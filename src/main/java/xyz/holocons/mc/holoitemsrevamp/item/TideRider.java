@@ -54,7 +54,7 @@ public class TideRider extends CustomItem implements Interactable {
                 return false;
             }
         }
-        player.sendBlockChange(player.getLocation().add(0,0,0), Material.WATER.createBlockData()); //TODO It doesn't
+        player.sendBlockChange(player.getLocation().add(0, 0, 0), Material.WATER.createBlockData()); //TODO It creates water, but does not remove it.
         // refresh the chunk, will need a task manager probably.
         Properties.COOLDOWN.set(dataContainer, System.currentTimeMillis());
         itemStack.setItemMeta(meta);
