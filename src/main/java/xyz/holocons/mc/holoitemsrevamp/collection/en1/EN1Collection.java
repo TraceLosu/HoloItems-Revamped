@@ -15,6 +15,11 @@ public class EN1Collection extends IdolCollection {
     public EN1Collection() {
         super(name);
         getIdolSet().add(new GawrGura());
+        getIdolSet().add(new IRyS());
+        getIdolSet().add(new MoriCalliope());
+        getIdolSet().add(new NinomaeInanis());
+        getIdolSet().add(new TakanashiKiara());
+        getIdolSet().add(new WatsonAmelia());
     }
 
     @Override

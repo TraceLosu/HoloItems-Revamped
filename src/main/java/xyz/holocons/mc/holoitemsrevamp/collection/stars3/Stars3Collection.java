@@ -1,4 +1,4 @@
-package xyz.holocons.mc.holoitemsrevamp.collection.en2;
+package xyz.holocons.mc.holoitemsrevamp.collection.stars3;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -8,17 +8,14 @@ import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
 import java.util.List;
 
-public class EN2Collection extends IdolCollection {
+public class Stars3Collection extends IdolCollection {
 
-    private static final String name = "en2";
+    private static final String name = "stars3";
 
-    public EN2Collection() {
+    public Stars3Collection() {
         super(name);
-        getIdolSet().add(new CeresFauna());
-        getIdolSet().add(new HakosBaelz());
-        getIdolSet().add(new NanashiMumei());
-        getIdolSet().add(new OuroKronii());
-        getIdolSet().add(new TsukumoSana());
+        getIdolSet().add(new AragamiOga());
+        getIdolSet().add(new KageyamaShien());
     }
 
     @Override
@@ -28,7 +25,7 @@ public class EN2Collection extends IdolCollection {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.text("EN Generation 2")
+        return Component.text("Holostars Generation 3")
 
                 .color(TextColor.color(0x1D83FF));
     }
@@ -38,4 +35,3 @@ public class EN2Collection extends IdolCollection {
         return null;
     }
 }
-
