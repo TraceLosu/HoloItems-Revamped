@@ -19,7 +19,7 @@ public class EN1Collection extends IdolCollection {
 
     @Override
     public @NotNull Material getMaterial() {
-        return Material.TRIDENT;
+        return Material.PAPER;
     }
 
     @Override
@@ -33,3 +33,4 @@ public class EN1Collection extends IdolCollection {
         return null;
     }
 }
+
