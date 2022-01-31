@@ -20,7 +20,7 @@ public class CollectionsCommand implements SubCommand {
 
     @Override
     public String getName() {
-        return "collection";
+        return "collections";
     }
 
     @Override
