@@ -14,7 +14,7 @@ public class MiscCollection extends IdolCollection {
 
     public MiscCollection() {
         super(name);
-        getIdolSet().add(new AChan());
+        getIdolSet().add(new Achan());
     }
 
     @Override

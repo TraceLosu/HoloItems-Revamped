@@ -11,7 +11,7 @@ import java.util.List;
 public class KureijiOllie extends Idol {
 
     private static final String name = "kureijiollie";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyMDE4NTczODM1NSwKICAicHJvZmlsZUlkIiA6ICIxMmUxMzc2YTY0OTQ0MTMxYWFhM2IzYzM3YmY4OWJhNCIsCiAgInByb2ZpbGVOYW1lIiA6ICJrdXJlaWppb2xsaWUiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTljMWQ2NDQ3MGVmZmNlOTU1ZWRlYjIyMzRlODU1Zjg2OWM2OGJkMzdiYTQ1NjJmYmRlNGI5ZjI1ZDE1YWM2ZiIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTljMWQ2NDQ3MGVmZmNlOTU1ZWRlYjIyMzRlODU1Zjg2OWM2OGJkMzdiYTQ1NjJmYmRlNGI5ZjI1ZDE1YWM2ZiJ9fX0=";
 
     public KureijiOllie() {
         super(name, base64);
@@ -30,4 +30,3 @@ public class KureijiOllie extends Idol {
         return null;
     }
 }
-            

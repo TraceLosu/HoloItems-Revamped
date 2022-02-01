@@ -15,7 +15,7 @@ public class Stars2Collection extends IdolCollection {
     public Stars2Collection() {
         super(name);
         getIdolSet().add(new AstelLeda());
-        getIdolSet().add(new KishidouTemma());
+        getIdolSet().add(new KishidoTemma());
         getIdolSet().add(new YukokuRoberu());
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 public class KageyamaShien extends Idol {
 
     private static final String name = "kageyamashien";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYxMTU3OTEzODc0OCwKICAicHJvZmlsZUlkIiA6ICJkODAwZDI4MDlmNTE0ZjkxODk4YTU4MWYzODE0Yzc5OSIsCiAgInByb2ZpbGVOYW1lIiA6ICJ0aGVCTFJ4eCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS8yMjVhZGNjNTQzYWRhYjNhZjY5Y2Q5MWM5ZjY1ODdlOWM5NjUwMTM0OWMyY2RiMDEyMjMxMDNjNjY0MDUzZjk3IgogICAgfQogIH0KfQ==";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjI1YWRjYzU0M2FkYWIzYWY2OWNkOTFjOWY2NTg3ZTljOTY1MDEzNDljMmNkYjAxMjIzMTAzYzY2NDA1M2Y5NyJ9fX0=";
 
     public KageyamaShien() {
         super(name, base64);
@@ -30,4 +30,3 @@ public class KageyamaShien extends Idol {
         return null;
     }
 }
-            

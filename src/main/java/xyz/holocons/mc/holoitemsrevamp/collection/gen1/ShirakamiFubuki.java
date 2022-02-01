@@ -11,7 +11,7 @@ import java.util.List;
 public class ShirakamiFubuki extends Idol {
 
     private static final String name = "shirakamifubuki";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyMDE4NDUwNzk2NywKICAicHJvZmlsZUlkIiA6ICI3MDNhM2Q3NTg5ODg0ZDk2YTI0ZTFmMmNjODNjNTQzOSIsCiAgInByb2ZpbGVOYW1lIiA6ICJzaGlyYWthbWlmdWJ1a2kiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzVjOTc1ZGViMjhkZTMzNjQ3ODc5MDhmYjBmNjkzYjIwMGViMTZjNTBmZmQ3ZmNmNjJjZGJlMjM2NjViOGYzOSIKICAgIH0KICB9Cn0=";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzVjOTc1ZGViMjhkZTMzNjQ3ODc5MDhmYjBmNjkzYjIwMGViMTZjNTBmZmQ3ZmNmNjJjZGJlMjM2NjViOGYzOSJ9fX0=";
 
     public ShirakamiFubuki() {
         super(name, base64);
@@ -30,4 +30,3 @@ public class ShirakamiFubuki extends Idol {
         return null;
     }
 }
-            

@@ -11,7 +11,7 @@ import java.util.List;
 public class NanashiMumei extends Idol {
 
     private static final String name = "nanashimumei";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYzMzEzMTcwNjMyNywKICAicHJvZmlsZUlkIiA6ICIyM2YxYTU5ZjQ2OWI0M2RkYmRiNTM3YmZlYzEwNDcxZiIsCiAgInByb2ZpbGVOYW1lIiA6ICIyODA3IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzlkNzZhZDIzNWMwMzkxZWJiZGU3MjU5ZWI5Y2QwZWFkNzc2ODMzZGUyNzIyNzdiZTQ3NzUyOGYwYzhiYjJmNyIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWQ3NmFkMjM1YzAzOTFlYmJkZTcyNTllYjljZDBlYWQ3NzY4MzNkZTI3MjI3N2JlNDc3NTI4ZjBjOGJiMmY3In19fQ==";
 
     public NanashiMumei() {
         super(name, base64);
@@ -30,4 +30,3 @@ public class NanashiMumei extends Idol {
         return null;
     }
 }
-            

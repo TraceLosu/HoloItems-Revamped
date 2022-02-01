@@ -11,7 +11,7 @@ import java.util.List;
 public class YuzukiChoco extends Idol {
 
     private static final String name = "yuzukichoco";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyMDE4NDY3ODk3MCwKICAicHJvZmlsZUlkIiA6ICIwYzNlMDAzNWQ3Y2U0ZWZhYjNhZGY1YTQzZTJhNzRmNiIsCiAgInByb2ZpbGVOYW1lIiA6ICJ5dXp1a2ljaG9jbyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS82MWQ4YjQ2ODhkZTI0YWRkMWNhOTA2ZWQ4YTJiZWE5ZjNhNWNlMjQxNmQyOThlMjViZTA3MmNlMDNiNTBhNjUxIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjFkOGI0Njg4ZGUyNGFkZDFjYTkwNmVkOGEyYmVhOWYzYTVjZTI0MTZkMjk4ZTI1YmUwNzJjZTAzYjUwYTY1MSJ9fX0=";
 
     public YuzukiChoco() {
         super(name, base64);
@@ -30,4 +30,3 @@ public class YuzukiChoco extends Idol {
         return null;
     }
 }
-            

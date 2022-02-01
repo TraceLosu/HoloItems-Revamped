@@ -5,18 +5,16 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
-import xyz.holocons.mc.holoitemsrevamp.item.TideRider;
 
 import java.util.List;
 
 public class GawrGura extends Idol {
 
     private static final String name = "gawrgura";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyMDE2NzY5ODkxMiwKICAicHJvZmlsZUlkIiA6ICI0YjA1ZDhkMzIzNjI0M2MyOTQ5NGIyODY2YzcwMTI2NyIsCiAgInByb2ZpbGVOYW1lIiA6ICJHYXVHdXJhIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzMzYTVkNDM0OTA2YmNjNWRkYTAyZTg0ZTJjMDllYzcyODQ1OTQwMGIyNjQ2M2VjN2JhYTkyYjM1ZGJhNTAwZGIiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ=";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzNhNWQ0MzQ5MDZiY2M1ZGRhMDJlODRlMmMwOWVjNzI4NDU5NDAwYjI2NDYzZWM3YmFhOTJiMzVkYmE1MDBkYiJ9fX0=";
 
     public GawrGura() {
         super(name, base64);
-        getItemSet().add(new TideRider());
     }
 
     @Override
@@ -32,4 +30,3 @@ public class GawrGura extends Idol {
         return null;
     }
 }
-            

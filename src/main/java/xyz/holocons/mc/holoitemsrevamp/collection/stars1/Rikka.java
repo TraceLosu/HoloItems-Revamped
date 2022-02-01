@@ -11,7 +11,7 @@ import java.util.List;
 public class Rikka extends Idol {
 
     private static final String name = "rikka";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYxNTA4NjU5ODAxOCwKICAicHJvZmlsZUlkIiA6ICIzOTg5OGFiODFmMjU0NmQxOGIyY2ExMTE1MDRkZGU1MCIsCiAgInByb2ZpbGVOYW1lIiA6ICJNeVV1aWRJcyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS83MWFiYTdlNmU2MGJjYzgwODJjZDI1MTFmNmQ5NmM4MmRhMzE4NGEwYmIyYjYyZjE3ZDIwMGQ0OGM5NmIzZTczIgogICAgfQogIH0KfQ==";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFhYmE3ZTZlNjBiY2M4MDgyY2QyNTExZjZkOTZjODJkYTMxODRhMGJiMmI2MmYxN2QyMDBkNDhjOTZiM2U3MyJ9fX0=";
 
     public Rikka() {
         super(name, base64);
@@ -30,4 +30,3 @@ public class Rikka extends Idol {
         return null;
     }
 }
-            

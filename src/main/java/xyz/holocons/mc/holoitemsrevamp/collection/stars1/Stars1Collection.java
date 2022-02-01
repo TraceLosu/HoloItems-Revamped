@@ -14,7 +14,7 @@ public class Stars1Collection extends IdolCollection {
 
     public Stars1Collection() {
         super(name);
-        getIdolSet().add(new Aurandeisu());
+        getIdolSet().add(new Arurandeisu());
         getIdolSet().add(new HanasakiMiyabi());
         getIdolSet().add(new KanadeIzuru());
         getIdolSet().add(new Rikka());

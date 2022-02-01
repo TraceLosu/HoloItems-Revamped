@@ -11,7 +11,7 @@ import java.util.List;
 public class NinomaeInanis extends Idol {
 
     private static final String name = "ninomaeinanis";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyMDE4NDEwOTA5MCwKICAicHJvZmlsZUlkIiA6ICI4MjM3ZTljNDFjMTE0YzE5YjI5YTY3YzUxZjIwNDViOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJOaW5vSW5hIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzNiMzA2OGJmN2M0NDEyODBkYTU1ZjBkOTY2ODZlMzk0MDhjNDYzNWVjMTBiZmFmNTk0ZTk4ZTc0MzMxOWU5NiIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9=";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2IzMDY4YmY3YzQ0MTI4MGRhNTVmMGQ5NjY4NmUzOTQwOGM0NjM1ZWMxMGJmYWY1OTRlOThlNzQzMzE5ZTk2In19fQ==";
 
     public NinomaeInanis() {
         super(name, base64);
@@ -19,7 +19,7 @@ public class NinomaeInanis extends Idol {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.text("Ninomae Ina'nis")
+        return Component.text("Ninomae Inanis")
                 .color(TextColor.color(0x3F3F6A))
                 .decoration(TextDecoration.BOLD, true)
                 .decoration(TextDecoration.ITALIC, false);
@@ -30,4 +30,3 @@ public class NinomaeInanis extends Idol {
         return null;
     }
 }
-            

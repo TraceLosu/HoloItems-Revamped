@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GamersCollection extends IdolCollection {
 
-    private static final String name = "en2";
+    private static final String name = "gamers";
 
     public GamersCollection() {
         super(name);

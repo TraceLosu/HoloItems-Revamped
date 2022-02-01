@@ -11,7 +11,7 @@ import java.util.List;
 public class AragamiOga extends Idol {
 
     private static final String name = "aragamioga";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYzMjk3MzM3MTMzMiwKICAicHJvZmlsZUlkIiA6ICJhYTJhMWE0ZTExZjE0YWViYmE5YmRlZDdiNjIzNjc5MCIsCiAgInByb2ZpbGVOYW1lIiA6ICJhcmFnYW1pb2dhIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2ZkMzgwNGMxOTUwNDEwMGNiMGViNTIzMWRmYzllY2NmYjFiMDU0ZTY0YTVlNTlkNzE0OTZlNGYyYWMwYjYyMyIKICAgIH0KICB9Cn0=";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmQzODA0YzE5NTA0MTAwY2IwZWI1MjMxZGZjOWVjY2ZiMWIwNTRlNjRhNWU1OWQ3MTQ5NmU0ZjJhYzBiNjIzIn19fQ==";
 
     public AragamiOga() {
         super(name, base64);
@@ -19,7 +19,7 @@ public class AragamiOga extends Idol {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.text("A4FB41")
+        return Component.text("Aragami Oga")
                 .color(TextColor.color(0xA4FB41))
                 .decoration(TextDecoration.BOLD, true)
                 .decoration(TextDecoration.ITALIC, false);
@@ -30,4 +30,3 @@ public class AragamiOga extends Idol {
         return null;
     }
 }
-            

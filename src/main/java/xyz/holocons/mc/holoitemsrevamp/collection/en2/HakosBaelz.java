@@ -11,7 +11,7 @@ import java.util.List;
 public class HakosBaelz extends Idol {
 
     private static final String name = "hakosbaelz";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyOTk4NzkxOTQxOSwKICAicHJvZmlsZUlkIiA6ICIwNWJhN2FmOGY0M2M0NGFjYWJkZjkzZjVmMTk2Njg3NiIsCiAgInByb2ZpbGVOYW1lIiA6ICJESkdyb3VuZDAiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjRhOTg1ZjE1NjBmNTdjMTgzODNkYjNjYzQ2MTUwMjg3OWY5YjYyOGM0ZDNlMTJhZGUzN2JlNjU2NzMyMzY5MCIKICAgIH0KICB9Cn0=";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjRhOTg1ZjE1NjBmNTdjMTgzODNkYjNjYzQ2MTUwMjg3OWY5YjYyOGM0ZDNlMTJhZGUzN2JlNjU2NzMyMzY5MCJ9fX0=";
 
     public HakosBaelz() {
         super(name, base64);
@@ -30,4 +30,3 @@ public class HakosBaelz extends Idol {
         return null;
     }
 }
-            
