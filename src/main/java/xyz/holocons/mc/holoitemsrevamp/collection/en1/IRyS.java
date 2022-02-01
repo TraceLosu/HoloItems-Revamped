@@ -11,7 +11,7 @@ import java.util.List;
 public class IRyS extends Idol {
 
     private static final String name = "irys";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyNjI2NzA0OTc4MywKICAicHJvZmlsZUlkIiA6ICIyMWUzNjdkNzI1Y2Y0ZTNiYjI2OTJjNGEzMDBhNGRlYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJHZXlzZXJNQyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lZDZiMzE1NzE0YTZiZTNlOWYzNWE1Y2FlYTQ0NDUxMTRjYmRhNjExMGM1ZTAzOWI0YjM4MmQ0Mjk1ODcwZWQyIgogICAgfQogIH0KfQ==";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWQ2YjMxNTcxNGE2YmUzZTlmMzVhNWNhZWE0NDQ1MTE0Y2JkYTYxMTBjNWUwMzliNGIzODJkNDI5NTg3MGVkMiJ9fX0=";
 
     public IRyS() {
         super(name, base64);
