@@ -14,7 +14,11 @@ public class Gen6Collection extends IdolCollection {
 
     public Gen6Collection() {
         super(name);
+        getIdolSet().add(new HakuiKoyori());
+        getIdolSet().add(new KazamaIroha());
+        getIdolSet().add(new LaplusDarknesss());
         getIdolSet().add(new SakamataChloe());
+        getIdolSet().add(new TakaneLui());
     }
 
     @Override

@@ -8,19 +8,19 @@ import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
 
 import java.util.List;
 
-public class SakamataChloe extends Idol {
+public class HakuiKoyori extends Idol {
 
-    private static final String name = "sakamatachloe";
-    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGQ3NmVjMWE0ZGQwNTllOWU5M2FkZWNmYTBkNGRkOThiYWM3MzFiMTFlMjNkMTMyYTdlODg5MTA4MzQ5Y2E1NyJ9fX0=";
+    private static final String name = "hakuikoyori";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTkxMDUzZWI1MTA2NjdhYmNhMDE4Mzg0NzFhNmYxZGIzMDBlYzBiNTU1MWUzYmFiNWI3MmFiMDMyNGRiYzI1ZiJ9fX0=";
 
-    public SakamataChloe() {
+    public HakuiKoyori() {
         super(name, base64);
     }
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.text("Sakamata Chloe")
-                .color(TextColor.color(0x8A2E30))
+        return Component.text("Hakui Koyori")
+                .color(TextColor.color(0xFDB4CA))
                 .decoration(TextDecoration.BOLD, true)
                 .decoration(TextDecoration.ITALIC, false);
     }
