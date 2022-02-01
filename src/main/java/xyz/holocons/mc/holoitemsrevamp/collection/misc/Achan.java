@@ -19,7 +19,7 @@ public class Achan extends Idol {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.text("A-Chan")
+        return Component.text("A-chan")
                 .color(TextColor.color(0x534A92))
                 .decoration(TextDecoration.BOLD, true)
                 .decoration(TextDecoration.ITALIC, false);

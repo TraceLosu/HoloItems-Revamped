@@ -11,7 +11,7 @@ import java.util.List;
 public class Arurandeisu extends Idol {
 
     private static final String name = "arurandeisu";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyNDg3MzE2Nzk3MSwKICAicHJvZmlsZUlkIiA6ICI2Mzk3ZWE2NTVkNzE0YTZmYmE2OGM0MzE0OTQxODA5OSIsCiAgInByb2ZpbGVOYW1lIiA6ICJBcnVyYW5kZWlzdSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9mZTFkNDVjODM5ZDE4YjQ5OGJiYzIxZWExZDBmZGNkYzFjYzA3ZmZiZDgzOTNiMDQyNWYxOTY2YmJiOTYxOGIzIgogICAgfQogIH0KfQ==";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmUxZDQ1YzgzOWQxOGI0OThiYmMyMWVhMWQwZmRjZGMxY2MwN2ZmYmQ4MzkzYjA0MjVmMTk2NmJiYjk2MThiMyJ9fX0=";
 
     public Arurandeisu() {
         super(name, base64);
