@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
+import xyz.holocons.mc.holoitemsrevamp.item.TideRider;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class GawrGura extends Idol {
 
     public GawrGura() {
         super(name, base64);
+        getItemSet().add(new TideRider());
     }
 
     @Override
