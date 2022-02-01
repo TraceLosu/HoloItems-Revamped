@@ -11,7 +11,7 @@ import java.util.List;
 public class Achan extends Idol {
 
     private static final String name = "achan";
-    private static final String base64 = "ewogICJ0aW1lc3RhbXAiIDogMTYyMDE4NTgyMzQ3NCwKICAicHJvZmlsZUlkIiA6ICIzMGQ5MGQ1MGQzZjQ0NzZhOTIyMTZmMDM4OGEzYTlkZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJhY2hhbl9VR0EiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTA0OGQ2ZGFlZWI4MDgyNjlhZmY1MzMzNzI0YWY4Y2Y4NTY1NmI5MjM2MGI0NTM1M2FmZjcyZWNhMmIwYzZkNiIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9";
+    private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTA0OGQ2ZGFlZWI4MDgyNjlhZmY1MzMzNzI0YWY4Y2Y4NTY1NmI5MjM2MGI0NTM1M2FmZjcyZWNhMmIwYzZkNiJ9fX0=";
 
     public Achan() {
         super(name, base64);
