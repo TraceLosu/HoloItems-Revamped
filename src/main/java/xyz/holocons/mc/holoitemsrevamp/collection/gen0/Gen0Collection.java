@@ -16,7 +16,7 @@ public class Gen0Collection extends IdolCollection {
         super(name);
         getIdolSet().add(new AZKi());
         getIdolSet().add(new HoshimachiSuisei());
-        getIdolSet().add(new RobokoSan());
+        getIdolSet().add(new Roboco());
         getIdolSet().add(new SakuraMiko());
         getIdolSet().add(new TokinoSora());
     }

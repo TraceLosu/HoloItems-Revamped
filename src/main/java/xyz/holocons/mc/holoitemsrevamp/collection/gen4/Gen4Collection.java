@@ -18,7 +18,7 @@ public class Gen4Collection extends IdolCollection {
         getIdolSet().add(new HimemoriLuna());
         getIdolSet().add(new KiryuCoco());
         getIdolSet().add(new TokoyamiTowa());
-        getIdolSet().add(new TsunowakiWatame());
+        getIdolSet().add(new TsunomakiWatame());
     }
 
     @Override
