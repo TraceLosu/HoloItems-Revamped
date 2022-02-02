@@ -1,5 +1,5 @@
 # HoloItems
-A plugin that adds some custom items to the server, themed with hololive talents!
+A plugin that adds some custom items themed around hololive talents!
 
 ## Contributing
 This plugin uses HoloItemsAPI to register and listen to custom items. To learn more about the API, click [here.](https://github.com/StrangeOne101/HoloItemsAPI)
@@ -32,3 +32,8 @@ Once the class is created, add an instance of the class to the Set in the Idol's
 ```
 
 If you want to have an item that consists of a large runnable task, you should create a class that extends `ItemAbility`. More info about it [here](https://github.com/StrangeOne101/HoloItemsAPI/blob/master/src/main/java/com/strangeone101/holoitemsapi/ItemAbility.java). Put the class in the same package as the item class.
+
+## Building and testing
+This project is configured to be packaged by Gradle Wrapper. The Wrapper script is invoked by running `./gradlew.bat [task]` on Windows or `./gradlew [task]` on Linux!
+
+The main tasks to use are `clean`, `build`, and `runServer`!
