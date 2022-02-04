@@ -26,5 +26,4 @@ jobs:
           name: ${{ github.event.repository.name }}-${{ github.sha }}
           path: |
             build/libs/*.jar
-            !build/libs/*-dev.jar
-            !build/libs/*-dev-all.jar
+            !build/libs/*-incomplete.jar

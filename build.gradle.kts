@@ -1,11 +1,8 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
-
 plugins {
     `java-library`
-    id("io.papermc.paperweight.userdev") version "1.3.4"
-    id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1" // Generates plugin.yml
     id("com.github.johnrengelman.shadow") version "7.1.2" // Shades and relocates dependencies into our plugin jar
+    id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
 }
 
 group = "xyz.holocons.mc"
@@ -18,19 +15,20 @@ java {
 }
 
 repositories {
+    maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://raw.githubusercontent.com/StrangeOne101/HoloItemsAPI/repository/")
 }
 
 dependencies {
-    paperDevBundle("1.18.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
     implementation("com.strangeone101:HoloItemsAPI:0.7.4")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.4")
 }
 
 tasks {
-    // Configure reobfJar to run when invoking the build task
+    // Configure shadowJar to run when invoking the build task
     assemble {
-        dependsOn(reobfJar)
+        dependsOn(shadowJar)
     }
 
     compileJava {
@@ -47,16 +45,31 @@ tasks {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
 
+    // Configure the name of the unshaded jar
+    jar {
+        archiveClassifier.set("incomplete")
+        archiveVersion.set("")
+    }
+
     // Shade and relocate dependencies
+    // https://github.com/johnrengelman/shadow
     shadowJar {
         relocate("com.strangeone101", "shadow.strangeone101")
         relocate("com.github.stefvanschie.inventoryframework", "shadow.inventoryframework")
+
+        archiveClassifier.set("")
+    }
+
+    // Configure the Minecraft version for runServer task
+    // https://github.com/jpenilla/run-paper
+    runServer {
+        minecraftVersion("1.18.1")
     }
 }
 
 // Configure plugin.yml generation
+// https://github.com/Minecrell/plugin-yml
 bukkit {
-    load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     main = "xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp"
     apiVersion = "1.18"
     authors = listOf("TraceL", "dlee13")
