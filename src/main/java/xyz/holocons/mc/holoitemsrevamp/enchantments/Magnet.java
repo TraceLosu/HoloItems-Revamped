@@ -48,14 +48,14 @@ public class Magnet extends CustomEnchant implements Mineable {
 
     @Override
     public void run(BlockBreakEvent event) {
-        final var location = event.getBlock().getLocation();
+        final var location = event.getBlock().getLocation().toCenterLocation();
         final var player = event.getPlayer();
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                final var items = location.getNearbyEntitiesByType(Item.class, 1.5);
-                final var itemStacks = items.stream().map(item -> item.getItemStack()).toArray(ItemStack[]::new);
+                final var items = location.getNearbyEntitiesByType(Item.class, 1.5, Item::canPlayerPickup);
+                final var itemStacks = items.stream().map(Item::getItemStack).toArray(ItemStack[]::new);
                 final var excess = player.getInventory().addItem(itemStacks);
                 excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
                 items.forEach(Item::remove);
