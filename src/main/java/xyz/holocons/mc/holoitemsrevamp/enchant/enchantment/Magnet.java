@@ -1,4 +1,4 @@
-package xyz.holocons.mc.holoitemsrevamp.enchantments;
+package xyz.holocons.mc.holoitemsrevamp.enchant.enchantment;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,10 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchant;
-import xyz.holocons.mc.holoitemsrevamp.enchant.interfaces.Mineable;
+import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
+import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
 
-public class Magnet extends CustomEnchant implements Mineable {
+public class Magnet extends CustomEnchantment implements BlockBreak {
 
     private final HoloItemsRevamp plugin;
 

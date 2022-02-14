@@ -1,11 +1,10 @@
 package xyz.holocons.mc.holoitemsrevamp.enchant;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchant.interfaces.Mineable;
+import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
 
 public class EnchantListener implements Listener {
 
@@ -13,7 +12,6 @@ public class EnchantListener implements Listener {
 
     public EnchantListener(HoloItemsRevamp plugin) {
         this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
@@ -26,13 +24,13 @@ public class EnchantListener implements Listener {
             return;
         }
 
-        var itemEnchants = itemStack.getItemMeta().getEnchants();
-        itemEnchants.keySet().stream().filter(enchantment -> enchantment instanceof CustomEnchant).forEach(enchantment -> {
+        var enchants = itemStack.getItemMeta().getEnchants();
+        enchants.keySet().stream().filter(enchantment -> enchantment instanceof CustomEnchantment).forEach(enchantment -> {
             //plugin.getLogger().info("Found enchantment!");
-            var customEnchant = (CustomEnchant) enchantment;
-            if (customEnchant instanceof Mineable mineable) {
+            var customEnchant = (CustomEnchantment) enchantment;
+            if (customEnchant instanceof BlockBreak blockBreak) {
                 //plugin.getLogger().info("Executing enchantment method!");
-                mineable.run(event);
+                blockBreak.run(event);
             }
         });
     }

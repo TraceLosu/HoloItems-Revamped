@@ -42,32 +42,32 @@ public class EnchantCommand implements SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!sender.hasPermission(getPermission())) {
-            sender.sendMessage("You do not have the permission to use this command!");
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("Do not use this command as console.");
             return true;
         }
 
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("Don't use this command in console.");
+        if (!player.hasPermission(getPermission())) {
+            player.sendMessage("You do not have the permission to use this command!");
             return true;
         }
 
         if (args.length < 1) {
-            sender.sendMessage("Not enough arguments");
+            player.sendMessage("Not enough arguments");
             return false;
         }
 
         var itemStack = player.getInventory().getItemInMainHand();
-        var itemStackMeta = itemStack.getItemMeta();
-        var customEnchant = plugin.getEnchantManager().getCustomEnchant(args[0]);
+        var itemMeta = itemStack.getItemMeta();
+        var customEnchant = plugin.getEnchantManager().getCustomEnchantment(args[0]);
 
         if (customEnchant == null) {
-            player.sendMessage(args[0] + " is not a valid item!");
+            player.sendMessage(args[0] + " is not a valid enchantment!");
             return false;
         }
 
-        if (itemStackMeta.addEnchant(customEnchant, 1, false)) {
-            itemStack.setItemMeta(itemStackMeta);
+        if (itemMeta.addEnchant(customEnchant, 1, false)) {
+            itemStack.setItemMeta(itemMeta);
             player.sendMessage("Enchanted!");
         } else {
             player.sendMessage("Could not set enchant!");

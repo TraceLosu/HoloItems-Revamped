@@ -21,9 +21,9 @@ import java.util.Set;
  * Some methods, like {@link Enchantment#displayName(int)} and {@link Enchantment#canEnchantItem(ItemStack)} aren't implemented.
  * While they also do nothing, they might help in setting enchantment lores, and validating anvil crafts.
  */
-public abstract class CustomEnchant extends Enchantment {
+public abstract class CustomEnchantment extends Enchantment {
 
-    public CustomEnchant(HoloItemsRevamp plugin, String namespace) {
+    public CustomEnchantment(HoloItemsRevamp plugin, String namespace) {
         super(new NamespacedKey(plugin, namespace));
     }
 
