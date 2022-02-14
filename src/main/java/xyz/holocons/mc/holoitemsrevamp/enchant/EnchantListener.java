@@ -16,7 +16,6 @@ public class EnchantListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        //plugin.getLogger().info("Block break event executed!");
         var player = event.getPlayer();
         var itemStack = player.getInventory().getItemInMainHand();
 
@@ -25,11 +24,8 @@ public class EnchantListener implements Listener {
         }
 
         var enchants = itemStack.getItemMeta().getEnchants();
-        enchants.keySet().stream().filter(enchantment -> enchantment instanceof CustomEnchantment).forEach(enchantment -> {
-            //plugin.getLogger().info("Found enchantment!");
-            var customEnchant = (CustomEnchantment) enchantment;
-            if (customEnchant instanceof BlockBreak blockBreak) {
-                //plugin.getLogger().info("Executing enchantment method!");
+        enchants.keySet().forEach(enchantment -> {
+            if (enchantment instanceof BlockBreak blockBreak) {
                 blockBreak.run(event);
             }
         });
