@@ -27,6 +27,17 @@ public abstract class CustomEnchantment extends Enchantment {
         super(new NamespacedKey(plugin, namespace));
     }
 
+    /**
+     * Gets the cost of enchanting an itemstack with the enchantment.
+     * @param itemStack The itemstack to check for.
+     * @return Amount of levels to enchant the itemstack.
+     */
+    public abstract int getItemStackCost(ItemStack itemStack);
+
+    @NotNull
+    @Override
+    public abstract String getName();
+
     @Override
     public @NotNull String translationKey() {
         return "";

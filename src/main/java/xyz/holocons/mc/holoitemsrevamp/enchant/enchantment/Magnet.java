@@ -2,6 +2,7 @@ package xyz.holocons.mc.holoitemsrevamp.enchant.enchantment;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.Util;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
 import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
 
@@ -38,12 +40,46 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
-        return false;
+        var materialString = item.getType().toString();
+
+        return materialString.endsWith("PICKAXE") || materialString.endsWith("AXE") || materialString.endsWith("SHOVEL")
+            || materialString.endsWith("HOE");
     }
 
     @Override
     public @NotNull Component displayName(int level) {
-        return Component.text("Magnet I", NamedTextColor.GRAY);
+        return Component.text("Magnet I", NamedTextColor.GRAY)
+            .decoration(TextDecoration.ITALIC, false);
+    }
+
+    @Override
+    public int getItemStackCost(ItemStack itemStack) {
+        int level = 0;
+
+        var oreLevel = Util.getOreLevel(itemStack.getType());
+        var enchantments = itemStack.getEnchantments();
+
+        switch (oreLevel) {
+            case NETHERITE_INGOT -> level = level + 10;
+            case DIAMOND -> level = level + 8;
+            case GOLD_INGOT -> level = level + 3;
+            case IRON_INGOT -> level = level + 5;
+            case OAK_PLANKS -> level = level + 1;
+        }
+
+        for (var entry : enchantments.entrySet()) {
+            if (Enchantment.DIG_SPEED.equals(entry.getKey())) {
+                level = level + (5 * entry.getValue());
+            } else if (Enchantment.DURABILITY.equals(entry.getKey())) {
+                level = level + (3 * entry.getValue());
+            } else if (Enchantment.SILK_TOUCH.equals(entry.getKey())) {
+                level = level + 5;
+            } else {
+                level = level + 2;
+            }
+        }
+
+        return level;
     }
 
     @Override
