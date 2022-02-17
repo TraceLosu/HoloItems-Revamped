@@ -1,6 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.collection;
 
 import com.strangeone101.holoitemsapi.CustomItem;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.collection.en1.EN1Collection;
 import xyz.holocons.mc.holoitemsrevamp.collection.en2.EN2Collection;
 import xyz.holocons.mc.holoitemsrevamp.collection.gamers.GamersCollection;
@@ -24,12 +25,12 @@ public class CollectionManager {
     private final List<IdolCollection> idolCollections;
     private final Map<String, CustomItem> allItems;
 
-    public CollectionManager(){
+    public CollectionManager(HoloItemsRevamp plugin){
         idolCollections = List.of(
             new EN1Collection(),
             new EN2Collection(),
             new GamersCollection(),
-            new Gen0Collection(),
+            new Gen0Collection(plugin),
             new Gen1Collection(),
             new Gen2Collection(),
             new Gen3Collection(),

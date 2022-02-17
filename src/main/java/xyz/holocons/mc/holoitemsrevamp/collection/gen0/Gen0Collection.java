@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
 import java.util.List;
@@ -12,11 +13,11 @@ public class Gen0Collection extends IdolCollection {
 
     private static final String name = "gen0";
 
-    public Gen0Collection() {
+    public Gen0Collection(HoloItemsRevamp plugin) {
         super(name);
         getIdolSet().add(new AZKi());
         getIdolSet().add(new HoshimachiSuisei());
-        getIdolSet().add(new Roboco());
+        getIdolSet().add(new Roboco(plugin));
         getIdolSet().add(new SakuraMiko());
         getIdolSet().add(new TokinoSora());
     }
