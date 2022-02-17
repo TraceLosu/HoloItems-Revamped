@@ -14,13 +14,18 @@ public class EnchantManager {
 
     public EnchantManager(HoloItemsRevamp plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(new EnchantListener(plugin), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new EnchantListener(plugin, this), plugin);
         customEnchantments = Set.of(
             new Magnet(plugin)
         );
         customEnchantments.forEach(this::registerEnchantment);
     }
 
+    /**
+     * Gets a custom enchantment from the plugin by name.
+     * @param name The name of the enchantment
+     * @return The CustomEnchantment class corresponding to the name, or null if it could not find one.
+     */
     public CustomEnchantment getCustomEnchantment(String name) {
         var result = customEnchantments.stream().filter(enchant -> enchant.getName().equalsIgnoreCase(name)).findAny();
         return result.orElse(null);
@@ -33,7 +38,7 @@ public class EnchantManager {
             field.set(null, true);
             Enchantment.registerEnchantment(enchantment);
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            plugin.getLogger().severe("[HoloItems] Failed to register enchantment " + enchantment.getName());
+            plugin.getLogger().severe("Failed to register enchantment " + enchantment.getKey());
             e.printStackTrace();
         }
     }
