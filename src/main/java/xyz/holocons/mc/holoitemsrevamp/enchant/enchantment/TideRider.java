@@ -58,8 +58,7 @@ public class TideRider extends CustomEnchantment implements PlayerInteract {
     }
 
     @Override
-    public void run(PlayerInteractEvent event) {
-        var itemStack = event.getItem();
+    public void run(PlayerInteractEvent event, ItemStack itemStack) {
         var itemMeta = itemStack.getItemMeta();
         var persistentDataContainer = itemMeta.getPersistentDataContainer();
         var currentTick = Util.currentTimeTicks();

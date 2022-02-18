@@ -42,7 +42,7 @@ public class EnchantListener implements Listener {
         final var enchants = itemStack.getItemMeta().getEnchants();
         enchants.keySet().forEach(enchantment -> {
             if (abilityCls.isInstance(enchantment)) {
-                abilityCls.cast(enchantment).run(event);
+                abilityCls.cast(enchantment).run(event, itemStack);
             }
         });
     }

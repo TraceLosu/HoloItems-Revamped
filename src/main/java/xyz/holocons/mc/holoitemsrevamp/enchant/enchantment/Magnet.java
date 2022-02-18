@@ -83,7 +83,7 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
     }
 
     @Override
-    public void run(BlockBreakEvent event) {
+    public void run(BlockBreakEvent event, ItemStack itemStack) {
         final var location = event.getBlock().getLocation().toCenterLocation();
         final var player = event.getPlayer();
 
