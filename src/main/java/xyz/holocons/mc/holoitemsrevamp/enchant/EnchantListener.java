@@ -55,7 +55,7 @@ public class EnchantListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onAnvilPrepare(PrepareAnvilEvent event) {
+    public void onPrepareAnvil(PrepareAnvilEvent event) {
 
         var player = event.getView().getPlayer();
 
@@ -128,7 +128,7 @@ public class EnchantListener implements Listener {
      * @param addition The second item
      * @return A map containing all custom enchants
      */
-    private Map<Enchantment, Integer> combineCustomEnchants(@NotNull ItemStack base, @NotNull ItemStack addition) {
+    private static Map<Enchantment, Integer> combineCustomEnchants(@NotNull ItemStack base, @NotNull ItemStack addition) {
         var additionMeta = addition.getItemMeta();
 
         var baseEnchantments = base.getEnchantments();
@@ -147,7 +147,7 @@ public class EnchantListener implements Listener {
         return combineCustomEnchants(baseEnchantments, additionEnchants);
     }
 
-    private Map<Enchantment, Integer> combineCustomEnchants(Map<Enchantment, Integer> base, Map<Enchantment, Integer> addition) {
+    private static Map<Enchantment, Integer> combineCustomEnchants(Map<Enchantment, Integer> base, Map<Enchantment, Integer> addition) {
         return Stream.of(base, addition)
             .map(Map::entrySet)
             .flatMap(Set::stream)
@@ -158,12 +158,12 @@ public class EnchantListener implements Listener {
             }));
     }
 
-    private boolean hasNoConflictEnchants(Map<Enchantment, Integer> enchants, Enchantment filter) {
+    private static boolean hasNoConflictEnchants(Map<Enchantment, Integer> enchants, Enchantment filter) {
         return enchants.keySet().stream()
             .noneMatch(filter::conflictsWith);
     }
 
-    private boolean hasNoCustomEnchants(@NotNull ItemStack itemStack) {
+    private static boolean hasNoCustomEnchants(@NotNull ItemStack itemStack) {
         return itemStack.getEnchantments().keySet().stream()
             .noneMatch(enchant -> enchant instanceof CustomEnchantment);
     }
