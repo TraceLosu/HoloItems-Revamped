@@ -3,6 +3,7 @@ package xyz.holocons.mc.holoitemsrevamp.enchant.enchantment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -40,10 +41,8 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
-        var materialString = item.getType().toString();
-
-        return materialString.endsWith("PICKAXE") || materialString.endsWith("AXE") || materialString.endsWith("SHOVEL")
-            || materialString.endsWith("HOE");
+        return MaterialTags.PICKAXES.isTagged(item) || MaterialTags.AXES.isTagged(item)
+            || MaterialTags.SHOVELS.isTagged(item) || MaterialTags.HOES.isTagged(item);
     }
 
     @Override
