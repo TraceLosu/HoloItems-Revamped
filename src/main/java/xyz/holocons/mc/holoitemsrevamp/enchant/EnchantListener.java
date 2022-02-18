@@ -6,6 +6,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -34,6 +35,18 @@ public class EnchantListener implements Listener {
         this.enchantManager = enchantManager;
     }
 
+    private static <A extends Ability, E extends Event> void runAbilities(Class<A> abilityCls, E event, ItemStack itemStack) {
+        if (!itemStack.hasItemMeta()) {
+            return;
+        }
+        final var enchants = itemStack.getItemMeta().getEnchants();
+        enchants.keySet().forEach(enchantment -> {
+            if (abilityCls.isInstance(enchantment)) {
+                abilityCls.cast(enchantment).run(event);
+            }
+        });
+    }
+
     /**
      * Handles BlockBreak enchantments.
      *
@@ -44,16 +57,7 @@ public class EnchantListener implements Listener {
         var player = event.getPlayer();
         var itemStack = player.getInventory().getItemInMainHand();
 
-        if (!itemStack.hasItemMeta()) {
-            return;
-        }
-
-        var enchants = itemStack.getItemMeta().getEnchants();
-        enchants.keySet().forEach(enchantment -> {
-            if (enchantment instanceof BlockBreak blockBreak) {
-                blockBreak.run(event);
-            }
-        });
+        runAbilities(BlockBreak.class, event, itemStack);
     }
 
     @EventHandler(ignoreCancelled = false)
@@ -61,19 +65,9 @@ public class EnchantListener implements Listener {
         if (event.isBlockInHand() || !event.getAction().isRightClick() || !event.hasItem()) {
             return;
         }
-
         var itemStack = event.getItem();
 
-        if (!itemStack.hasItemMeta()) {
-            return;
-        }
-
-        var enchants = itemStack.getItemMeta().getEnchants();
-        enchants.keySet().forEach(enchantment -> {
-            if (enchantment instanceof PlayerInteract playerInteract) {
-                playerInteract.run(event);
-            }
-        });
+        runAbilities(PlayerInteract.class, event, itemStack);
     }
 
     @EventHandler(ignoreCancelled = true)
