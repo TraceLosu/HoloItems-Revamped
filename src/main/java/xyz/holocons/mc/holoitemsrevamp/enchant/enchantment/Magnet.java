@@ -65,6 +65,7 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
             case GOLD_INGOT -> level = level + 3;
             case IRON_INGOT -> level = level + 5;
             case OAK_PLANKS -> level = level + 1;
+            default -> {}
         }
 
         for (var entry : enchantments.entrySet()) {
