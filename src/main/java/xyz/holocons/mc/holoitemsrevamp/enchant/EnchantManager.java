@@ -27,7 +27,7 @@ public class EnchantManager {
             new Magnet(plugin),
             new TideRider(plugin)
         );
-        customEnchantments.forEach(this::registerEnchantment);
+        customEnchantments.forEach(Enchantment::registerEnchantment);
     }
 
     /**
@@ -38,9 +38,5 @@ public class EnchantManager {
     public CustomEnchantment getCustomEnchantment(String name) {
         var result = customEnchantments.stream().filter(enchant -> enchant.getName().equalsIgnoreCase(name)).findAny();
         return result.orElse(null);
-    }
-
-    private void registerEnchantment(Enchantment enchantment) {
-        Enchantment.registerEnchantment(enchantment);
     }
 }
