@@ -10,12 +10,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
+import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
 
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +52,26 @@ public class EnchantListener implements Listener {
         enchants.keySet().forEach(enchantment -> {
             if (enchantment instanceof BlockBreak blockBreak) {
                 blockBreak.run(event);
+            }
+        });
+    }
+
+    @EventHandler(ignoreCancelled = false)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.isBlockInHand() || !event.getAction().isRightClick() || !event.hasItem()) {
+            return;
+        }
+
+        var itemStack = event.getItem();
+
+        if (!itemStack.hasItemMeta()) {
+            return;
+        }
+
+        var enchants = itemStack.getItemMeta().getEnchants();
+        enchants.keySet().forEach(enchantment -> {
+            if (enchantment instanceof PlayerInteract playerInteract) {
+                playerInteract.run(event);
             }
         });
     }

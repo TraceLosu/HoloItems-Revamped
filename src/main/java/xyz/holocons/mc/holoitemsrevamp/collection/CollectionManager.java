@@ -27,7 +27,7 @@ public class CollectionManager {
 
     public CollectionManager(HoloItemsRevamp plugin){
         idolCollections = List.of(
-            new EN1Collection(),
+            new EN1Collection(plugin),
             new EN2Collection(),
             new GamersCollection(),
             new Gen0Collection(plugin),

@@ -1,19 +1,22 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
 import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.Properties;
-import com.strangeone101.holoitemsapi.interfaces.Interactable;
+import com.strangeone101.holoitemsapi.interfaces.Enchantable;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import xyz.holocons.mc.holoitemsrevamp.Util;
+import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.Component;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class TideRider extends CustomItem implements Interactable {
+public class TideRider extends CustomItem implements Enchantable {
 
     private final static String name = "tideRider";
     private final static Material material = Material.TRIDENT;
@@ -21,10 +24,12 @@ public class TideRider extends CustomItem implements Interactable {
     private final static List<String> lore = List.of(
         "Allows you to riptide anywhere you want!"
     );
-    private final static long cooldown = 100;
 
-    public TideRider() {
+    private final HoloItemsRevamp plugin;
+
+    public TideRider(HoloItemsRevamp plugin) {
         super(name, material, displayName, lore);
+        this.plugin = plugin;
         this.setMaxDurability(32);
         this.setStackable(false);
         this.register();
@@ -46,19 +51,28 @@ public class TideRider extends CustomItem implements Interactable {
     }
 
     @Override
-    public boolean onInteract(Player player, CustomItem customItem, ItemStack itemStack) {
-        var meta = itemStack.getItemMeta();
-        var dataContainer = meta.getPersistentDataContainer();
-        var currentTick = Util.currentTimeTicks();
-        var previousTick = Properties.COOLDOWN.get(dataContainer);
-        if (currentTick - previousTick < cooldown) {
-            return false;
+    public @NotNull Enchantment getEnchantment() {
+        return plugin.getEnchantManager().getCustomEnchantment("tide_rider");
+    }
+
+    @Override
+    public ItemStack applyEnchantment(ItemStack itemStack) {
+        var enchantedStack = itemStack.clone();
+        var enchantedMeta = enchantedStack.hasItemMeta() ? enchantedStack.getItemMeta() : Bukkit.getItemFactory().getItemMeta(enchantedStack.getType());
+
+        if (enchantedMeta.addEnchant(getEnchantment(), 1, false)) {
+            List<Component> lore;
+            if (enchantedMeta.hasLore()) {
+                lore = enchantedMeta.lore();
+            } else {
+                lore = new ArrayList<>();
+            }
+            lore.add(getEnchantment().displayName(1));
+            enchantedMeta.lore(lore);
+            enchantedStack.setItemMeta(enchantedMeta);
+            return enchantedStack;
+        } else {
+            return null;
         }
-        player.sendBlockChange(player.getLocation().add(0, 0, 0), Material.WATER.createBlockData()); //TODO It creates water, but does not remove it.
-        // refresh the chunk, will need a task manager probably.
-        Properties.COOLDOWN.set(dataContainer, currentTick);
-        itemStack.setItemMeta(meta);
-        damageItem(itemStack, 1, player);
-        return false;
     }
 }

@@ -3,6 +3,7 @@ package xyz.holocons.mc.holoitemsrevamp.enchant;
 import org.bukkit.enchantments.Enchantment;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.enchant.enchantment.Magnet;
+import xyz.holocons.mc.holoitemsrevamp.enchant.enchantment.TideRider;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -16,7 +17,8 @@ public class EnchantManager {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(new EnchantListener(plugin, this), plugin);
         customEnchantments = Set.of(
-            new Magnet(plugin)
+            new Magnet(plugin),
+            new TideRider(plugin)
         );
         customEnchantments.forEach(this::registerEnchantment);
     }

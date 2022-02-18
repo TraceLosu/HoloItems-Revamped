@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
 import java.util.List;
@@ -12,9 +13,9 @@ public class EN1Collection extends IdolCollection {
 
     private static final String name = "en1";
 
-    public EN1Collection() {
+    public EN1Collection(HoloItemsRevamp plugin) {
         super(name);
-        getIdolSet().add(new GawrGura());
+        getIdolSet().add(new GawrGura(plugin));
         getIdolSet().add(new IRyS());
         getIdolSet().add(new MoriCalliope());
         getIdolSet().add(new NinomaeInanis());
