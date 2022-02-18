@@ -14,7 +14,11 @@ public final class HoloItemsRevamp extends JavaPlugin {
     @Override
     public void onEnable() {
         HoloItemsAPI.setup(this);
-        enchantManager = new EnchantManager(this);
+        try {
+            enchantManager = new EnchantManager(this);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
         collectionManager = new CollectionManager(this);
         getCommand("holoitems").setExecutor(new MainCommand(this));
         getCommand("holoitems").setTabCompleter(new MainCommand(this));

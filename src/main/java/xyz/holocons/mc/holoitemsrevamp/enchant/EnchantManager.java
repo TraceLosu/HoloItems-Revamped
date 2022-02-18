@@ -13,7 +13,14 @@ public class EnchantManager {
     private final HoloItemsRevamp plugin;
     private final Set<CustomEnchantment> customEnchantments;
 
-    public EnchantManager(HoloItemsRevamp plugin) {
+    public EnchantManager(HoloItemsRevamp plugin) throws ReflectiveOperationException {
+        try {
+            final Field field = Enchantment.class.getDeclaredField("acceptingNew");
+            field.setAccessible(true);
+            field.set(null, true);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            throw new ReflectiveOperationException(e);
+        }
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(new EnchantListener(plugin, this), plugin);
         customEnchantments = Set.of(
@@ -34,14 +41,6 @@ public class EnchantManager {
     }
 
     private void registerEnchantment(Enchantment enchantment) {
-        try {
-            Field field = Enchantment.class.getDeclaredField("acceptingNew");
-            field.setAccessible(true);
-            field.set(null, true);
-            Enchantment.registerEnchantment(enchantment);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            plugin.getLogger().severe("Failed to register enchantment " + enchantment.getKey());
-            e.printStackTrace();
-        }
+        Enchantment.registerEnchantment(enchantment);
     }
 }
