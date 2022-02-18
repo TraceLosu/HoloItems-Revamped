@@ -54,8 +54,7 @@ public class EnchantListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        var player = event.getPlayer();
-        var itemStack = player.getInventory().getItemInMainHand();
+        var itemStack = event.getPlayer().getInventory().getItemInMainHand();
 
         runAbilities(BlockBreak.class, event, itemStack);
     }
@@ -65,7 +64,11 @@ public class EnchantListener implements Listener {
         if (event.isBlockInHand() || !event.getAction().isRightClick() || !event.hasItem()) {
             return;
         }
-        var itemStack = event.getItem();
+        ItemStack itemStack = switch (event.getHand()) {
+            case HAND -> itemStack = event.getPlayer().getInventory().getItemInMainHand();
+            case OFF_HAND -> itemStack = event.getPlayer().getInventory().getItemInOffHand();
+            default -> new ItemStack(Material.AIR);
+        };
 
         runAbilities(PlayerInteract.class, event, itemStack);
     }
