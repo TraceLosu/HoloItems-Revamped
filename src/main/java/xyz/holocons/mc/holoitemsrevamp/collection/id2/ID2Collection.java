@@ -1,22 +1,21 @@
 package xyz.holocons.mc.holoitemsrevamp.collection.id2;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
-import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
+import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
 public class ID2Collection extends IdolCollection {
 
     private static final String name = "id2";
 
-    public ID2Collection() {
-        super(name);
-        getIdolSet().add(new AnyaMelfissa());
-        getIdolSet().add(new KureijiOllie());
-        getIdolSet().add(new PavoliaReine());
+    public ID2Collection(Idol... idols) {
+        super(name, idols);
     }
 
     @Override

@@ -1,20 +1,23 @@
 package xyz.holocons.mc.holoitemsrevamp.collection.en2;
 
+import java.util.List;
+
+import com.strangeone101.holoitemsapi.CustomItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
-
-import java.util.List;
 
 public class TsukumoSana extends Idol {
 
     private static final String name = "tsukumosana";
     private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2QxYWY4NTMxMzk4OTI2NGQ5NTFiZWJmMjM3YWQzNjcyM2U5MjYwZjE1MmQwMjVhOGFiNWE3NjQ4MDc4MDZjOCJ9fX0=";
 
-    public TsukumoSana() {
-        super(name, base64);
+    public TsukumoSana(CustomItem... items) {
+        super(name, base64, items);
     }
 
     @Override

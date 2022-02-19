@@ -1,24 +1,21 @@
 package xyz.holocons.mc.holoitemsrevamp.collection.gen4;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
-import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
+import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
 public class Gen4Collection extends IdolCollection {
 
     private static final String name = "gen4";
 
-    public Gen4Collection() {
-        super(name);
-        getIdolSet().add(new AmaneKanata());
-        getIdolSet().add(new HimemoriLuna());
-        getIdolSet().add(new KiryuCoco());
-        getIdolSet().add(new TokoyamiTowa());
-        getIdolSet().add(new TsunomakiWatame());
+    public Gen4Collection(Idol... idols) {
+        super(name, idols);
     }
 
     @Override

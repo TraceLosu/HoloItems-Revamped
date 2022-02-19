@@ -1,20 +1,23 @@
 package xyz.holocons.mc.holoitemsrevamp.collection.misc;
 
+import java.util.List;
+
+import com.strangeone101.holoitemsapi.CustomItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
-
-import java.util.List;
 
 public class Achan extends Idol {
 
     private static final String name = "achan";
     private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTA0OGQ2ZGFlZWI4MDgyNjlhZmY1MzMzNzI0YWY4Y2Y4NTY1NmI5MjM2MGI0NTM1M2FmZjcyZWNhMmIwYzZkNiJ9fX0=";
 
-    public Achan() {
-        super(name, base64);
+    public Achan(CustomItem... items) {
+        super(name, base64, items);
     }
 
     @Override
@@ -30,4 +33,3 @@ public class Achan extends Idol {
         return null;
     }
 }
-            

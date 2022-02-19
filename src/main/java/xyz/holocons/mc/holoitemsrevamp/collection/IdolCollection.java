@@ -1,16 +1,17 @@
 package xyz.holocons.mc.holoitemsrevamp.collection;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.strangeone101.holoitemsapi.CustomItem;
-import net.kyori.adventure.text.Component;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import net.kyori.adventure.text.Component;
 
 /**
  * A class that holds all idols from a generation.
@@ -22,9 +23,9 @@ public abstract class IdolCollection {
     private final Set<Idol> idolSet;
     private final ItemStack genItem;
 
-    public IdolCollection(String name) {
+    public IdolCollection(String name, Idol... idols) {
         this.name = name;
-        this.idolSet = new HashSet<>();
+        this.idolSet = Set.of(idols);
         this.genItem = initItem();
     }
 

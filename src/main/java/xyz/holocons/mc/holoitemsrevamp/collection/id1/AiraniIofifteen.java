@@ -1,20 +1,23 @@
 package xyz.holocons.mc.holoitemsrevamp.collection.id1;
 
+import java.util.List;
+
+import com.strangeone101.holoitemsapi.CustomItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
-
-import java.util.List;
 
 public class AiraniIofifteen extends Idol {
 
     private static final String name = "airaniiofifteen";
     private static final String base64 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDNiOWQyNzJkNmFmYmUyOGYwNGI3ODljMjc1YzJlY2YwMzMyOTljYTY3MGM1MjI1MTU1YzIwODViMGNlMTUyZSJ9fX0=";
 
-    public AiraniIofifteen() {
-        super(name, base64);
+    public AiraniIofifteen(CustomItem... items) {
+        super(name, base64, items);
     }
 
     @Override

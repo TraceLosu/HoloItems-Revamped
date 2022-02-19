@@ -1,15 +1,16 @@
 package xyz.holocons.mc.holoitemsrevamp.collection;
 
+import java.util.List;
+import java.util.Set;
+
 import com.strangeone101.holoitemsapi.CustomItem;
-import net.kyori.adventure.text.Component;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.Util;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import net.kyori.adventure.text.Component;
+import xyz.holocons.mc.holoitemsrevamp.Util;
 
 /**
  * Represents a collection of items for a single idol/agent.
@@ -19,11 +20,12 @@ public abstract class Idol {
 
     private final String name; //Currently not used, but might be needed to identify an Idol from a set.
     private final ItemStack head;
-    private final Set<CustomItem> itemSet = new HashSet<>();
+    private final Set<CustomItem> itemSet;
 
-    public Idol(String name, String base64) {
+    public Idol(String name, String base64, CustomItem... items) {
         this.name = name;
         this.head = initHead(base64);
+        this.itemSet = Set.of(items);
     }
 
     private ItemStack initHead(String base64){

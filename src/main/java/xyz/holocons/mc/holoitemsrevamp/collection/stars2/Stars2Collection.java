@@ -1,22 +1,21 @@
 package xyz.holocons.mc.holoitemsrevamp.collection.stars2;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
-import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import xyz.holocons.mc.holoitemsrevamp.collection.Idol;
+import xyz.holocons.mc.holoitemsrevamp.collection.IdolCollection;
 
 public class Stars2Collection extends IdolCollection {
 
     private static final String name = "stars2";
 
-    public Stars2Collection() {
-        super(name);
-        getIdolSet().add(new AstelLeda());
-        getIdolSet().add(new KishidoTemma());
-        getIdolSet().add(new YukokuRoberu());
+    public Stars2Collection(Idol... idols) {
+        super(name, idols);
     }
 
     @Override
