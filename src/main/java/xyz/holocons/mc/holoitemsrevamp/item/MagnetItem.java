@@ -1,6 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
 import com.strangeone101.holoitemsapi.CustomItem;
+import com.strangeone101.holoitemsapi.HoloItemsAPI;
 import com.strangeone101.holoitemsapi.interfaces.Enchantable;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
 import net.kyori.adventure.text.Component;
@@ -13,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,11 @@ public class MagnetItem extends CustomItem implements Enchantable {
         ChatColor.DARK_PURPLE + "Automatically put mined items to your inventory!"
     );
 
-    private final HoloItemsRevamp plugin;
+    private final NamespacedKey key;
 
-    public MagnetItem(HoloItemsRevamp plugin) {
+    public MagnetItem() {
         super(name, material, displayName, lore);
-        this.plugin = plugin;
+        this.key = new NamespacedKey(HoloItemsAPI.getPlugin(), name);
         this.register();
         this.registerRecipe();
     }
@@ -42,7 +42,7 @@ public class MagnetItem extends CustomItem implements Enchantable {
     }
 
     private void registerRecipe() {
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, "magnet"), buildStack(null));
+        ShapedRecipe recipe = new ShapedRecipe(key, buildStack(null));
         recipe.shape(
             "AAB",
             "CDE",
@@ -60,7 +60,7 @@ public class MagnetItem extends CustomItem implements Enchantable {
 
     @Override
     public @NotNull Enchantment getEnchantment() {
-        return Enchantment.getByKey(new NamespacedKey(plugin, "magnet"));
+        return Enchantment.getByKey(key);
     }
 
     @Override

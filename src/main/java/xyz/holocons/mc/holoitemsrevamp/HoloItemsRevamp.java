@@ -19,9 +19,10 @@ public final class HoloItemsRevamp extends JavaPlugin {
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
-        collectionManager = new CollectionManager(this);
-        getCommand("holoitems").setExecutor(new MainCommand(this));
-        getCommand("holoitems").setTabCompleter(new MainCommand(this));
+        collectionManager = new CollectionManager();
+        final var mainCommand = new MainCommand(this);
+        getCommand("holoitems").setExecutor(mainCommand);
+        getCommand("holoitems").setTabCompleter(mainCommand);
         this.getLogger().info("HoloItems-Revamped [ON]");
     }
 

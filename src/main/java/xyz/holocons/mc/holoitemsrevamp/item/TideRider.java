@@ -1,6 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
 import com.strangeone101.holoitemsapi.CustomItem;
+import com.strangeone101.holoitemsapi.HoloItemsAPI;
 import com.strangeone101.holoitemsapi.interfaces.Enchantable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,25 +13,24 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.text.Component;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TideRider extends CustomItem implements Enchantable {
 
-    private final static String name = "tideRider";
+    private final static String name = "tide_rider";
     private final static Material material = Material.TRIDENT;
     private final static String displayName = ChatColor.BLUE + "Tide Rider";
     private final static List<String> lore = List.of(
         "Allows you to riptide anywhere you want!"
     );
 
-    private final HoloItemsRevamp plugin;
+    private final NamespacedKey key;
 
-    public TideRider(HoloItemsRevamp plugin) {
+    public TideRider() {
         super(name, material, displayName, lore);
-        this.plugin = plugin;
+        this.key = new NamespacedKey(HoloItemsAPI.getPlugin(), name);
         this.setMaxDurability(32);
         this.setStackable(false);
         this.register();
@@ -53,7 +53,7 @@ public class TideRider extends CustomItem implements Enchantable {
 
     @Override
     public @NotNull Enchantment getEnchantment() {
-        return Enchantment.getByKey(new NamespacedKey(plugin, "tide_rider"));
+        return Enchantment.getByKey(key);
     }
 
     @Override
