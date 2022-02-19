@@ -36,7 +36,9 @@ public abstract class CustomEnchantment extends Enchantment {
 
     @NotNull
     @Override
-    public abstract String getName();
+    public String getName() {
+        return getKey().getKey();
+    }
 
     @Override
     public @NotNull String translationKey() {

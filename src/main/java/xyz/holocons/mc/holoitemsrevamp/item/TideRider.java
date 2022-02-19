@@ -5,6 +5,7 @@ import com.strangeone101.holoitemsapi.interfaces.Enchantable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -52,7 +53,7 @@ public class TideRider extends CustomItem implements Enchantable {
 
     @Override
     public @NotNull Enchantment getEnchantment() {
-        return plugin.getEnchantManager().getCustomEnchantment("tide_rider");
+        return plugin.getEnchantManager().getCustomEnchantment(new NamespacedKey(plugin, "tide_rider"));
     }
 
     @Override

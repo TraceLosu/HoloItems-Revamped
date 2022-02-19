@@ -25,11 +25,6 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
     }
 
     @Override
-    public @NotNull String getName() {
-        return "magnet";
-    }
-
-    @Override
     public int getMaxLevel() {
         return 1;
     }

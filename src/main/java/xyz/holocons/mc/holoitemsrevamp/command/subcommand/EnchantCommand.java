@@ -1,9 +1,11 @@
 package xyz.holocons.mc.holoitemsrevamp.command.subcommand;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.command.SubCommand;
+import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
 
 import java.util.List;
 
@@ -59,14 +61,19 @@ public class EnchantCommand implements SubCommand {
 
         var itemStack = player.getInventory().getItemInMainHand();
         var itemMeta = itemStack.getItemMeta();
-        var customEnchant = plugin.getEnchantManager().getCustomEnchantment(args[0]);
 
-        if (customEnchant == null) {
+        CustomEnchantment customEnchantment = null;
+        var key = NamespacedKey.fromString(args[0], plugin);
+        if (key != null && key.getNamespace() != "minecraft") {
+            customEnchantment = plugin.getEnchantManager().getCustomEnchantment(key);
+        }
+
+        if (customEnchantment == null) {
             player.sendMessage(args[0] + " is not a valid enchantment!");
             return false;
         }
 
-        if (itemMeta.addEnchant(customEnchant, 1, false)) {
+        if (itemMeta.addEnchant(customEnchantment, 1, false)) {
             itemStack.setItemMeta(itemMeta);
             player.sendMessage("Enchanted!");
         } else {

@@ -27,11 +27,6 @@ public class TideRider extends CustomEnchantment implements PlayerInteract {
     }
 
     @Override
-    public @NotNull String getName() {
-        return "tide_rider";
-    }
-
-    @Override
     public int getMaxLevel() {
         return 1;
     }
