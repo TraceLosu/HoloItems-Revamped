@@ -53,7 +53,7 @@ public class TideRider extends CustomItem implements Enchantable {
 
     @Override
     public @NotNull Enchantment getEnchantment() {
-        return plugin.getEnchantManager().getCustomEnchantment(new NamespacedKey(plugin, "tide_rider"));
+        return Enchantment.getByKey(new NamespacedKey(plugin, "tide_rider"));
     }
 
     @Override

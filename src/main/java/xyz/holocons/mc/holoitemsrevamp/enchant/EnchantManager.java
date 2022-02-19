@@ -1,7 +1,8 @@
 package xyz.holocons.mc.holoitemsrevamp.enchant;
 
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.enchant.enchantment.Magnet;
 import xyz.holocons.mc.holoitemsrevamp.enchant.enchantment.TideRider;
@@ -33,12 +34,13 @@ public class EnchantManager {
     }
 
     /**
-     * Gets a custom enchantment from the plugin by key.
-     * @param key The NamespacedKey of the enchantment
-     * @return The CustomEnchantment class corresponding to the key, or null if it could not find one.
+     * Gets a custom enchantment from the plugin by class.
+     * @param enchantmentCls The class of the enchantment
+     * @return The CustomEnchantment, or null if it could not find one
      */
-    public CustomEnchantment getCustomEnchantment(NamespacedKey key) {
-        Predicate<CustomEnchantment> matchesKey = enchantment -> enchantment.getKey().equals(key);
-        return customEnchantments.stream().filter(matchesKey).findAny().orElse(null);
+    @Nullable
+    public <E extends CustomEnchantment> E getCustomEnchantment(@NotNull Class<E> enchantmentCls) {
+        Predicate<CustomEnchantment> matchesClass = enchantment -> enchantmentCls.isInstance(enchantment);
+        return enchantmentCls.cast(customEnchantments.stream().filter(matchesClass).findAny().orElse(null));
     }
 }

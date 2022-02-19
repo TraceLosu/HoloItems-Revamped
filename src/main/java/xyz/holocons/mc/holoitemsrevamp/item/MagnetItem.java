@@ -60,7 +60,7 @@ public class MagnetItem extends CustomItem implements Enchantable {
 
     @Override
     public @NotNull Enchantment getEnchantment() {
-        return plugin.getEnchantManager().getCustomEnchantment(new NamespacedKey(plugin, "magnet"));
+        return Enchantment.getByKey(new NamespacedKey(plugin, "magnet"));
     }
 
     @Override

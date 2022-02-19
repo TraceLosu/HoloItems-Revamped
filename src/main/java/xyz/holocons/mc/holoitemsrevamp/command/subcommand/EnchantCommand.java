@@ -62,11 +62,8 @@ public class EnchantCommand implements SubCommand {
         var itemStack = player.getInventory().getItemInMainHand();
         var itemMeta = itemStack.getItemMeta();
 
-        CustomEnchantment customEnchantment = null;
         var key = NamespacedKey.fromString(args[0], plugin);
-        if (key != null && key.getNamespace() != "minecraft") {
-            customEnchantment = plugin.getEnchantManager().getCustomEnchantment(key);
-        }
+        var customEnchantment = CustomEnchantment.getByKey(key, CustomEnchantment.class);
 
         if (customEnchantment == null) {
             player.sendMessage(args[0] + " is not a valid enchantment!");

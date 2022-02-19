@@ -8,6 +8,8 @@ import org.bukkit.entity.EntityCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.Set;
@@ -28,9 +30,21 @@ public abstract class CustomEnchantment extends Enchantment {
     }
 
     /**
+     * Gets a custom enchantment from the server by key.
+     * @param key The NamespacedKey of the enchantment
+     * @param enchantmentCls The class to cast the enchantment to if found
+     * @return The CustomEnchantment corresponding to the key, or null if it could not find one
+     */
+    @Nullable
+    public static final <E extends Enchantment> E getByKey(@Nullable NamespacedKey key, @NotNull Class<E> enchantmentCls) {
+        final var enchantment = Enchantment.getByKey(key);
+        return enchantmentCls.isInstance(enchantment) ? enchantmentCls.cast(enchantment) : null;
+    }
+
+    /**
      * Gets the cost of enchanting an itemstack with the enchantment.
-     * @param itemStack The itemstack to check for.
-     * @return Amount of levels to enchant the itemstack.
+     * @param itemStack The itemstack to check for
+     * @return Amount of levels to enchant the itemstack
      */
     public abstract int getItemStackCost(ItemStack itemStack);
 
