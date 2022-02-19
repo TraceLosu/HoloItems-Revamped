@@ -35,16 +35,18 @@ public class EnchantListener implements Listener {
         this.enchantManager = enchantManager;
     }
 
-    private static <A extends Ability, E extends Event> void runAbilities(Class<A> abilityCls, E event, ItemStack itemStack) {
-        if (!itemStack.hasItemMeta()) {
-            return;
-        }
-        final var enchants = itemStack.getItemMeta().getEnchants();
-        enchants.keySet().forEach(enchantment -> {
-            if (abilityCls.isInstance(enchantment)) {
-                abilityCls.cast(enchantment).run(event, itemStack);
+    private static <A extends Ability, E extends Event> void runAbilities(Class<A> abilityCls, E event, @NotNull ItemStack... items) {
+        for (final var itemStack : items) {
+            if (!itemStack.hasItemMeta()) {
+                continue;
             }
-        });
+            final var enchants = itemStack.getItemMeta().getEnchants();
+            enchants.keySet().forEach(enchantment -> {
+                if (abilityCls.isInstance(enchantment)) {
+                    abilityCls.cast(enchantment).run(event, itemStack);
+                }
+            });
+        }
     }
 
     /**
