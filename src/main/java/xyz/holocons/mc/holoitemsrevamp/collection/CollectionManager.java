@@ -74,15 +74,18 @@ import xyz.holocons.mc.holoitemsrevamp.collection.id2.KureijiOllie;
 import xyz.holocons.mc.holoitemsrevamp.collection.id2.PavoliaReine;
 import xyz.holocons.mc.holoitemsrevamp.collection.misc.Achan;
 import xyz.holocons.mc.holoitemsrevamp.collection.misc.MiscCollection;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars1.Arurandeisu;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars1.HanasakiMiyabi;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars1.KanadeIzuru;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars1.Rikka;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars2.AstelLeda;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars2.KishidoTemma;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars2.YukokuRoberu;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars3.AragamiOga;
-// import xyz.holocons.mc.holoitemsrevamp.collection.stars3.KageyamaShien;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars1.Arurandeisu;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars1.HanasakiMiyabi;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars1.KanadeIzuru;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars1.Rikka;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars1.Stars1Collection;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars2.AstelLeda;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars2.KishidoTemma;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars2.Stars2Collection;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars2.YukokuRoberu;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars3.AragamiOga;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars3.KageyamaShien;
+import xyz.holocons.mc.holoitemsrevamp.collection.stars3.Stars3Collection;
 import xyz.holocons.mc.holoitemsrevamp.item.MagnetItem;
 import xyz.holocons.mc.holoitemsrevamp.item.TideRider;
 
@@ -189,17 +192,17 @@ public class CollectionManager {
 
         var achan = new Achan();
 
-        // var aruran = new Arurandeisu();
-        // var miyabi = new HanasakiMiyabi();
-        // var izuru = new KanadeIzuru();
-        // var rikka = new Rikka();
+        var aruran = new Arurandeisu();
+        var miyabi = new HanasakiMiyabi();
+        var izuru = new KanadeIzuru();
+        var rikka = new Rikka();
 
-        // var astel = new AstelLeda();
-        // var temma = new KishidoTemma();
-        // var roberu = new YukokuRoberu();
+        var astel = new AstelLeda();
+        var temma = new KishidoTemma();
+        var roberu = new YukokuRoberu();
 
-        // var oga = new AragamiOga();
-        // var shien = new KageyamaShien();
+        var oga = new AragamiOga();
+        var shien = new KageyamaShien();
 
         return List.of(
             new EN1Collection(gura, irys, calliope, ina, kiara, amelia),
@@ -214,7 +217,10 @@ public class CollectionManager {
             new Gen6Collection(koyori, iroha, laplus, chloe, lui),
             new ID1Collection(iofi, risu, moona),
             new ID2Collection(anya, ollie, reine),
-            new MiscCollection(achan)
+            new MiscCollection(achan),
+            new Stars1Collection(aruran, miyabi, izuru, rikka),
+            new Stars2Collection(astel, temma, roberu),
+            new Stars3Collection(oga, shien)
         );
     }
 }
