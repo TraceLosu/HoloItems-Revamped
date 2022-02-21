@@ -16,19 +16,19 @@ public abstract class AbstractPacket {
         this.handle = new PacketContainer(packetType);
     }
 
-    public final PacketContainer getHandle() {
+    public PacketContainer getHandle() {
         return handle;
     }
 
     public void sendPacket(Player player) {
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, handle);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, getHandle());
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
     public void broadcastPacket() {
-        ProtocolLibrary.getProtocolManager().broadcastServerPacket(handle);
+        ProtocolLibrary.getProtocolManager().broadcastServerPacket(getHandle());
     }
 }
