@@ -16,11 +16,13 @@ java {
 
 repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://raw.githubusercontent.com/TraceLosu/HoloItemsAPI/mvn-repo/")
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     implementation("com.strangeone101:HoloItemsAPI:0.8.8-hlc")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.4")
 }
@@ -74,6 +76,7 @@ bukkit {
     apiVersion = "1.18"
     authors = listOf("TraceL", "dlee13")
     website = "holocons.xyz"
+    depend = listOf("ProtocolLib")
     prefix = "HoloItems"
 
     commands {
