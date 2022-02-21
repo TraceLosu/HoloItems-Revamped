@@ -89,6 +89,7 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
                 final var itemStacks = items.stream().map(Item::getItemStack).toArray(ItemStack[]::new);
                 final var excess = player.getInventory().addItem(itemStacks);
                 excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
+                items.forEach(player::playPickupItemAnimation);
                 items.forEach(Item::remove);
             }
         }.runTask(plugin);
