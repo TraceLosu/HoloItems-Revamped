@@ -1,7 +1,6 @@
 package xyz.holocons.mc.holoitemsrevamp.packet;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
