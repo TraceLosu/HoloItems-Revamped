@@ -8,9 +8,11 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Util {
 
+    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
     private static final UUID SKULL_OWNER = new UUID(0, 0);
 
     private static long epochTick = -1;
@@ -19,7 +21,27 @@ public class Util {
     private static final String[] NUMERALS = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
 
     /**
-     * Returns a player head with the base64 texture. Mostly used for GUI
+     * Convenience method to call the deprecated {@code UnsafeValues#nextEntityId()}.
+     * @return The next EntityId available
+     */
+    @SuppressWarnings("deprecation")
+    public static int nextEntityId() {
+        return Bukkit.getUnsafe().nextEntityId();
+    }
+
+    /**
+     * Calling {@code UUID#randomUUID()} uses {@code SecureRandom} to get a cryptographically
+     * secure random UUID, but for our use cases, we don't need it to be
+     * cryptographically secure. We can generate our UUIDs a little more cheaply using
+     * {@code ThreadLocalRandom} instead.
+     * @return A pseudo randomly generated UUID
+     */
+    public static UUID randomUUID() {
+        return new UUID(RANDOM.nextLong(), RANDOM.nextLong());
+    }
+
+    /**
+     * Returns a player head with the base64 texture. Mostly used for GUI.
      * @param base64 A base 64 string that contains ONLY the texture
      * @return The ItemStack player head
      */
@@ -34,11 +56,12 @@ public class Util {
     }
 
     /**
-     * Calling {@link System#currentTimeMillis()} performs IO which might be expensive if done
-     * several times per game tick. On the other hand, {@Code Bukkit#getCurrentTick()} is cheap
-     * but returns a relative current time since it begins counting from 0 when the
-     * server starts. Instead, we'll use the system time as an epoch and add
-     * the current tick to it to efficiently get an absolute current time.
+     * Calling {@code System#currentTimeMillis()} performs IO which might be expensive
+     * if done several times per game tick. On the other hand,
+     * {@code Bukkit#getCurrentTick()} is cheap but returns a relative current time since
+     * it begins counting from 0 when the server starts. Instead, we'll use the system
+     * time as an epoch and add the current tick to it to efficiently get an absolute
+     * current time.
      * @return The current time represented in terms of game ticks, assuming 20 TPS
      */
     public static long currentTimeTicks() {
