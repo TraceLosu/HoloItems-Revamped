@@ -1,7 +1,9 @@
 package xyz.holocons.mc.holoitemsrevamp.packet;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -28,7 +30,21 @@ public abstract class AbstractPacket {
         }
     }
 
-    public void broadcastPacket() {
+    public void sendGroupPacket(Collection<Player> players) {
+        try {
+            for (final var player : players) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, getHandle());
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void broadcastNearbyPacket(Location origin, int maxObserverDistance) {
+        ProtocolLibrary.getProtocolManager().broadcastServerPacket(getHandle(), origin, maxObserverDistance);
+    }
+
+    public void broadcastServerPacket() {
         ProtocolLibrary.getProtocolManager().broadcastServerPacket(getHandle());
     }
 }

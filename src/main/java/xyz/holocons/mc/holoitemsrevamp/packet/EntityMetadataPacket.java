@@ -12,7 +12,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 public class EntityMetadataPacket extends AbstractPacket {
 
-    public class Metadata {
+    public static class Metadata {
 
         private final WrappedDataWatcher watcher;
 
@@ -25,8 +25,20 @@ public class EntityMetadataPacket extends AbstractPacket {
             return watcher;
         }
 
-        public void setByte(int index, byte data) {
-            watcher.setObject(index, Registry.get(Byte.class), data, true);
+        private void setObject(int index, Object value, Class<?> clazz) {
+            watcher.setObject(index, Registry.get(clazz), value, true);
+        }
+
+        public void setByte(int index, byte value) {
+            setObject(index, value, Byte.class);
+        }
+
+        public void setBoolean(int index, boolean value) {
+            setObject(index, value, Boolean.class);
+        }
+
+        public void setVarInt(int index, int value) {
+            setObject(index, value, Integer.class);
         }
 
         public void setCustomName(Component name) {
@@ -36,8 +48,8 @@ public class EntityMetadataPacket extends AbstractPacket {
             watcher.setObject(2, Registry.getChatComponentSerializer(true), optionalChatComponent, true);
         }
 
-        public void setCustomNameVisible(boolean visible) {
-            watcher.setObject(3, Registry.get(Boolean.class), visible, true);
+        public void setCustomNameVisible() {
+            setBoolean(3, true);
         }
     }
 
