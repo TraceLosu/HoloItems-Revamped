@@ -30,16 +30,6 @@ public abstract class AbstractPacket {
         }
     }
 
-    public void sendGroupPacket(Collection<Player> players) {
-        try {
-            for (final var player : players) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, getHandle());
-            }
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void broadcastNearbyPacket(Location origin, int maxObserverDistance) {
         ProtocolLibrary.getProtocolManager().broadcastServerPacket(getHandle(), origin, maxObserverDistance);
     }
