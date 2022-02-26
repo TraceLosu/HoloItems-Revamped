@@ -8,10 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
@@ -22,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
+import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
 
 import java.util.Map;
 import java.util.Set;
@@ -82,6 +85,29 @@ public class EnchantListener implements Listener {
         enchants.keySet().forEach(enchantment -> {
             if (PlayerInteract.class.isInstance(enchantment)) {
                 PlayerInteract.class.cast(enchantment).run(event, itemStack);
+            }
+        });
+    }
+
+    /**
+     * Handles ProjectileLaunch enchantments.
+     *
+     * @param event The ProjectileLaunchEvent
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        if (!(event.getEntity() instanceof ThrowableProjectile throwableProjectile)) {
+            return;
+        }
+        final var itemStack = throwableProjectile.getItem();
+
+        if (!itemStack.hasItemMeta()) {
+            return;
+        }
+        final var enchants = itemStack.getItemMeta().getEnchants();
+        enchants.keySet().forEach(enchantment -> {
+            if (ProjectileLaunch.class.isInstance(enchantment)) {
+                ProjectileLaunch.class.cast(enchantment).run(event, itemStack);
             }
         });
     }

@@ -1,18 +1,16 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
@@ -20,9 +18,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
+import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
 import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
 
-public class TideRider extends CustomEnchantment implements PlayerInteract {
+public class TideRider extends CustomEnchantment implements PlayerInteract, ProjectileLaunch {
 
     private final HoloItemsRevamp plugin;
 
@@ -38,7 +37,7 @@ public class TideRider extends CustomEnchantment implements PlayerInteract {
 
     @Override
     public boolean conflictsWith(@NotNull Enchantment other) {
-        return false;
+        return !other.equals(Enchantment.MENDING) && !other.equals(Enchantment.VANISHING_CURSE);
     }
 
     @Override
@@ -54,79 +53,85 @@ public class TideRider extends CustomEnchantment implements PlayerInteract {
 
     @Override
     public int getItemStackCost(ItemStack itemStack) {
-        return 1000;
+        return Integer.MAX_VALUE;
     }
 
     @Override
     public void run(PlayerInteractEvent event, ItemStack itemStack) {
+        final var player = event.getPlayer();
+        final var world = player.getWorld();
+
+        if (itemStack.getItemMeta() instanceof Damageable damageable) {
+            final var damage = damageable.getDamage() + 1;
+            if (damage >= itemStack.getType().getMaxDurability()) {
+                return;
+            }
+            damageable.setDamage(damage);
+            itemStack.setItemMeta(damageable);
+        }
+
+        player.playSound(player, Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED, 0.3F, 0.7F);
 
         new BukkitRunnable() {
-            final Player player = event.getPlayer();
-            final World world = player.getWorld();
-            final ItemMeta meta = itemStack.getItemMeta();
-            int increment = 0;
+            int elapsedTicks = 0;
+
             @Override
             public void run() {
-                Location location = player.getLocation();
-                Vector direction = location.getDirection().setY(0.0001).normalize();
-                Block front = world.getBlockAt(location.clone().add(direction));
-                Block below = world.getBlockAt(location.add(0, -1, 0));
-
-                if (!player.isValid() || !player.isHandRaised() || increment>=1200){
-                    meta.removeEnchant(Enchantment.RIPTIDE);
-                    meta.addEnchant(Enchantment.LOYALTY, 3, false);
-                    Damageable dmeta = (org.bukkit.inventory.meta.Damageable) itemStack.getItemMeta();
-                    dmeta.setDamage(dmeta.getDamage()+1);
-                    itemStack.setItemMeta(meta);
-                    System.out.println("Cancel");
-                    System.out.println(increment);
-                    System.out.println(player.isValid());
-                    System.out.println(player.isHandRaised());
+                if (!player.isValid() || !player.isHandRaised() || elapsedTicks >= 1200) {
                     cancel();
+                    if (itemStack.getItemMeta() instanceof Damageable damageable) {
+                        damageable.setDamage(damageable.getDamage() + 1);
+                        itemStack.setItemMeta(damageable);
+                    }
                 }
-                else if(increment==0){
-                    meta.removeEnchant(Enchantment.LOYALTY);
-                    meta.addEnchant(Enchantment.RIPTIDE, 3, false);
-                    itemStack.setItemMeta(meta);
-                }
-                increment ++;
+                elapsedTicks++;
 
-                double multiplier = 1;
-                if (player.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE))
+                final var location = player.getLocation();
+
+                if (elapsedTicks % 2 != 0) {
+                    world.spawnParticle(Particle.WATER_WAKE, location, 80, 0.2, 0.0, 0.2);
+                }
+
+                final var direction = location.getDirection().setY(0.0001).normalize();
+                final var belowBlock = location.getBlock().getRelative(BlockFace.DOWN, 1);
+                final var frontBlock = world.getBlockAt(location.add(direction));
+
+                double multiplier = 1.0;
+                if (player.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE)) {
                     multiplier += 0.33;
-                if (below.getType() == Material.SOUL_SAND)
+                }
+                if (belowBlock.getType() == Material.SOUL_SAND) {
                     multiplier -= 0.33;
-                ItemStack boots = player.getInventory().getBoots();
-                if (boots == null || boots.getType() == Material.AIR)
-                    ;
-                else {
+                }
+                final var boots = player.getInventory().getBoots();
+                if (boots != null && boots.getType() != Material.AIR) {
                     multiplier += 0.11 * boots.getEnchantmentLevel(Enchantment.DEPTH_STRIDER);
-                    if (boots.getEnchantments().containsKey(Enchantment.SOUL_SPEED) && below.getType() == Material.SOUL_SAND)
+                    if (belowBlock.getType() == Material.SOUL_SAND) {
                         multiplier += 0.33 * boots.getEnchantmentLevel(Enchantment.SOUL_SPEED);
+                    }
                 }
 
+                double yVelocity;
+                if (frontBlock.isPassable() && !frontBlock.isLiquid()) {
+                    if (belowBlock.isPassable() && !belowBlock.isLiquid()) {
+                        yVelocity = -0.5;
+                    } else {
+                        yVelocity = 0;
+                    }
+                } else if (!belowBlock.isPassable() || belowBlock.isLiquid()) {
+                    yVelocity = 0.5;
+                } else {
+                    yVelocity = 0;
+                }
 
-                double yvelocity;
-                if (front.isPassable() && !front.isLiquid())
-                    if (below.isPassable() && !below.isLiquid())
-                        yvelocity = -0.5;
-
-                    else
-                        yvelocity = 0;
-
-                else
-                if (!below.isPassable() && !below.isLiquid())
-                    yvelocity = 0.5;
-
-                else
-                    yvelocity = 0;
-
-                player.setVelocity(player.getVelocity().add(direction).normalize().multiply(multiplier)
-                    .setY(yvelocity));
-
-
+                player.setVelocity(player.getVelocity().add(direction).normalize().multiply(multiplier).setY(yVelocity));
                 player.setFallDistance(0);
             }
-        }.runTaskTimer(plugin, 0, 1);
+        }.runTaskTimer(plugin, 2, 1);
+    }
+
+    @Override
+    public void run(ProjectileLaunchEvent event, ItemStack itemStack) {
+        event.setCancelled(true);
     }
 }
