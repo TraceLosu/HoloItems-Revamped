@@ -7,13 +7,12 @@ import xyz.holocons.mc.holoitemsrevamp.command.MainCommand;
 import xyz.holocons.mc.holoitemsrevamp.enchant.EnchantManager;
 
 public final class HoloItemsRevamp extends JavaPlugin {
-    private static HoloItemsRevamp instance;
+
     CollectionManager collectionManager;
     EnchantManager enchantManager;
 
     @Override
     public void onEnable() {
-        instance = this;
         HoloItemsAPI.setup(this);
         try {
             enchantManager = new EnchantManager(this);
@@ -29,11 +28,6 @@ public final class HoloItemsRevamp extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
     }
-
-    public static HoloItemsRevamp getInstance() {
-        return instance;
-    }
-
 
     public CollectionManager getCollectionManager() {
         return collectionManager;
