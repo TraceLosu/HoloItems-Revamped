@@ -17,7 +17,7 @@ import java.util.List;
 
 public class PlowItem extends CustomItem implements Enchantable {
     private final static String name = "plow";
-    private final static Material material = Material.ENCHANTED_BOOK;
+    private final static Material material = Material.IRON_SHOVEL;
     private final static String displayName = ChatColor.WHITE + "Plow";
     private final static List<String> lore = List.of(
         "Shovel snow"
