@@ -23,7 +23,6 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
-    implementation("com.strangeone101:HoloItemsAPI:0.8.9-hlc")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.5")
 }
 
@@ -56,7 +55,6 @@ tasks {
     // Shade and relocate dependencies
     // https://github.com/johnrengelman/shadow
     shadowJar {
-        relocate("com.strangeone101", "shadow.strangeone101")
         relocate("com.github.stefvanschie.inventoryframework", "shadow.inventoryframework")
 
         archiveClassifier.set("")
