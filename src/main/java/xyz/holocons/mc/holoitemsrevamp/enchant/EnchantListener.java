@@ -1,6 +1,6 @@
 package xyz.holocons.mc.holoitemsrevamp.enchant;
 
-import com.strangeone101.holoitemsapi.CustomItemRegistry;
+import com.strangeone101.holoitemsapi.CustomItemManager;
 import com.strangeone101.holoitemsapi.interfaces.Enchantable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -153,8 +153,8 @@ public class EnchantListener implements Listener {
 
         // Only handle recipes that would work in vanilla
         if ((event.getInventory().getResult() == null || event.getInventory().getResult().getType() == Material.AIR)) {
-            if (CustomItemRegistry.isCustomItem(addition)) { // Unless that second item is a custom item
-                var customItem = CustomItemRegistry.getCustomItem(addition);
+            if (CustomItemManager.isCustomItem(addition)) { // Unless that second item is a custom item
+                var customItem = CustomItemManager.getCustomItem(addition);
                 if (customItem instanceof Enchantable enchantable) { // And it must implement the enchantable interface.
                     if (!enchantable.getEnchantment().canEnchantItem(base))
                         return;

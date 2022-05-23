@@ -1,6 +1,11 @@
 package com.strangeone101.holoitemsapi.util;
 
 import com.strangeone101.holoitemsapi.CustomItem;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -8,6 +13,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.UUID;
 
@@ -162,5 +168,41 @@ public class ItemUtils {
      */
     public static int cantorFunction(int x, int y) {
         return (((x * x) + (3 * x) + (2 * x * y) + y + (y * y)) / 2);
+    }
+
+    /**
+     * Get a fancy string that represents the durability % left
+     * @param durability The durability
+     * @param maxDurability The max durability
+     * @return The string
+     */
+    public static Component getDurabilityString(int durability, int maxDurability) {
+        if (maxDurability == 0) return Component.empty(); //No durability
+        double percentage = ((double) durability) / ((double) maxDurability);
+        double bigPercentage = percentage * 100;
+        var color = NamedTextColor.DARK_RED;
+        if (bigPercentage >= 90) color = NamedTextColor.DARK_GREEN;
+        else if (bigPercentage >= 60) color = NamedTextColor.GREEN;
+        else if (bigPercentage >= 40) color = NamedTextColor.YELLOW;
+        else if (bigPercentage > 25) color = NamedTextColor.GOLD;
+        else if (bigPercentage > 5) color = NamedTextColor.RED; //5% or lower will be dark red since that is the default
+
+        var template = "■■■■■■■■■■■■"; //The bar that shows the item health
+        int percentInt = (int) (template.length() * percentage);
+
+        var coloredPart = Component.text(template.substring(0, percentInt), color);
+        var greyPart = Component.text(template.substring(percentInt), NamedTextColor.GRAY);
+
+        var complete = coloredPart.append(greyPart);
+        DecimalFormat dc = new DecimalFormat();
+        dc.setMaximumFractionDigits(2);
+        dc.setMaximumIntegerDigits(3);
+        dc.setMinimumFractionDigits(0);
+        dc.setMinimumIntegerDigits(1);
+
+        complete = Component.text(dc.format(bigPercentage) + "%", color); //Format of '100% BARBARBARBAR'
+
+        return complete;
+
     }
 }

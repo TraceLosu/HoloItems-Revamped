@@ -3,8 +3,7 @@ package com.strangeone101.holoitemsapi.listener;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.strangeone101.holoitemsapi.CustomItemRegistry;
-import com.strangeone101.holoitemsapi.HoloItemsAPI;
+import com.strangeone101.holoitemsapi.CustomItemManager;
 import com.strangeone101.holoitemsapi.recipe.NonConsumableChoice;
 import com.strangeone101.holoitemsapi.recipe.RecipeBuilder;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
@@ -27,14 +26,14 @@ public class CraftListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCraftItem(CraftItemEvent event) {
         ItemStack stack = event.getCurrentItem();
-        if (CustomItemRegistry.isCustomItem(event.getCurrentItem()) && event.getWhoClicked() instanceof Player) {
+        if (CustomItemManager.isCustomItem(event.getCurrentItem()) && event.getWhoClicked() instanceof Player) {
             //Makes the output a fresh build of the item. Means it will be owned by that player
-            event.setCurrentItem(CustomItemRegistry.getCustomItem(stack).buildStack((Player) event.getWhoClicked()));
+            event.setCurrentItem(CustomItemManager.getCustomItem(stack).buildStack((Player) event.getWhoClicked()));
         }
 
         if (!RecipeManager.isManagedRecipe(event.getRecipe())) {
             for (ItemStack ingredient : event.getInventory().getMatrix()) {
-                if (CustomItemRegistry.isCustomItem(ingredient)) {
+                if (CustomItemManager.isCustomItem(ingredient)) {
                     event.setCancelled(true);
                 }
             }
@@ -144,7 +143,7 @@ public class CraftListener implements Listener {
     public void onPrepareItemCraft(PrepareItemCraftEvent event) {
         if (!RecipeManager.isManagedRecipe(event.getRecipe())) {
             for (ItemStack ingredient : event.getInventory().getMatrix()) {
-                if (CustomItemRegistry.isCustomItem(ingredient)) {
+                if (CustomItemManager.isCustomItem(ingredient)) {
                     event.getInventory().setResult(null); //Stops recipes using our custom items
                 }
             }

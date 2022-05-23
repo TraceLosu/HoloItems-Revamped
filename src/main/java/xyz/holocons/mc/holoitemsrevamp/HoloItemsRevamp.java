@@ -1,7 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp;
 
-import com.strangeone101.holoitemsapi.HoloItemsAPI;
-import com.strangeone101.holoitemsapi.Keys;
+import com.strangeone101.holoitemsapi.CustomItemManager;
+import com.strangeone101.holoitemsapi.Properties;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.holocons.mc.holoitemsrevamp.collection.CollectionManager;
 import xyz.holocons.mc.holoitemsrevamp.command.MainCommand;
@@ -11,7 +11,8 @@ public final class HoloItemsRevamp extends JavaPlugin {
 
     private CollectionManager collectionManager;
     private EnchantManager enchantManager;
-    private Keys keys;
+    private Properties properties;
+    private CustomItemManager customItemManager;
 
 
     @Override
@@ -22,7 +23,11 @@ public final class HoloItemsRevamp extends JavaPlugin {
             throw new RuntimeException(e);
         }
         collectionManager = new CollectionManager(this);
-        keys = new Keys(this);
+
+        properties = new Properties(this);
+
+        customItemManager = new CustomItemManager(properties);
+
         getCommand("holoitems").setExecutor(new MainCommand(this));
         this.getLogger().info("HoloItems-Revamped [ON]");
     }
@@ -32,8 +37,12 @@ public final class HoloItemsRevamp extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public Keys getKeys() {
-        return keys;
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public CustomItemManager getCustomItemManager() {
+        return customItemManager;
     }
 
     public CollectionManager getCollectionManager() {

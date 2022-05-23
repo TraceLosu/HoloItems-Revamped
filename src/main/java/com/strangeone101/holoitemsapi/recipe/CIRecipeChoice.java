@@ -1,7 +1,7 @@
 package com.strangeone101.holoitemsapi.recipe;
 
 import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.CustomItemRegistry;
+import com.strangeone101.holoitemsapi.CustomItemManager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
@@ -17,9 +17,9 @@ public class CIRecipeChoice extends RecipeChoice.ExactChoice {
     @Override
     public boolean test(ItemStack t) {
         for (ItemStack match : this.getChoices()) {
-            if (CustomItemRegistry.isCustomItem(match)) {
-                CustomItem ci = CustomItemRegistry.getCustomItem(match);
-                if (ci != null && ci == CustomItemRegistry.getCustomItem(t) &&
+            if (CustomItemManager.isCustomItem(match)) {
+                CustomItem ci = CustomItemManager.getCustomItem(match);
+                if (ci != null && ci == CustomItemManager.getCustomItem(t) &&
                         (ci.getMaxDurability() == 0 || ci.getDurability(match) == ci.getDurability(t)))
                     return true;
             }

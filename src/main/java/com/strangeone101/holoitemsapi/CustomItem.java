@@ -1,26 +1,9 @@
 package com.strangeone101.holoitemsapi;
 
-import com.strangeone101.holoitemsapi.util.ItemUtils;
-import com.strangeone101.holoitemsapi.util.ReflectionUtils;
 import com.strangeone101.holoitemsapi.util.StatsWrapper;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Keyed;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.Statistic;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -29,19 +12,11 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.Util;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.BiConsumer;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -50,44 +25,41 @@ import java.util.function.Function;
  */
 public class CustomItem implements Keyed {
 
+    private final HoloItemsRevamp plugin;
     private NamespacedKey key;
     private int internalIntID;
 
     private Material material;
-    private String displayName;
-    private List<String> lore = new ArrayList<>();
-    private boolean jsonLore = false;
+    private Component displayName;
+    private List<Component> lore = new ArrayList<>();
     private int maxDurability = 0;
     private int cooldown = 0;
     private boolean stackable = true;
     private Set<Property<?>> properties = new HashSet<>();
     private Set<StatsWrapper<?>> statGoals;
-    private String extraData;
-    private boolean ench;
+    private boolean glow;
     private int hex;
     private ItemFlag[] flags;
-    private BiConsumer<ItemStack, ItemMeta> onBuild;
-    private BiConsumer<ItemStack, ItemMeta> onUpdate;
 
-    private Map<Attribute, Map<AttributeModifier.Operation, Double>> attributes = new HashMap<>();
-    private Map<String, Function<PersistentDataContainer, String>> variables = new HashMap<>();
+    private Map<String, Function<PersistentDataContainer, Component>> variables = new HashMap<String, Function<PersistentDataContainer, Component>>();
 
-    private CustomItem(String name) {
-        this.key = new NamespacedKey(HoloItemsAPI.getPlugin(), name);
+    private CustomItem(String name, HoloItemsRevamp plugin) {
+        this.key = new NamespacedKey(plugin, name);
+        this.plugin = plugin;
     }
 
-    public CustomItem(String name, Material material) {
-        this(name);
+    public CustomItem(String name, Material material, HoloItemsRevamp plugin) {
+        this(name, plugin);
         this.material = material;
     }
 
-    public CustomItem(String name, Material material, String displayName) {
-        this(name, material);
+    public CustomItem(String name, Material material, Component displayName, HoloItemsRevamp plugin) {
+        this(name, material, plugin);
         this.displayName = displayName;
     }
 
-    public CustomItem(String name, Material material, String displayName, List<String> lore) {
-        this(name, material, displayName);
+    public CustomItem(String name, Material material, Component displayName, List<Component> lore, HoloItemsRevamp plugin) {
+        this(name, material, displayName, plugin);
         this.lore = lore;
     }
 
@@ -115,64 +87,49 @@ public class CustomItem implements Keyed {
 
         //It's important to use the functions `getDisplayName()` and `getLore()` bellow
         //instead of the field names in case an object overrides them
-        meta.setDisplayName(replaceVariables(getDisplayName(), meta.getPersistentDataContainer()));
+        meta.displayName(replaceVariables(getDisplayName(), meta.getPersistentDataContainer()));
 
         if (meta instanceof LeatherArmorMeta) {
             ((LeatherArmorMeta) meta).setColor(Color.fromRGB(hex));
         }
-        List<String> lore = new ArrayList<>();
 
-        for (String line : getLore()) {
-            lore.add(replaceVariables(line, meta.getPersistentDataContainer()));
+        List<Component> loreList = new ArrayList<>();
+
+        for (var line : getLore()) {
+            loreList.add(replaceVariables(line, meta.getPersistentDataContainer()));
         }
-        if (!this.jsonLore) {
-            meta.setLore(lore);
-        }
+
+        meta.lore(loreList);
+
         if (internalIntID != 0) meta.setCustomModelData(internalIntID); //Used for resource packs
 
         if (player != null) {
-            if (properties.contains(Properties.OWNER)) {
-                Properties.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
-                Properties.OWNER_NAME.set(meta.getPersistentDataContainer(), player.getName());
+            if (properties.contains(plugin.getProperties().getOwner())) {
+                plugin.getProperties().getOwner().set(meta.getPersistentDataContainer(), player.getUniqueId());
+                plugin.getProperties().getOwnerName().set(meta.getPersistentDataContainer(), player.getName());
             }
         }
-        if (properties.contains(Properties.COOLDOWN)) {
-            Properties.COOLDOWN.set(meta.getPersistentDataContainer(), 0L);
+        if (properties.contains(plugin.getProperties().getCooldown())) {
+            plugin.getProperties().getCooldown().set(meta.getPersistentDataContainer(), 0L);
         }
 
-        Properties.ITEM_ID.set(meta.getPersistentDataContainer(), getInternalName());
-        //meta.getPersistentDataContainer().set(HoloItemsPlugin.getKeys().CUSTOM_ITEM_ID, PersistentDataType.STRING, getInternalName());
+        plugin.getProperties().getItemId().set(meta.getPersistentDataContainer(), getInternalName());
+
         if (getMaxDurability() > 0) {
-            meta.getPersistentDataContainer().set(HoloItemsAPI.getKeys().CUSTOM_ITEM_DURABILITY, PersistentDataType.INTEGER, 0);
+            plugin.getProperties().getDurability().set(meta.getPersistentDataContainer(), 0);
         }
 
          //If the item shouldn't be stackable, add a random INTEGER to the NBT
-        Properties.UNSTACKABLE.set(meta.getPersistentDataContainer(), !isStackable());
+        plugin.getProperties().getUnstackable().set(meta.getPersistentDataContainer(), !isStackable());
 
-        if (ench) {
-            stack.addUnsafeEnchantment(Enchantment.LURE, 1);
+        if (glow) {
+            stack.addUnsafeEnchantment(Enchantment.LUCK, 1);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         if (flags != null && flags.length > 0) meta.addItemFlags(flags);
 
         stack.setItemMeta(meta);
-
-        //Add all attributes to the item
-        for (Attribute attr : getAttributes().keySet()) {
-            for (AttributeModifier.Operation operation: getAttributes().get(attr).keySet()) {
-                ItemUtils.setAttribute(getAttributes().get(attr).get(operation), attr, operation, stack, this);
-            }
-        }
-
-        if (this.jsonLore) {
-            ReflectionUtils.setTrueLore(stack, lore);
-        }
-
-        if (onBuild != null) {
-            meta = stack.getItemMeta();
-            onBuild.accept(stack, meta);
-        }
 
         return stack;
     }
@@ -183,14 +140,11 @@ public class CustomItem implements Keyed {
      * @return An ItemStack with extra information.
      */
     public ItemStack buildGuiStack(OfflinePlayer player) {
+
         var itemStack = this.buildStack(null);
-        var itemStackMeta = itemStack.getItemMeta();
-        List<String> lore;
-        if (itemStackMeta.hasLore()) {
-            lore = itemStackMeta.getLore();
-        } else {
-            lore = new ArrayList<>();
-        }
+        var itemMeta = itemStack.getItemMeta();
+
+        var lore = itemMeta.lore();
 
         var remainingStats = inspectStatGoals(player);
         if (remainingStats.isEmpty()) {
@@ -198,10 +152,15 @@ public class CustomItem implements Keyed {
         }
 
         for (var statistic : remainingStats.keySet()) {
-            lore.add(ChatColor.BLUE + statistic.toString() + ChatColor.RESET + " | " + ChatColor.RED + remainingStats.get(statistic));
+            //lore.add(ChatColor.BLUE + statistic.toString() + ChatColor.RESET + " | " + ChatColor.RED + remainingStats.get(statistic));
+            lore.add(
+                Component.text(statistic.toString(), NamedTextColor.BLUE)
+                    .append(Component.text(" | "))
+                    .append(Component.text(remainingStats.get(statistic), NamedTextColor.RED))
+            );
         }
 
-        itemStack.setItemMeta(itemStackMeta);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
@@ -225,68 +184,53 @@ public class CustomItem implements Keyed {
                 }
             }
         }
-        if (properties.contains(Properties.OWNER)) {
-            UUID uuid = Properties.OWNER.get(meta.getPersistentDataContainer());
+        if (properties.contains(plugin.getProperties().getOwner())) {
+            UUID uuid = plugin.getProperties().getOwner().get(meta.getPersistentDataContainer());
             String ownerName;
             if (uuid != null) { //The owner can still be none if this is built using no player
                 if (Bukkit.getPlayer(uuid) != null) { //If the player is online, use the new name
                     ownerName = Bukkit.getPlayer(uuid).getName();
-                } else if (Properties.OWNER_NAME.has(meta.getPersistentDataContainer())) {
-                    ownerName = Properties.OWNER_NAME.get(meta.getPersistentDataContainer());
+                } else if (plugin.getProperties().getOwnerName().has(meta.getPersistentDataContainer())) {
+                    ownerName = plugin.getProperties().getOwnerName().get(meta.getPersistentDataContainer());
                 } else ownerName = player.getName(); //Failsafe is the new player's name
-                Properties.OWNER_NAME.set(meta.getPersistentDataContainer(), ownerName);
+                plugin.getProperties().getOwnerName().set(meta.getPersistentDataContainer(), ownerName);
             } else { //Owner is not defined but it should be
                 if (player != null) { //Be sure we aren't gonna get an NPE
-                    Properties.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
-                    Properties.OWNER_NAME.set(meta.getPersistentDataContainer(), player.getName());
+                    plugin.getProperties().getOwner().set(meta.getPersistentDataContainer(), player.getUniqueId());
+                    plugin.getProperties().getOwnerName().set(meta.getPersistentDataContainer(), player.getName());
                 }
             }
         }
 
-        if (!properties.contains(Properties.RENAMABLE) || Properties.RENAMABLE.get(meta.getPersistentDataContainer()) == 0) {
+        if (!properties.contains(plugin.getProperties().getRenamable()) || plugin.getProperties().getRenamable().get(meta.getPersistentDataContainer()) == 0) {
             //It's important to use the functions `getDisplayName()` and `getLore()` bellow
             //instead of the field names in case an object overrides them
-            meta.setDisplayName(replaceVariables(getDisplayName(), meta.getPersistentDataContainer()));
+            meta.displayName(replaceVariables(getDisplayName(), meta.getPersistentDataContainer()));
         }
 
 
-        List<String> lore = new ArrayList<>();
+        List<Component> lore = new ArrayList<>();
 
-        for (String line : getLore()) {
+        for (var line : getLore()) {
             lore.add(replaceVariables(line, meta.getPersistentDataContainer()));
         }
-        if (!this.jsonLore) {
-            meta.setLore(lore);
-        }
+
+        meta.lore(lore);
+
         if (meta instanceof LeatherArmorMeta) {
             ((LeatherArmorMeta) meta).setColor(Color.fromRGB(hex));
         }
+
         if (internalIntID != 0) meta.setCustomModelData(internalIntID); //Used for resource packs
 
-        if (ench) {
-            stack.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+        if (glow) {
+            stack.addUnsafeEnchantment(Enchantment.LUCK, 1);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         if (flags != null && flags.length > 0) meta.addItemFlags(flags);
 
         stack.setItemMeta(meta);
-
-        //Add all attributes to the item
-        for (Attribute attr : getAttributes().keySet()) {
-            for (AttributeModifier.Operation operation: getAttributes().get(attr).keySet()) {
-                ItemUtils.setAttribute(getAttributes().get(attr).get(operation), attr, operation, stack, this);
-            }
-        }
-
-        if (this.jsonLore) {
-            ReflectionUtils.setTrueLore(stack, lore);
-        }
-
-        if (onUpdate != null) {
-            meta = stack.getItemMeta();
-            onUpdate.accept(stack, meta);
-        }
 
         return stack;
     }
@@ -300,7 +244,7 @@ public class CustomItem implements Keyed {
     public void damageItem(ItemStack stack, int amount, Player player) {
         if (getMaxDurability() > 0 && player.getGameMode() != GameMode.CREATIVE) {
             ItemMeta meta = stack.getItemMeta();
-            int damage = meta.getPersistentDataContainer().getOrDefault(HoloItemsAPI.getKeys().CUSTOM_ITEM_DURABILITY, PersistentDataType.INTEGER, 0);
+            int damage = plugin.getProperties().getDurability().get(meta.getPersistentDataContainer());
             damage += amount;
 
             if (damage >= getMaxDurability()) {
@@ -317,42 +261,6 @@ public class CustomItem implements Keyed {
     }
 
     /**
-     * Get a fancy string that represents the durability % left
-     * @param durability The durability
-     * @param maxDurability The max durability
-     * @return The string
-     */
-    public static String getDurabilityString(int durability, int maxDurability) {
-        if (maxDurability == 0) return ""; //No durability
-        double percentage = ((double) durability) / ((double) maxDurability);
-        double bigPercentage = percentage * 100;
-        ChatColor color = ChatColor.DARK_RED;
-        if (bigPercentage >= 90) color = ChatColor.DARK_GREEN;
-        else if (bigPercentage >= 60) color = ChatColor.GREEN;
-        else if (bigPercentage >= 40) color = ChatColor.YELLOW;
-        else if (bigPercentage > 25) color = ChatColor.GOLD;
-        else if (bigPercentage > 5) color = ChatColor.RED; //5% or lower will be dark red since that is the default
-
-        String template = "■■■■■■■■■■■■"; //The bar that shows the item health
-        int percentInt = (int) (template.length() * percentage);
-
-        String coloredPart = color + template.substring(0, percentInt);
-        String greyPart = ChatColor.GRAY + template.substring(percentInt);
-
-        String complete = coloredPart + greyPart;
-        DecimalFormat dc = new DecimalFormat();
-        dc.setMaximumFractionDigits(2);
-        dc.setMaximumIntegerDigits(3);
-        dc.setMinimumFractionDigits(0);
-        dc.setMinimumIntegerDigits(1);
-
-        complete = color + dc.format(bigPercentage) + "% " + complete; //Format of '100% BARBARBARBAR'
-
-        return complete;
-
-    }
-
-    /**
      * Get the durability on this custom item
      * @param stack The custom item stack
      * @return The durability
@@ -360,7 +268,7 @@ public class CustomItem implements Keyed {
     public int getDurability(ItemStack stack) {
         if (getMaxDurability() > 0) {
             ItemMeta meta = stack.getItemMeta();
-            return meta.getPersistentDataContainer().getOrDefault(HoloItemsAPI.getKeys().CUSTOM_ITEM_DURABILITY, PersistentDataType.INTEGER, 0);
+            return plugin.getProperties().getDurability().get(meta.getPersistentDataContainer());
         }
         return 0;
     }
@@ -377,7 +285,7 @@ public class CustomItem implements Keyed {
                 return;
             }
             ItemMeta meta = stack.getItemMeta();
-            meta.getPersistentDataContainer().set(HoloItemsAPI.getKeys().CUSTOM_ITEM_DURABILITY, PersistentDataType.INTEGER, durability);
+            plugin.getProperties().getDurability().set(meta.getPersistentDataContainer(), durability);
 
             if (meta instanceof Damageable) {
                 ((Damageable) meta).setDamage((int)(((double)durability / (double)getMaxDurability()) * stack.getType().getMaxDurability()));
@@ -385,46 +293,20 @@ public class CustomItem implements Keyed {
 
             stack.setItemMeta(meta); //Update item
         }
-        return;
-    }
-
-    /**
-     * Set the custom skin of the head
-     * @param skin The skin
-     * @return Itself
-     */
-    public CustomItem setHeadSkin(String skin) {
-        if (material != Material.PLAYER_HEAD && material != Material.PLAYER_WALL_HEAD) {
-            this.extraData = skin;
-        }
-
-        return this;
     }
 
     /**
      * Replaces the string provided with variables
-     * @param string The string
+     * @param component The component
      * @param dataHolder The data holder
      * @return The replaced string
      */
-    public String replaceVariables(String string, PersistentDataContainer dataHolder) {
-        String s = string;
-        if (getMaxDurability() > 0) {
-            int damage = dataHolder.getOrDefault(HoloItemsAPI.getKeys().CUSTOM_ITEM_DURABILITY, PersistentDataType.INTEGER, 0);
-            damage = getMaxDurability() - damage;
-            s = s.replace("{durability}", getDurabilityString(damage, getMaxDurability()));
-        }
-        for (String variable : variables.keySet()) {
-            String endResult = variables.get(variable).apply(dataHolder);
-
-            if (endResult == null) continue; //Variable not ready for use yet
-
-            s = s.replace("{" + variable + "}", endResult);
-        }
-        return s;
+    public Component replaceVariables(Component component, PersistentDataContainer dataHolder) {
+        // TODO add this but for Adventure
+        return component;
     }
 
-    public void addVariable(String variable, Function<PersistentDataContainer, String> function) {
+    public void addVariable(String variable, Function<PersistentDataContainer, Component> function) {
         variables.put(variable, function);
     }
 
@@ -444,7 +326,7 @@ public class CustomItem implements Keyed {
      * @param displayName The display name
      * @return Itself
      */
-    public CustomItem setDisplayName(String displayName) {
+    public CustomItem setDisplayName(Component displayName) {
         this.displayName = displayName;
         return this;
     }
@@ -453,7 +335,7 @@ public class CustomItem implements Keyed {
      * Get the custom display name
      * @return The display name
      */
-    public String getDisplayName() {
+    public Component getDisplayName() {
         return displayName;
     }
 
@@ -498,7 +380,7 @@ public class CustomItem implements Keyed {
      */
     public ItemStack applyCooldown(ItemStack item) {
         ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : Bukkit.getItemFactory().getItemMeta(item.getType());
-        Properties.COOLDOWN.set(meta.getPersistentDataContainer(), System.currentTimeMillis() + getCooldown());
+        plugin.getProperties().getCooldown().set(meta.getPersistentDataContainer(), Util.currentTimeTicks() + getCooldown());
         item.setItemMeta(meta);
         return item;
     }
@@ -511,8 +393,9 @@ public class CustomItem implements Keyed {
     public boolean checkCooldown(ItemStack item) {
         if (!item.hasItemMeta())
             return false;
-        if (Properties.COOLDOWN.has(item.getItemMeta().getPersistentDataContainer())){
-            return Properties.COOLDOWN.get(item.getItemMeta().getPersistentDataContainer()) >= System.currentTimeMillis();
+        if (plugin.getProperties().getCooldown().has(item.getItemMeta().getPersistentDataContainer())){
+            return plugin.getProperties().getCooldown()
+                .get(item.getItemMeta().getPersistentDataContainer()) >= Util.currentTimeTicks();
         }
         return false;
     }
@@ -568,7 +451,7 @@ public class CustomItem implements Keyed {
      * @return Itself
      */
     public CustomItem setEnchantedGlow(boolean glow) {
-        this.ench = true;
+        this.glow = true;
         return this;
     }
 
@@ -577,14 +460,14 @@ public class CustomItem implements Keyed {
      * @return The glow state
      */
     public boolean hasEnchantedGlow() {
-        return this.ench;
+        return this.glow;
     }
 
     /**
      * Get the lore
      * @return The lore
      */
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return lore;
     }
 
@@ -593,62 +476,21 @@ public class CustomItem implements Keyed {
      * @param lore The lore
      * @return Itself
      */
-    public CustomItem setLore(List<String> lore) {
+    public CustomItem setLore(List<Component> lore) {
         this.lore = lore;
-        this.jsonLore = false;
         return this;
     }
 
     /**
      * Add a line to the lore
-     * @param string The line to add
+     * @param component The line to add
      * @return Itself
      */
-    public CustomItem addLore(String string) {
+    public CustomItem addLore(Component component) {
         if (this.lore == null) this.lore = new ArrayList<>();
 
-        if (this.jsonLore) {
-            //Don't bother adding white and non italics to nothing
-            if (string.length() == 0) lore.add(ComponentSerializer.toString(new TextComponent()));
-            else {
-                //Append white and non italics to the front so it doesn't appear in italics
-                BaseComponent comp = new ComponentBuilder().append("")
-                        .color(net.md_5.bungee.api.ChatColor.WHITE).italic(false).getCurrentComponent();
-                comp.setExtra(Arrays.asList(TextComponent.fromLegacyText(string)));
-                lore.add(ComponentSerializer.toString(comp));
-            }
+        this.lore.add(component);
 
-        } else {
-            lore.add(string);
-        }
-
-        return this;
-    }
-
-    public CustomItem addLore(BaseComponent component) {
-        if (this.lore == null) this.lore = new ArrayList<>();
-        if (!this.jsonLore) {
-            this.jsonLore = true;
-            List<String> jsonList = new ArrayList<>();
-
-            for (String s : this.lore) {
-                //Don't bother adding white and non italics to nothing
-                if (s.length() == 0) jsonList.add(ComponentSerializer.toString(new TextComponent()));
-                else {
-                    //Append white and non italics to the front so it doesn't appear in italics
-                    BaseComponent comp = new ComponentBuilder().append("")
-                            .color(net.md_5.bungee.api.ChatColor.WHITE).italic(false).getCurrentComponent();
-                    comp.setExtra(Arrays.asList(TextComponent.fromLegacyText(s)));
-                    jsonList.add(ComponentSerializer.toString(comp));
-                }
-            }
-            this.lore = jsonList;
-        }
-
-        BaseComponent baseComp = new ComponentBuilder().append("")
-                .color(net.md_5.bungee.api.ChatColor.WHITE).italic(false).getCurrentComponent();
-        baseComp.addExtra(component);
-        this.lore.add(ComponentSerializer.toString(baseComp));
         return this;
     }
 
@@ -684,7 +526,7 @@ public class CustomItem implements Keyed {
      * @return Itself
      */
     public CustomItem register() {
-        CustomItemRegistry.register(this);
+        plugin.getCustomItemManager().register(this);
         return this;
     }
 
@@ -734,7 +576,6 @@ public class CustomItem implements Keyed {
                 ", maxDurability=" + maxDurability +
                 ", stackable=" + stackable +
                 ", properties=" + properties +
-                ", extraData='" + extraData + '\'' +
                 '}';
     }
 
@@ -751,156 +592,6 @@ public class CustomItem implements Keyed {
     @Override
     public int hashCode() {
         return getKey().hashCode();
-    }
-
-    public CustomItem setAttribute(Attribute attribute, double amount, boolean percentage) {
-        AttributeModifier.Operation operation = AttributeModifier.Operation.ADD_NUMBER;
-        if (percentage) {
-            operation = AttributeModifier.Operation.ADD_SCALAR;
-        }
-        HashMap<AttributeModifier.Operation, Double> map = new HashMap<>();
-        map.put(operation, amount);
-        getAttributes().put(attribute, map);
-
-        return this;
-    }
-
-    public CustomItem setArmor(double armor, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_ARMOR, armor, percentage);
-    }
-
-    public CustomItem setArmor(double armor) {
-        return setArmor(armor, false);
-    }
-
-    public CustomItem setArmorPercentage(double armorPercentage) {
-        return setArmor(armorPercentage, true);
-    }
-
-    public CustomItem setArmorToughness(double armorToughness, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS, armorToughness, percentage);
-    }
-
-    public CustomItem setArmorToughness(double armorToughness) {
-        return setArmorToughness(armorToughness, false);
-    }
-
-    public CustomItem setArmorToughnessPercentage(double armorToughnessPercentage) {
-        return setArmorToughness(armorToughnessPercentage, true);
-    }
-
-    public CustomItem setDamage(double damage, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_ATTACK_DAMAGE, damage, percentage);
-    }
-
-    public CustomItem setDamage(double damage) {
-        return setDamage(damage, false);
-    }
-
-    public CustomItem setDamagePercentage(double damagePercentage) {
-        return setDamage(damagePercentage, true);
-    }
-
-    public CustomItem setAttackKnockback(double knockback, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK, knockback, percentage);
-    }
-
-    public CustomItem setAttackKnockback(double knockback) {
-        return setAttackKnockback(knockback, false);
-    }
-
-    public CustomItem setAttackKnockbackPercentage(double knockbackPercentage) {
-        return setAttackKnockback(knockbackPercentage, true);
-    }
-
-    public CustomItem setAttackSpeed(double speed, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_ATTACK_SPEED, speed, percentage);
-    }
-
-    public CustomItem setAttackSpeed(double speed) {
-        return setAttackSpeed(speed, false);
-    }
-
-    public CustomItem setAttackSpeedPercentage(double speedPercentage) {
-        return setAttackSpeed(speedPercentage, true);
-    }
-
-    public CustomItem setKnockbackResistance(double resistance, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, resistance, percentage);
-    }
-
-    public CustomItem setKnockbackResistance(double resistance) {
-        return setKnockbackResistance(resistance, false);
-    }
-
-    public CustomItem setKnockbackResistancePercentage(double resistancePercentage) {
-        return setKnockbackResistance(resistancePercentage, true);
-    }
-
-    public CustomItem setLuck(double luck, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_LUCK, luck, percentage);
-    }
-
-    public CustomItem setLuck(double luck) {
-        return setLuck(luck, false);
-    }
-
-    public CustomItem setLuckPercentage(double luckPercentage) {
-        return setLuck(luckPercentage, true);
-    }
-
-    public CustomItem setHealth(double health, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_MAX_HEALTH, health, percentage);
-    }
-
-    public CustomItem setHealth(int health) {
-        return setHealth(health, false);
-    }
-
-    public CustomItem setHealthPercentage(double healthPercentage) {
-        return setHealth(healthPercentage, true);
-    }
-
-    public CustomItem setSpeed(double speed, boolean percentage) {
-        return setAttribute(Attribute.GENERIC_MOVEMENT_SPEED, speed, percentage);
-    }
-
-    public CustomItem setSpeed(double speed) {
-        return setSpeed(speed, false);
-    }
-
-    public CustomItem setSpeedPercentage(double speedPercentage) {
-        return setSpeed(speedPercentage, true);
-    }
-
-    public Map<Attribute, Map<AttributeModifier.Operation, Double>> getAttributes() {
-        return attributes;
-    }
-
-    /**
-     * Run some code when this item is built. Used in case you don't want to create
-     * a new class just to change something about the item.
-     *
-     * {code}item.onBuild((itemstack, meta) -> itemstack.addUnsafeEnchantment(Enchantment.KNOCKBACK, 10)){code}
-     * @param consumer The code to run
-     * @return Itself
-     */
-    public CustomItem onBuild(BiConsumer<ItemStack, ItemMeta> consumer) {
-        this.onBuild = consumer;
-        return this;
-    }
-
-    /**
-     * Run some code when this item is updated (picked up or regenerated). Used in case you don't want to create
-     * a new class just to change something about the item.
-     *
-     * {code}item.onUpdate((itemstack, meta) -> itemstack.addUnsafeEnchantment(Enchantment.KNOCKBACK, 10)){code}
-     * @param consumer The code to run
-     * @return Itself
-     */
-    public CustomItem onUpdate(BiConsumer<ItemStack, ItemMeta> consumer) {
-        this.onUpdate = consumer;
-        return this;
     }
 
     /**

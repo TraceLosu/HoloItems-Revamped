@@ -1,7 +1,6 @@
 package com.strangeone101.holoitemsapi.recipe;
 
-import com.strangeone101.holoitemsapi.CustomItemRegistry;
-import com.strangeone101.holoitemsapi.HoloItemsAPI;
+import com.strangeone101.holoitemsapi.CustomItemManager;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -232,8 +231,8 @@ public class RecipeBuilder {
 
         public boolean checkStack(char ingredientChar, ItemStack stack) {
             if (ingredients.containsKey(ingredientChar)) {
-                if (CustomItemRegistry.isCustomItem(ingredients.get(ingredientChar)) && CustomItemRegistry.isCustomItem(stack)) {
-                    return CustomItemRegistry.getCustomItem(ingredients.get(ingredientChar)).getInternalID() == CustomItemRegistry.getCustomItem(stack).getInternalID();
+                if (CustomItemManager.isCustomItem(ingredients.get(ingredientChar)) && CustomItemManager.isCustomItem(stack)) {
+                    return CustomItemManager.getCustomItem(ingredients.get(ingredientChar)).getInternalID() == CustomItemManager.getCustomItem(stack).getInternalID();
                 } else {
                     return ingredients.get(ingredientChar).isSimilar(stack);
                 }
