@@ -1,6 +1,12 @@
 package xyz.holocons.mc.holoitemsrevamp.collection;
 
-import com.strangeone101.holoitemsapi.item.CustomItem;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import com.strangeone101.holoitemsapi.CustomItem;
+
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.collection.en1.EN1Collection;
 import xyz.holocons.mc.holoitemsrevamp.collection.en1.GawrGura;
@@ -83,6 +89,7 @@ import xyz.holocons.mc.holoitemsrevamp.collection.stars3.AragamiOga;
 import xyz.holocons.mc.holoitemsrevamp.collection.stars3.KageyamaShien;
 import xyz.holocons.mc.holoitemsrevamp.collection.stars3.Stars3Collection;
 import xyz.holocons.mc.holoitemsrevamp.item.DummyBlockBlock;
+import xyz.holocons.mc.holoitemsrevamp.item.BackdashBoots;
 import xyz.holocons.mc.holoitemsrevamp.item.MagnetBook;
 import xyz.holocons.mc.holoitemsrevamp.item.MementoItem;
 import xyz.holocons.mc.holoitemsrevamp.item.TideRiderItem;
@@ -114,7 +121,7 @@ public class CollectionManager {
 
     /**
      * Gets a list of all generations
-     * 
+     *
      * @return a list
      */
     public List<IdolCollection> getAllGens() {
@@ -125,7 +132,7 @@ public class CollectionManager {
      * Gets a map that contains all custom items as its values, and their internal
      * name as the key. Used for
      * autocompletion
-     * 
+     *
      * @return All custom items that the plugin contains
      */
     public Map<String, CustomItem> getAllItems() {
@@ -185,7 +192,9 @@ public class CollectionManager {
 
         var nene = new MomosuzuNene();
         var polka = new OmaruPolka();
-        var botan = new ShishiroBotan();
+        var botan = new ShishiroBotan(
+            new BackdashBoots(plugin)
+        );
         var lamy = new YukihanaLamy();
 
         var koyori = new HakuiKoyori();
