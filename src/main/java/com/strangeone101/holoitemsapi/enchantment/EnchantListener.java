@@ -12,6 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -24,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
+import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
+import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
 import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
 import xyz.holocons.mc.holoitemsrevamp.packet.PlayerAbilitiesPacket;
@@ -58,6 +62,46 @@ public class EnchantListener implements Listener {
                 ability.run(event, itemStack);
             }
         });
+    }
+
+    /**
+     * Handles BlockPlace enchantments.
+     *
+     * @param event The BlockBreakEvent
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        final var itemStack = event.getPlayer().getInventory().getItemInMainHand();
+
+        itemStack.getEnchantments().keySet().forEach(enchantment -> {
+            if (enchantment instanceof BlockPlace ability) {
+                ability.run(event, itemStack);
+            }
+        });
+    }
+
+    /**
+     * Handles ProjectileLaunch enchantments.
+     *
+     * @param event The ProjectileLaunchEvent
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        final var player = event.getPlayer();
+        final var inventory = player.getInventory();
+
+        for (ItemStack item : inventory) {
+
+            if (item == null){
+                return;
+            }
+
+            item.getEnchantments().keySet().forEach(enchantment -> {
+                if (enchantment instanceof PlayerDeath ability) {
+                    ability.run(event, item);
+                }
+            });
+        }
     }
 
     /**
