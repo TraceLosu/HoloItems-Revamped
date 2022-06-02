@@ -2,12 +2,12 @@ package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -15,7 +15,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
-import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
 
 public class Momento extends CustomEnchantment implements PlayerDeath, BlockPlace {
 
@@ -53,27 +52,30 @@ public class Momento extends CustomEnchantment implements PlayerDeath, BlockPlac
     }
 
     @Override
-    public int getItemStackCost(ItemStack itemStack) {
+    public int getCostMultiplier() {
         return Integer.MAX_VALUE;
     }
 
     @Override
     public void run(PlayerDeathEvent event, ItemStack itemStack) {
         // Set keepInv and keepExp on (For this event and player only)
+        if (event.getKeepInventory()){
+            return;
+        }
+
         event.setKeepInventory(true);
         event.setKeepLevel(true);
 
         // Clear corpse items to prevent dupes
-        event.setDroppedExp(0);
+        event.setShouldDropExperience(false);
         event.getDrops().clear();
 
         // Decrease amount of Momentos by 1
-        itemStack.setAmount(itemStack.getAmount()-1);
+        itemStack.subtract(1);
     }
 
     @Override
     public void run(BlockPlaceEvent event, ItemStack itemStack){
         event.setCancelled(true);
     }
-
 }

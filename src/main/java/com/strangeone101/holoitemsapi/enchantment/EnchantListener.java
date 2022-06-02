@@ -67,11 +67,11 @@ public class EnchantListener implements Listener {
     /**
      * Handles BlockPlace enchantments.
      *
-     * @param event The BlockBreakEvent
+     * @param event The BlockPlaceEvent
      */
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        final var itemStack = event.getPlayer().getInventory().getItemInMainHand();
+        final var itemStack = event.getItemInHand();
 
         itemStack.getEnchantments().keySet().forEach(enchantment -> {
             if (enchantment instanceof BlockPlace ability) {
@@ -81,9 +81,9 @@ public class EnchantListener implements Listener {
     }
 
     /**
-     * Handles ProjectileLaunch enchantments.
+     * Handles PlayerDeath enchantments.
      *
-     * @param event The ProjectileLaunchEvent
+     * @param event The PlayerDeathEvent
      */
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
