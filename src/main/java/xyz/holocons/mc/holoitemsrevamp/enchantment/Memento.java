@@ -16,12 +16,12 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
 
-public class Momento extends CustomEnchantment implements PlayerDeath, BlockPlace {
+public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlace {
 
     private final HoloItemsRevamp plugin;
 
-    public Momento(HoloItemsRevamp plugin) {
-        super(plugin, "momento");
+    public Memento(HoloItemsRevamp plugin) {
+        super(plugin, "memento");
         this.plugin = plugin;
     }
 
@@ -47,7 +47,7 @@ public class Momento extends CustomEnchantment implements PlayerDeath, BlockPlac
         return Component.text()
             .color(NamedTextColor.DARK_PURPLE)
             .decoration(TextDecoration.ITALIC, false)
-            .append(Component.text("Momento"))
+            .append(Component.text("Memento"))
             .build();
     }
 
@@ -70,7 +70,7 @@ public class Momento extends CustomEnchantment implements PlayerDeath, BlockPlac
         event.setShouldDropExperience(false);
         event.getDrops().clear();
 
-        // Decrease amount of Momentos by 1
+        // Decrease amount of Mementos by 1
         itemStack.subtract(1);
     }
 

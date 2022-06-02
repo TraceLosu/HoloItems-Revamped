@@ -89,7 +89,7 @@ import xyz.holocons.mc.holoitemsrevamp.collection.stars3.AragamiOga;
 import xyz.holocons.mc.holoitemsrevamp.collection.stars3.KageyamaShien;
 import xyz.holocons.mc.holoitemsrevamp.collection.stars3.Stars3Collection;
 import xyz.holocons.mc.holoitemsrevamp.item.MagnetBook;
-import xyz.holocons.mc.holoitemsrevamp.item.MomentoItem;
+import xyz.holocons.mc.holoitemsrevamp.item.MementoItem;
 import xyz.holocons.mc.holoitemsrevamp.item.TideRiderItem;
 
 public class CollectionManager {
@@ -129,7 +129,7 @@ public class CollectionManager {
         );
         var irys = new IRyS();
         var calliope = new MoriCalliope(
-            new MomentoItem(plugin)
+            new MementoItem(plugin)
         );
         var ina = new NinomaeInanis();
         var kiara = new TakanashiKiara();

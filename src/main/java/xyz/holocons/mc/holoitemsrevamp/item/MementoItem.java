@@ -19,18 +19,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.List;
 
-public class MomentoItem extends CustomItem implements Enchantable {
+public class MementoItem extends CustomItem implements Enchantable {
 
-    private final static String name = "momento";
+    private final static String name = "memento";
     private final static Material material = Material.ENDER_CHEST;
-    private final static Component displayName = Component.text("Momento", NamedTextColor.DARK_PURPLE);
+    private final static Component displayName = Component.text("Memento", NamedTextColor.DARK_PURPLE);
     private final static List<Component> lore = List.of(
         Component.text("Keep your items on death. Consumable.", NamedTextColor.DARK_PURPLE)
     );
 
     private final EnchantManager enchantManager;
 
-    public MomentoItem(HoloItemsRevamp plugin) {
+    public MementoItem(HoloItemsRevamp plugin) {
         super(plugin, name, material, displayName, lore);
         this.enchantManager = plugin.getEnchantManager();
         this.register();

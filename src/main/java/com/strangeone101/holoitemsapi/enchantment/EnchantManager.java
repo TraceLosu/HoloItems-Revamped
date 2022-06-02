@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Momento;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
 
 import java.lang.reflect.Field;
@@ -121,7 +121,7 @@ public class EnchantManager {
     private static Set<CustomEnchantment> buildCustomEnchantments(HoloItemsRevamp plugin) {
         return Set.of(
                 new Magnet(plugin),
-                new Momento(plugin),
+                new Memento(plugin),
                 new TideRider(plugin));
     }
 }
