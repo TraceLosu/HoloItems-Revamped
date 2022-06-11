@@ -1,32 +1,30 @@
 package xyz.holocons.mc.holoitemsrevamp;
 
-import com.strangeone101.holoitemsapi.CustomItemManager;
-import com.strangeone101.holoitemsapi.Properties;
+import com.strangeone101.holoitemsapi.Keys;
+import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.holocons.mc.holoitemsrevamp.collection.CollectionManager;
 import xyz.holocons.mc.holoitemsrevamp.command.MainCommand;
-import xyz.holocons.mc.holoitemsrevamp.enchant.EnchantManager;
+import com.strangeone101.holoitemsapi.enchantments.EnchantManager;
+
+import java.util.HashMap;
 
 public final class HoloItemsRevamp extends JavaPlugin {
 
     private CollectionManager collectionManager;
     private EnchantManager enchantManager;
-    private Properties properties;
-    private CustomItemManager customItemManager;
 
 
     @Override
     public void onEnable() {
+        buildKeys();
+
         try {
             enchantManager = new EnchantManager(this);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
         collectionManager = new CollectionManager(this);
-
-        properties = new Properties(this);
-
-        customItemManager = new CustomItemManager(properties);
 
         getCommand("holoitems").setExecutor(new MainCommand(this));
         this.getLogger().info("HoloItems-Revamped [ON]");
@@ -37,19 +35,25 @@ public final class HoloItemsRevamp extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public Properties getProperties() {
-        return properties;
-    }
-
-    public CustomItemManager getCustomItemManager() {
-        return customItemManager;
-    }
-
     public CollectionManager getCollectionManager() {
         return collectionManager;
     }
 
     public EnchantManager getEnchantManager() {
         return enchantManager;
+    }
+
+    private void buildKeys() {
+        var keyMap = new HashMap<String, NamespacedKey>(7);
+
+        keyMap.put("owner", new NamespacedKey(this, "owner"));
+        keyMap.put("owner_name", new NamespacedKey(this, "owner_name"));
+        keyMap.put("cooldown", new NamespacedKey(this, "cooldown"));
+        keyMap.put("durability", new NamespacedKey(this, "durability"));
+        keyMap.put("unstackable", new NamespacedKey(this, "unstackable"));
+        keyMap.put("renamable", new NamespacedKey(this, "renamable"));
+        keyMap.put("item_id", new NamespacedKey(this, "item_id"));
+
+        Keys.fillKeys(keyMap);
     }
 }

@@ -1,10 +1,12 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
 import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.interfaces.Enchantable;
+import com.strangeone101.holoitemsapi.enchantments.EnchantManager;
+import com.strangeone101.holoitemsapi.enchantments.Enchantable;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -12,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchant.EnchantManager;
 
 import java.util.List;
 
@@ -20,15 +21,15 @@ public class TideRiderItem extends CustomItem implements Enchantable {
 
     private final static String name = "tide_rider";
     private final static Material material = Material.TRIDENT;
-    private final static String displayName = ChatColor.BLUE + "Tide Rider";
-    private final static List<String> lore = List.of(
-        "Surf the waves"
+    private final static Component displayName = Component.text("Tide Rider", NamedTextColor.BLUE);
+    private final static List<Component> lore = List.of(
+        Component.text("Surf the waves")
     );
 
     private final EnchantManager enchantManager;
 
     public TideRiderItem(HoloItemsRevamp plugin) {
-        super(name, material, displayName, lore);
+        super(name, material, displayName, lore, plugin);
         this.enchantManager = plugin.getEnchantManager();
         this.setStackable(false);
         this.register();

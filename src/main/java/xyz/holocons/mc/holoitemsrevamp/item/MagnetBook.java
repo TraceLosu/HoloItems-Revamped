@@ -1,18 +1,18 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
 import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.interfaces.Enchantable;
+import com.strangeone101.holoitemsapi.enchantments.EnchantManager;
+import com.strangeone101.holoitemsapi.enchantments.Enchantable;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchant.EnchantManager;
-
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.List;
 
@@ -21,15 +21,15 @@ public class MagnetBook extends CustomItem implements Enchantable {
     // TODO: The magnet enchantment should be given on an enchanted book
     private final static String name = "magnet";
     private final static Material material = Material.IRON_PICKAXE;
-    private final static String displayName = ChatColor.RED + "Magnet";
-    private final static List<String> lore = List.of(
-        ChatColor.DARK_PURPLE + "Automatically put mined items to your inventory!"
+    private final static Component displayName = Component.text("Magnet", NamedTextColor.RED);
+    private final static List<Component> lore = List.of(
+        Component.text("Automatically put mined items to your inventory!", NamedTextColor.DARK_PURPLE)
     );
 
     private final EnchantManager enchantManager;
 
     public MagnetBook(HoloItemsRevamp plugin) {
-        super(name, material, displayName, lore);
+        super(name, material, displayName, lore, plugin);
         this.enchantManager = plugin.getEnchantManager();
         this.register();
         this.registerRecipe();

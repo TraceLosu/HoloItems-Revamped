@@ -1,27 +1,29 @@
 package com.strangeone101.holoitemsapi.listener;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.strangeone101.holoitemsapi.CustomItemManager;
 import com.strangeone101.holoitemsapi.recipe.NonConsumableChoice;
 import com.strangeone101.holoitemsapi.recipe.RecipeBuilder;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
-import org.bukkit.inventory.CraftingInventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.scheduler.BukkitRunnable;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CraftListener implements Listener {
+
+    private final HoloItemsRevamp plugin;
+
+    public CraftListener(HoloItemsRevamp plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onCraftItem(CraftItemEvent event) {
@@ -134,7 +136,7 @@ public class CraftListener implements Listener {
                             event.getInventory().setItem(slot, slots.get(slot));
                         }
                     }
-                }.runTaskLater(HoloItemsAPI.getPlugin(), 1L);
+                }.runTaskLater(plugin, 1L);
             }
         }
     }

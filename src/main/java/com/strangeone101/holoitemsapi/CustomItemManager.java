@@ -10,22 +10,16 @@ import java.util.Map;
  */
 public class CustomItemManager {
 
-    private int NEXT_ID = 2300;
-    private final int INVALID_ID = 404;
+    private static int NEXT_ID = 2300;
+    private static final int INVALID_ID = 404;
 
-    private final Map<String, CustomItem> CUSTOM_ITEMS = new HashMap<>();
-
-    private final Properties properties;
-
-    public CustomItemManager(Properties pluginProperties) {
-        this.properties = pluginProperties;
-    }
+    private static final Map<String, CustomItem> CUSTOM_ITEMS = new HashMap<>();
 
     /**
      * Register a custom item
      * @param item The item
      */
-    public void register(CustomItem item) {
+    public static void register(CustomItem item) {
         CUSTOM_ITEMS.put(item.getInternalName(), item);
 
         if (item.getInternalID() == 0) {
@@ -41,7 +35,7 @@ public class CustomItemManager {
      * @param id The item identifier
      * @return The custom item
      */
-    public CustomItem getCustomItem(String id) {
+    public static CustomItem getCustomItem(String id) {
         return CUSTOM_ITEMS.get(id);
     }
 
@@ -50,10 +44,10 @@ public class CustomItemManager {
      * @param stack The itemstack
      * @return True if it's a custom item
      */
-    public boolean isCustomItem(ItemStack stack) {
+    public static boolean isCustomItem(ItemStack stack) {
         return stack != null &&
             stack.hasItemMeta() &&
-            properties.getItemId().has(stack.getItemMeta().getPersistentDataContainer());
+            Keys.ITEM_ID.has(stack.getItemMeta().getPersistentDataContainer());
     }
 
     /**
@@ -61,9 +55,9 @@ public class CustomItemManager {
      * @param stack The itemstack
      * @return The custom item
      */
-    public CustomItem getCustomItem(ItemStack stack) {
+    public static CustomItem getCustomItem(ItemStack stack) {
         if (isCustomItem(stack)) {
-            String id = properties.getItemId().get(stack.getItemMeta().getPersistentDataContainer());
+            String id = Keys.ITEM_ID.get(stack.getItemMeta().getPersistentDataContainer());
             return getCustomItem(id);
         }
         return null;
@@ -73,7 +67,7 @@ public class CustomItemManager {
      * Get all custom items
      * @return The many many items
      */
-    public Map<String, CustomItem> getCustomItems() {
+    public static Map<String, CustomItem> getCustomItems() {
         return CUSTOM_ITEMS;
     }
 

@@ -24,8 +24,6 @@ import java.util.function.Function;
  * to properly register it
  */
 public class CustomItem implements Keyed {
-
-    private final HoloItemsRevamp plugin;
     private NamespacedKey key;
     private int internalIntID;
 
@@ -45,7 +43,6 @@ public class CustomItem implements Keyed {
 
     private CustomItem(String name, HoloItemsRevamp plugin) {
         this.key = new NamespacedKey(plugin, name);
-        this.plugin = plugin;
     }
 
     public CustomItem(String name, Material material, HoloItemsRevamp plugin) {
@@ -104,23 +101,23 @@ public class CustomItem implements Keyed {
         if (internalIntID != 0) meta.setCustomModelData(internalIntID); //Used for resource packs
 
         if (player != null) {
-            if (properties.contains(plugin.getProperties().getOwner())) {
-                plugin.getProperties().getOwner().set(meta.getPersistentDataContainer(), player.getUniqueId());
-                plugin.getProperties().getOwnerName().set(meta.getPersistentDataContainer(), player.getName());
+            if (properties.contains(Keys.OWNER)) {
+                Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
+                Keys.OWNER_NAME.set(meta.getPersistentDataContainer(), player.getName());
             }
         }
-        if (properties.contains(plugin.getProperties().getCooldown())) {
-            plugin.getProperties().getCooldown().set(meta.getPersistentDataContainer(), 0L);
+        if (properties.contains(Keys.COOLDOWN)) {
+            Keys.COOLDOWN.set(meta.getPersistentDataContainer(), 0L);
         }
 
-        plugin.getProperties().getItemId().set(meta.getPersistentDataContainer(), getInternalName());
+        Keys.ITEM_ID.set(meta.getPersistentDataContainer(), getInternalName());
 
         if (getMaxDurability() > 0) {
-            plugin.getProperties().getDurability().set(meta.getPersistentDataContainer(), 0);
+            Keys.DURABILITY.set(meta.getPersistentDataContainer(), 0);
         }
 
          //If the item shouldn't be stackable, add a random INTEGER to the NBT
-        plugin.getProperties().getUnstackable().set(meta.getPersistentDataContainer(), !isStackable());
+        Keys.UNSTACKABLE.set(meta.getPersistentDataContainer(), !isStackable());
 
         if (glow) {
             stack.addUnsafeEnchantment(Enchantment.LUCK, 1);
@@ -184,25 +181,25 @@ public class CustomItem implements Keyed {
                 }
             }
         }
-        if (properties.contains(plugin.getProperties().getOwner())) {
-            UUID uuid = plugin.getProperties().getOwner().get(meta.getPersistentDataContainer());
+        if (properties.contains(Keys.OWNER)) {
+            UUID uuid = Keys.OWNER.get(meta.getPersistentDataContainer());
             String ownerName;
             if (uuid != null) { //The owner can still be none if this is built using no player
                 if (Bukkit.getPlayer(uuid) != null) { //If the player is online, use the new name
                     ownerName = Bukkit.getPlayer(uuid).getName();
-                } else if (plugin.getProperties().getOwnerName().has(meta.getPersistentDataContainer())) {
-                    ownerName = plugin.getProperties().getOwnerName().get(meta.getPersistentDataContainer());
+                } else if (Keys.OWNER_NAME.has(meta.getPersistentDataContainer())) {
+                    ownerName = Keys.OWNER_NAME.get(meta.getPersistentDataContainer());
                 } else ownerName = player.getName(); //Failsafe is the new player's name
-                plugin.getProperties().getOwnerName().set(meta.getPersistentDataContainer(), ownerName);
+                Keys.OWNER_NAME.set(meta.getPersistentDataContainer(), ownerName);
             } else { //Owner is not defined but it should be
                 if (player != null) { //Be sure we aren't gonna get an NPE
-                    plugin.getProperties().getOwner().set(meta.getPersistentDataContainer(), player.getUniqueId());
-                    plugin.getProperties().getOwnerName().set(meta.getPersistentDataContainer(), player.getName());
+                    Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
+                    Keys.OWNER_NAME.set(meta.getPersistentDataContainer(), player.getName());
                 }
             }
         }
 
-        if (!properties.contains(plugin.getProperties().getRenamable()) || plugin.getProperties().getRenamable().get(meta.getPersistentDataContainer()) == 0) {
+        if (!properties.contains(Keys.RENAMABLE) || Keys.RENAMABLE.get(meta.getPersistentDataContainer()) == 0) {
             //It's important to use the functions `getDisplayName()` and `getLore()` bellow
             //instead of the field names in case an object overrides them
             meta.displayName(replaceVariables(getDisplayName(), meta.getPersistentDataContainer()));
@@ -244,7 +241,7 @@ public class CustomItem implements Keyed {
     public void damageItem(ItemStack stack, int amount, Player player) {
         if (getMaxDurability() > 0 && player.getGameMode() != GameMode.CREATIVE) {
             ItemMeta meta = stack.getItemMeta();
-            int damage = plugin.getProperties().getDurability().get(meta.getPersistentDataContainer());
+            int damage = Keys.DURABILITY.get(meta.getPersistentDataContainer());
             damage += amount;
 
             if (damage >= getMaxDurability()) {
@@ -268,7 +265,7 @@ public class CustomItem implements Keyed {
     public int getDurability(ItemStack stack) {
         if (getMaxDurability() > 0) {
             ItemMeta meta = stack.getItemMeta();
-            return plugin.getProperties().getDurability().get(meta.getPersistentDataContainer());
+            return Keys.DURABILITY.get(meta.getPersistentDataContainer());
         }
         return 0;
     }
@@ -285,7 +282,7 @@ public class CustomItem implements Keyed {
                 return;
             }
             ItemMeta meta = stack.getItemMeta();
-            plugin.getProperties().getDurability().set(meta.getPersistentDataContainer(), durability);
+            Keys.DURABILITY.set(meta.getPersistentDataContainer(), durability);
 
             if (meta instanceof Damageable) {
                 ((Damageable) meta).setDamage((int)(((double)durability / (double)getMaxDurability()) * stack.getType().getMaxDurability()));
@@ -380,7 +377,7 @@ public class CustomItem implements Keyed {
      */
     public ItemStack applyCooldown(ItemStack item) {
         ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : Bukkit.getItemFactory().getItemMeta(item.getType());
-        plugin.getProperties().getCooldown().set(meta.getPersistentDataContainer(), Util.currentTimeTicks() + getCooldown());
+        Keys.COOLDOWN.set(meta.getPersistentDataContainer(), Util.currentTimeTicks() + getCooldown());
         item.setItemMeta(meta);
         return item;
     }
@@ -393,8 +390,8 @@ public class CustomItem implements Keyed {
     public boolean checkCooldown(ItemStack item) {
         if (!item.hasItemMeta())
             return false;
-        if (plugin.getProperties().getCooldown().has(item.getItemMeta().getPersistentDataContainer())){
-            return plugin.getProperties().getCooldown()
+        if (Keys.COOLDOWN.has(item.getItemMeta().getPersistentDataContainer())){
+            return Keys.COOLDOWN
                 .get(item.getItemMeta().getPersistentDataContainer()) >= Util.currentTimeTicks();
         }
         return false;
@@ -526,7 +523,7 @@ public class CustomItem implements Keyed {
      * @return Itself
      */
     public CustomItem register() {
-        plugin.getCustomItemManager().register(this);
+        CustomItemManager.register(this);
         return this;
     }
 

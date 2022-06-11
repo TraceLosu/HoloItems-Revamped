@@ -6,36 +6,19 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.UUID;
 
 
 public class Properties {
 
-    private final HoloItemsRevamp plugin;
-    private final Owner owner;
-    private final OwnerName ownerName;
-    private final Cooldown cooldown;
-    private final Unstackable unstackable;
-    private final ItemId itemId;
-    private final Renamable renamable;
-    private final Durability durability;
+    public static class Owner extends Property<UUID> {
 
-    public Properties(HoloItemsRevamp plugin) {
-        this.plugin = plugin;
-        this.owner = new Owner();
-        this.ownerName = new OwnerName();
-        this.cooldown = new Cooldown();
-        this.unstackable = new Unstackable();
-        this.itemId = new ItemId();
-        this.renamable = new Renamable();
-        this.durability = new Durability();
-    }
+        private final NamespacedKey key;
 
-    public class Owner extends Property<UUID> {
-
-        private final NamespacedKey key = new NamespacedKey(plugin, "itemowner");
+        public Owner(NamespacedKey key) {
+            this.key = key;
+        }
 
         @Override
         public boolean has(PersistentDataContainer data) {
@@ -63,9 +46,13 @@ public class Properties {
         }
     }
 
-    public class OwnerName extends Property<String> {
+    public static class OwnerName extends Property<String> {
 
-        private final NamespacedKey key = new NamespacedKey(plugin, "itemowername");
+        private final NamespacedKey key;
+
+        public OwnerName(NamespacedKey key) {
+            this.key = key;
+        }
 
         @Override
         public boolean has(PersistentDataContainer data) {
@@ -93,9 +80,13 @@ public class Properties {
         }
     }
 
-    public class Cooldown extends Property<Long> {
+    public static class Cooldown extends Property<Long> {
 
-        private final NamespacedKey key = new NamespacedKey(plugin, "itemcooldown");
+        private final NamespacedKey key;
+
+        public Cooldown(NamespacedKey key) {
+            this.key = key;
+        }
 
         @Override
         public boolean has(PersistentDataContainer data) {
@@ -123,9 +114,13 @@ public class Properties {
         }
     }
 
-    public class Unstackable extends Property<Boolean> {
+    public static class Unstackable extends Property<Boolean> {
 
-        private final NamespacedKey key = new NamespacedKey(plugin, "unstackable");
+        private final NamespacedKey key;
+
+        public Unstackable(NamespacedKey key) {
+            this.key = key;
+        }
 
 
         @Override
@@ -158,9 +153,13 @@ public class Properties {
         }
     }
 
-    public class ItemId extends Property<String> {
+    public static class ItemId extends Property<String> {
 
-        private final NamespacedKey key = new NamespacedKey(plugin, "customitemid");
+        private final NamespacedKey key;
+
+        public ItemId(NamespacedKey key) {
+            this.key = key;
+        }
 
         @Override
         public boolean has(PersistentDataContainer data) {
@@ -188,9 +187,13 @@ public class Properties {
         }
     }
 
-    public class Renamable extends Property<Integer> {
+    public static class Renamable extends Property<Integer> {
 
-        private final NamespacedKey key = new NamespacedKey(plugin, "rename");
+        private final NamespacedKey key;
+
+        public Renamable(NamespacedKey key) {
+            this.key = key;
+        }
 
         @Override
         public boolean has(PersistentDataContainer data) {
@@ -218,9 +221,13 @@ public class Properties {
         }
     }
 
-    public class Durability extends Property<Integer> {
+    public static class Durability extends Property<Integer> {
 
-        private final NamespacedKey key = new NamespacedKey(plugin, "itemdurability");
+        private final NamespacedKey key;
+
+        public Durability(NamespacedKey key) {
+            this.key = key;
+        }
 
         @Override
         public boolean has(PersistentDataContainer data) {
@@ -246,33 +253,5 @@ public class Properties {
         public @NotNull NamespacedKey getKey() {
             return key;
         }
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public OwnerName getOwnerName() {
-        return ownerName;
-    }
-
-    public Cooldown getCooldown() {
-        return cooldown;
-    }
-
-    public Unstackable getUnstackable() {
-        return unstackable;
-    }
-
-    public ItemId getItemId() {
-        return itemId;
-    }
-
-    public Renamable getRenamable() {
-        return renamable;
-    }
-
-    public Durability getDurability() {
-        return durability;
     }
 }

@@ -1,4 +1,4 @@
-package xyz.holocons.mc.holoitemsrevamp.enchant;
+package com.strangeone101.holoitemsapi.enchantments;
 
 import java.lang.reflect.Field;
 import java.util.List;

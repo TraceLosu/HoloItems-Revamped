@@ -1,6 +1,5 @@
 package com.strangeone101.holoitemsapi.recipe;
 
-import com.strangeone101.holoitemsapi.HoloItemsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
@@ -34,15 +33,6 @@ public class RecipeManager {
      */
     public static Recipe getRecipe(NamespacedKey key) {
         return recipes.get(key);
-    }
-
-    /**
-     * Get a recipe
-     * @param key The key
-     * @return The recipe
-     */
-    public static Recipe getRecipe(String key) {
-        return recipes.get(new NamespacedKey(HoloItemsAPI.getPlugin(), key));
     }
 
     /**
@@ -138,15 +128,6 @@ public class RecipeManager {
      */
     public static void addRecipe(Recipe recipe, NamespacedKey key) {
         recipes.put(key, recipe);
-    }
-
-    /**
-     * Register a custom recipe
-     * @param recipe The recipe
-     * @param key The key
-     */
-    public static void registerRecipe(Recipe recipe, String key) {
-        registerRecipe(recipe, new NamespacedKey(HoloItemsAPI.getPlugin(), key));
     }
 
     /**

@@ -15,7 +15,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.Util;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
-import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantments.CustomEnchantment;
 
 public class Magnet extends CustomEnchantment implements BlockBreak {
 

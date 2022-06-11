@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.command.SubCommand;
-import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantments.CustomEnchantment;
 
 import java.util.List;
 

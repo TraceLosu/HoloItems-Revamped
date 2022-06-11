@@ -1,7 +1,6 @@
-package xyz.holocons.mc.holoitemsrevamp.enchant;
+package com.strangeone101.holoitemsapi.enchantments;
 
 import com.strangeone101.holoitemsapi.CustomItemManager;
-import com.strangeone101.holoitemsapi.interfaces.Enchantable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;

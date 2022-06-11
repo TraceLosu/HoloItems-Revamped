@@ -11,6 +11,7 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +28,6 @@ public class RecipeBuilder {
 
         public Shaped(NamespacedKey key, ItemStack stack) {
             this.recipe = new ShapedRecipe(key, stack);
-        }
-
-        public Shaped(String key, ItemStack stack) {
-            this(new NamespacedKey(HoloItemsAPI.getPlugin(), key), stack);
         }
 
         public Shaped setIngredient(char character, Material material) {
@@ -89,10 +86,6 @@ public class RecipeBuilder {
 
         public Shapeless(NamespacedKey key, ItemStack stack) {
             this.recipe = new ShapelessRecipe(key, stack);
-        }
-
-        public Shapeless(String key, ItemStack stack) {
-            this(new NamespacedKey(HoloItemsAPI.getPlugin(), key), stack);
         }
 
         public Shapeless addIngredient(Material material) {
@@ -259,7 +252,7 @@ public class RecipeBuilder {
             return this;
         }
 
-        public ShapedRecipe[] buildRegister() {
+        public ShapedRecipe[] buildRegister(HoloItemsRevamp plugin) {
             if (shape == null) throw new NoSuchElementException("Shape was not provided!");
 
             if (ingredients.size() == 0 && riingredients.size() == 0 && filters.size() == 0) {
@@ -270,13 +263,13 @@ public class RecipeBuilder {
                 //TODO Make 20 recipes with different inputs from the groups
                 //before grouping them together
             } else {
-                ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(HoloItemsAPI.getPlugin(), key), output);
+                ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, key), output);
 
                 ItemStack dummyItem = new ItemStack(Material.KNOWLEDGE_BOOK);
                 ItemMeta dummyMeta = dummyItem.getItemMeta();
                 dummyMeta.setDisplayName(recipe.getKey().getKey());
                 dummyItem.setItemMeta(dummyMeta);
-                ShapedRecipe dummyRecipe = new ShapedRecipe(new NamespacedKey(HoloItemsAPI.getPlugin(), "__" + key), dummyItem);
+                ShapedRecipe dummyRecipe = new ShapedRecipe(new NamespacedKey(plugin, "__" + key), dummyItem);
 
                 recipe.shape(shape);
                 dummyRecipe.shape(shape);
