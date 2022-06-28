@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.1" // Generates plugin.yml
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.2" // Generates plugin.yml
     id("com.github.johnrengelman.shadow") version "7.1.2" // Shades and relocates dependencies into our plugin jar
     id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
 }
@@ -15,7 +15,7 @@ java {
 }
 
 repositories {
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://raw.githubusercontent.com/TraceLosu/HoloItemsAPI/mvn-repo/")
 }
@@ -23,7 +23,7 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
-    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.5")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.6")
 }
 
 tasks {

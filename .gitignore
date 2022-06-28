@@ -119,3 +119,8 @@ run/
 # VSCode
 .vscode/
 *.code-workspace
+
+# Eclipse
+*.classpath
+*.prefs
+*.project
