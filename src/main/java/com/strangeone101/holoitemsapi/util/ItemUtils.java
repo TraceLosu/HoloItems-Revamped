@@ -1,44 +1,13 @@
 package com.strangeone101.holoitemsapi.util;
 
-import com.strangeone101.holoitemsapi.CustomItem;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
-import java.util.Random;
-import java.util.UUID;
 
 public class ItemUtils {
-
-    /**
-     * Sets attributes on an item
-     * @param number The amount to use
-     * @param attribute The attribute
-     * @param operation The operation
-     * @param stack The itemstack
-     * @param ci The custom item
-     */
-    public static void setAttribute(double number, Attribute attribute, AttributeModifier.Operation operation, ItemStack stack, CustomItem ci) {
-        Random random = new Random(cantorFunction(ci.getInternalID(), cantorFunction(attribute.ordinal(), operation.ordinal())));
-
-        try {
-            AttributeModifier mod = new AttributeModifier(new UUID(random.nextLong(), random.nextLong()), attribute.name(), number, operation, getSlotForItem(stack.getType()));
-            ItemMeta meta = stack.getItemMeta();
-            meta.addAttributeModifier(attribute, mod);
-            stack.setItemMeta(meta);
-        } catch (IllegalArgumentException e) {
-
-        }
-    }
 
     /**
      * Gets what Equipment slot this item should be used for

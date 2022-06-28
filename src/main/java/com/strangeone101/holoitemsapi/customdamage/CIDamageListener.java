@@ -1,14 +1,12 @@
-package com.strangeone101.holoitemsapi.listener;
+package com.strangeone101.holoitemsapi.customdamage;
 
 import com.strangeone101.holoitemsapi.Config;
-import com.strangeone101.holoitemsapi.event.CIDamageEntityEvent;
-import com.strangeone101.holoitemsapi.event.CIEntityDamageEntityEvent;
 import com.strangeone101.holoitemsapi.util.CustomDamageSource;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-public class GenericListener implements Listener {
+public class CIDamageListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
