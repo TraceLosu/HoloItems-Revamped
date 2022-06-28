@@ -305,13 +305,13 @@ public class CustomItem implements Keyed {
 
         // Default durability replacement
         result = component.replaceText(
-            TextReplacementConfig.builder().match("{durability}")
+            TextReplacementConfig.builder().matchLiteral("{durability}")
                 .replacement(ItemUtils.getDurabilityString(Keys.DURABILITY.get(dataHolder), getMaxDurability())).build()
         );
 
         for (var entry : variables.entrySet()) {
             result = result.replaceText(
-                TextReplacementConfig.builder().match(entry.getKey())
+                TextReplacementConfig.builder().matchLiteral(entry.getKey())
                     .replacement(entry.getValue().apply(dataHolder))
                     .build()
             );
