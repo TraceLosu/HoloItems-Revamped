@@ -1,7 +1,9 @@
 package com.strangeone101.holoitemsapi;
 
+import com.strangeone101.holoitemsapi.util.ItemUtils;
 import com.strangeone101.holoitemsapi.util.StatsWrapper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -39,7 +41,7 @@ public class CustomItem implements Keyed {
     private int hex;
     private ItemFlag[] flags;
 
-    private Map<String, Function<PersistentDataContainer, Component>> variables = new HashMap<String, Function<PersistentDataContainer, Component>>();
+    private Map<String, Function<PersistentDataContainer, Component>> variables = new HashMap<>();
 
     private CustomItem(String name, HoloItemsRevamp plugin) {
         this.key = new NamespacedKey(plugin, name);
@@ -299,8 +301,23 @@ public class CustomItem implements Keyed {
      * @return The replaced string
      */
     public Component replaceVariables(Component component, PersistentDataContainer dataHolder) {
-        // TODO add this but for Adventure
-        return component;
+        Component result;
+
+        // Default durability replacement
+        result = component.replaceText(
+            TextReplacementConfig.builder().match("{durability}")
+                .replacement(ItemUtils.getDurabilityString(Keys.DURABILITY.get(dataHolder), getMaxDurability())).build()
+        );
+
+        for (var entry : variables.entrySet()) {
+            result = result.replaceText(
+                TextReplacementConfig.builder().match(entry.getKey())
+                    .replacement(entry.getValue().apply(dataHolder))
+                    .build()
+            );
+        }
+
+        return result;
     }
 
     public void addVariable(String variable, Function<PersistentDataContainer, Component> function) {
