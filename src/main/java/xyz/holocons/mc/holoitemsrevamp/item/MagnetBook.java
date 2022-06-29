@@ -29,7 +29,7 @@ public class MagnetBook extends CustomItem implements Enchantable {
     private final EnchantManager enchantManager;
 
     public MagnetBook(HoloItemsRevamp plugin) {
-        super(name, material, displayName, lore, plugin);
+        super(plugin, name, material, displayName, lore);
         this.enchantManager = plugin.getEnchantManager();
         this.register();
         this.registerRecipe();

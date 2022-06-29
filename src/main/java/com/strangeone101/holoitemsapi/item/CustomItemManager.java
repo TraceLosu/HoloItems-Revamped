@@ -24,8 +24,8 @@ public class CustomItemManager {
     public static void register(CustomItem item) {
         CUSTOM_ITEMS.put(item.getInternalName(), item);
 
-        if (item.getInternalID() == 0) {
-            item.setInternalID(NEXT_ID);
+        if (item.getCustomModelID() == 0) {
+            item.setCustomModelID(NEXT_ID);
 
             NEXT_ID++;
             if (NEXT_ID == INVALID_ID) NEXT_ID++;

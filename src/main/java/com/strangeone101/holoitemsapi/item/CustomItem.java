@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -22,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.strangeone101.holoitemsapi.Keys;
@@ -31,7 +31,6 @@ import com.strangeone101.holoitemsapi.statistic.StatsWrapper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.Util;
 
 /**
@@ -41,8 +40,8 @@ import xyz.holocons.mc.holoitemsrevamp.Util;
 public class CustomItem implements Keyed {
 
     private NamespacedKey key;
-    private int internalIntID;
 
+    private int customModelID;
     private Material material;
     private Component displayName;
     private List<Component> lore = new ArrayList<>();
@@ -56,22 +55,10 @@ public class CustomItem implements Keyed {
 
     private Map<String, Function<PersistentDataContainer, Component>> variables = new HashMap<>();
 
-    private CustomItem(String name, HoloItemsRevamp plugin) {
-        this.key = new NamespacedKey(plugin, name);
-    }
-
-    public CustomItem(String name, Material material, HoloItemsRevamp plugin) {
-        this(name, plugin);
+    public CustomItem(Plugin plugin, String key, Material material, Component displayName, List<Component> lore) {
+        this.key = new NamespacedKey(plugin, key);
         this.material = material;
-    }
-
-    public CustomItem(String name, Material material, Component displayName, HoloItemsRevamp plugin) {
-        this(name, material, plugin);
         this.displayName = displayName;
-    }
-
-    public CustomItem(String name, Material material, Component displayName, List<Component> lore, HoloItemsRevamp plugin) {
-        this(name, material, displayName, plugin);
         this.lore = lore;
     }
 
@@ -113,7 +100,7 @@ public class CustomItem implements Keyed {
 
         meta.lore(loreList);
 
-        if (internalIntID != 0) meta.setCustomModelData(internalIntID); //Used for resource packs
+        if (customModelID != 0) meta.setCustomModelData(customModelID); //Used for resource packs
 
         if (player != null) {
             if (properties.contains(Keys.OWNER)) {
@@ -233,7 +220,7 @@ public class CustomItem implements Keyed {
 
     /**
      * Gets the cooldown of the item
-     * @return The cooldown in milliseconds
+     * @return The cooldown in ticks
      */
     public int getCooldown() {
         return cooldown;
@@ -241,37 +228,35 @@ public class CustomItem implements Keyed {
 
     /**
      * Sets the cooldown of the item
-     * @param cooldown The cooldown of the item in millisecond
+     * @param cooldown The cooldown of the item in ticks
      */
     public void setCooldown(int cooldown) {
         this.cooldown = cooldown;
     }
 
     /**
-     * Applies a cooldown to an itemstack by storing the next time the item can be used.
+     * Applies a cooldown to an itemstack by storing the current time
      * @param item The itemStack
      * @return The itemStack with the cooldown.
      */
     public ItemStack applyCooldown(ItemStack item) {
-        ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : Bukkit.getItemFactory().getItemMeta(item.getType());
-        Keys.COOLDOWN.set(meta.getPersistentDataContainer(), Util.currentTimeTicks() + getCooldown());
+        var currentTick = Util.currentTimeTicks();
+        var meta = item.getItemMeta();
+        Keys.COOLDOWN.set(meta.getPersistentDataContainer(), currentTick);
         item.setItemMeta(meta);
         return item;
     }
 
     /**
-     * Checks if an item is on cooldown or not. If the plugin fails to get the meta then it returns false.
+     * Checks whether an item is on cooldown
      * @param item The item
      * @return True if it's on cooldown. False otherwise.
      */
     public boolean checkCooldown(ItemStack item) {
-        if (!item.hasItemMeta())
-            return false;
-        if (Keys.COOLDOWN.has(item.getItemMeta().getPersistentDataContainer())){
-            return Keys.COOLDOWN
-                .get(item.getItemMeta().getPersistentDataContainer()) >= Util.currentTimeTicks();
-        }
-        return false;
+        var currentTick = Util.currentTimeTicks();
+        var meta = item.getItemMeta();
+        var previousTick = Keys.COOLDOWN.get(meta.getPersistentDataContainer());
+        return currentTick - previousTick < getCooldown();
     }
 
     /**
@@ -368,13 +353,13 @@ public class CustomItem implements Keyed {
         return this;
     }
 
-    public CustomItem setInternalID(int id) {
-        this.internalIntID = id;
+    public CustomItem setCustomModelID(int id) {
+        this.customModelID = id;
         return this;
     }
 
-    public int getInternalID() {
-        return internalIntID;
+    public int getCustomModelID() {
+        return customModelID;
     }
 
     /**
@@ -426,7 +411,7 @@ public class CustomItem implements Keyed {
     public String toString() {
         return "CustomItem{" +
                 "name='" + getInternalName() + '\'' +
-                ", textureID=" + internalIntID +
+                ", textureID=" + customModelID +
                 ", material=" + material +
                 ", displayName='" + displayName + "\'\u00A7r'" +
                 ", stackable=" + stackable +

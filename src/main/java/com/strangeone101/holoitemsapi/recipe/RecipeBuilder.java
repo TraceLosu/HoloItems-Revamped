@@ -227,7 +227,7 @@ public class RecipeBuilder {
         public boolean checkStack(char ingredientChar, ItemStack stack) {
             if (ingredients.containsKey(ingredientChar)) {
                 if (CustomItemManager.isCustomItem(ingredients.get(ingredientChar)) && CustomItemManager.isCustomItem(stack)) {
-                    return CustomItemManager.getCustomItem(ingredients.get(ingredientChar)).getInternalID() == CustomItemManager.getCustomItem(stack).getInternalID();
+                    return CustomItemManager.getCustomItem(ingredients.get(ingredientChar)).getCustomModelID() == CustomItemManager.getCustomItem(stack).getCustomModelID();
                 } else {
                     return ingredients.get(ingredientChar).isSimilar(stack);
                 }
