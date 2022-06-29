@@ -45,40 +45,6 @@ public class Properties {
         }
     }
 
-    public static class OwnerName extends Property<String> {
-
-        private final NamespacedKey key;
-
-        public OwnerName(NamespacedKey key) {
-            this.key = key;
-        }
-
-        @Override
-        public boolean has(PersistentDataContainer data) {
-            return data.has(getKey(), PersistentDataType.STRING);
-        }
-
-        @Override
-        public String get(PersistentDataContainer data) {
-            return data.get(getKey(), PersistentDataType.STRING);
-        }
-
-        @Override
-        public void set(PersistentDataContainer data, String value) {
-            data.set(getKey(), PersistentDataType.STRING, value);
-        }
-
-        @Override
-        public String getPropertyName() {
-            return "Owner Name";
-        }
-
-        @Override
-        public @NotNull NamespacedKey getKey() {
-            return key;
-        }
-    }
-
     public static class Cooldown extends Property<Long> {
 
         private final NamespacedKey key;
@@ -120,7 +86,6 @@ public class Properties {
         public Unstackable(NamespacedKey key) {
             this.key = key;
         }
-
 
         @Override
         public boolean has(PersistentDataContainer data) {
@@ -178,40 +143,6 @@ public class Properties {
         @Override
         public String getPropertyName() {
             return "Owner Name";
-        }
-
-        @Override
-        public @NotNull NamespacedKey getKey() {
-            return key;
-        }
-    }
-
-    public static class Renamable extends Property<Integer> {
-
-        private final NamespacedKey key;
-
-        public Renamable(NamespacedKey key) {
-            this.key = key;
-        }
-
-        @Override
-        public boolean has(PersistentDataContainer data) {
-            return data.has(getKey(), PersistentDataType.INTEGER);
-        }
-
-        @Override
-        public Integer get(PersistentDataContainer data) {
-            return data.getOrDefault(getKey(), PersistentDataType.INTEGER, 0);
-        }
-
-        @Override
-        public void set(PersistentDataContainer data, Integer value) {
-            data.set(getKey(), PersistentDataType.INTEGER, value);
-        }
-
-        @Override
-        public String getPropertyName() {
-            return "Renamed";
         }
 
         @Override

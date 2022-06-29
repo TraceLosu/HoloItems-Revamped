@@ -11,10 +11,8 @@ public class Keys {
     private static HashMap<String, NamespacedKey> keyMap;
 
     public static Property<UUID> OWNER;
-    public static Property<String> OWNER_NAME;
     public static Property<Long> COOLDOWN;
     public static Property<Boolean> UNSTACKABLE;
-    public static Property<Integer> RENAMABLE;
     public static Property<String> ITEM_ID;
 
     public static void fillKeys(HashMap<String, NamespacedKey> keys) {
@@ -22,10 +20,8 @@ public class Keys {
         keyMap = keys;
 
         OWNER = new Properties.Owner(getKey("owner"));
-        OWNER_NAME = new Properties.OwnerName(getKey("owner_name"));
         COOLDOWN = new Properties.Cooldown(getKey("cooldown"));
         UNSTACKABLE = new Properties.Unstackable(getKey("unstackable"));
-        RENAMABLE = new Properties.Renamable(getKey("renamable"));
         ITEM_ID = new Properties.ItemId(getKey("item_id"));
     }
 

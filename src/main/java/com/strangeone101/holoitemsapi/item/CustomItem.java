@@ -1,33 +1,45 @@
 package com.strangeone101.holoitemsapi.item;
 
-import com.strangeone101.holoitemsapi.Keys;
-import com.strangeone101.holoitemsapi.Property;
-import com.strangeone101.holoitemsapi.util.ItemUtils;
-import com.strangeone101.holoitemsapi.util.StatsWrapper;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Keyed;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import com.strangeone101.holoitemsapi.Keys;
+import com.strangeone101.holoitemsapi.Property;
+import com.strangeone101.holoitemsapi.util.StatsWrapper;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.Util;
-
-import java.util.*;
-import java.util.function.Function;
 
 /**
  * A class for creating custom items. Be sure to call {@link #register()} after creating it
  * to properly register it
  */
 public class CustomItem implements Keyed {
+
     private NamespacedKey key;
     private int internalIntID;
 
@@ -106,7 +118,6 @@ public class CustomItem implements Keyed {
         if (player != null) {
             if (properties.contains(Keys.OWNER)) {
                 Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
-                Keys.OWNER_NAME.set(meta.getPersistentDataContainer(), player.getName());
             }
         }
         if (properties.contains(Keys.COOLDOWN)) {
@@ -161,77 +172,6 @@ public class CustomItem implements Keyed {
     }
 
     /**
-     * Updates an existing itemstack with updated lore, name and variables
-     * @param stack The itemstack
-     * @param player The player holding it
-     * @return The updated stack
-     */
-    public ItemStack updateStack(ItemStack stack, Player player) {
-        ItemMeta originalMeta = stack.getItemMeta();
-        ItemMeta meta = originalMeta;
-
-        if (getMaterial() != stack.getType()) {
-            if (originalMeta instanceof Damageable) {
-                int damage = ((Damageable)originalMeta).getDamage();
-                stack = buildStack(player); //Rebuild from scratch
-                meta = stack.getItemMeta();
-                if (meta instanceof Damageable) {
-                    ((Damageable) meta).setDamage(damage);
-                }
-            }
-        }
-        if (properties.contains(Keys.OWNER)) {
-            UUID uuid = Keys.OWNER.get(meta.getPersistentDataContainer());
-            String ownerName;
-            if (uuid != null) { //The owner can still be none if this is built using no player
-                if (Bukkit.getPlayer(uuid) != null) { //If the player is online, use the new name
-                    ownerName = Bukkit.getPlayer(uuid).getName();
-                } else if (Keys.OWNER_NAME.has(meta.getPersistentDataContainer())) {
-                    ownerName = Keys.OWNER_NAME.get(meta.getPersistentDataContainer());
-                } else ownerName = player.getName(); //Failsafe is the new player's name
-                Keys.OWNER_NAME.set(meta.getPersistentDataContainer(), ownerName);
-            } else { //Owner is not defined but it should be
-                if (player != null) { //Be sure we aren't gonna get an NPE
-                    Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
-                    Keys.OWNER_NAME.set(meta.getPersistentDataContainer(), player.getName());
-                }
-            }
-        }
-
-        if (!properties.contains(Keys.RENAMABLE) || Keys.RENAMABLE.get(meta.getPersistentDataContainer()) == 0) {
-            //It's important to use the functions `getDisplayName()` and `getLore()` bellow
-            //instead of the field names in case an object overrides them
-            meta.displayName(replaceVariables(getDisplayName(), meta.getPersistentDataContainer()));
-        }
-
-
-        List<Component> lore = new ArrayList<>();
-
-        for (var line : getLore()) {
-            lore.add(replaceVariables(line, meta.getPersistentDataContainer()));
-        }
-
-        meta.lore(lore);
-
-        if (meta instanceof LeatherArmorMeta) {
-            ((LeatherArmorMeta) meta).setColor(Color.fromRGB(hex));
-        }
-
-        if (internalIntID != 0) meta.setCustomModelData(internalIntID); //Used for resource packs
-
-        if (glow) {
-            stack.addUnsafeEnchantment(Enchantment.LUCK, 1);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-
-        if (flags != null && flags.length > 0) meta.addItemFlags(flags);
-
-        stack.setItemMeta(meta);
-
-        return stack;
-    }
-
-    /**
      * Replaces the string provided with variables
      * @param component The component
      * @param dataHolder The data holder
@@ -253,17 +193,6 @@ public class CustomItem implements Keyed {
 
     public void addVariable(String variable, Function<PersistentDataContainer, Component> function) {
         variables.put(variable, function);
-    }
-
-    /**
-     * Unimplemented
-     * @param speedPercentage
-     * @return Itself
-     */
-    @Deprecated
-    public CustomItem setToolSpeed(double speedPercentage) {
-        //TODO
-        return this;
     }
 
     /**
