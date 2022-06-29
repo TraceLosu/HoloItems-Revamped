@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -44,12 +43,11 @@ public class CustomItem implements Keyed {
     private int customModelID;
     private Material material;
     private Component displayName;
-    private List<Component> lore = new ArrayList<>();
+    private List<Component> lore;
     private int cooldown = 0;
     private boolean stackable = true;
     private Set<Property<?>> properties = new HashSet<>();
     private Set<StatsWrapper<?>> statGoals;
-    private boolean glow;
     private int hex;
     private ItemFlag[] flags;
 
@@ -115,11 +113,6 @@ public class CustomItem implements Keyed {
 
          //If the item shouldn't be stackable, add a random INTEGER to the NBT
         Keys.UNSTACKABLE.set(meta.getPersistentDataContainer(), !isStackable());
-
-        if (glow) {
-            stack.addUnsafeEnchantment(Enchantment.LUCK, 1);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
 
         if (flags != null && flags.length > 0) meta.addItemFlags(flags);
 
@@ -302,24 +295,6 @@ public class CustomItem implements Keyed {
             remainingStats.put(stat.getStatistic(), stat.inspectPlayer(player));
         });
         return remainingStats;
-    }
-
-    /**
-     * Make the item have an enchanted glow
-     * @param glow True to glow
-     * @return Itself
-     */
-    public CustomItem setEnchantedGlow(boolean glow) {
-        this.glow = true;
-        return this;
-    }
-
-    /**
-     * Whether the item has an enchanted glow
-     * @return The glow state
-     */
-    public boolean hasEnchantedGlow() {
-        return this.glow;
     }
 
     /**
