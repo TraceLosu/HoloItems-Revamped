@@ -16,7 +16,6 @@ public class Keys {
     public static Property<Boolean> UNSTACKABLE;
     public static Property<Integer> RENAMABLE;
     public static Property<String> ITEM_ID;
-    public static Property<Integer> DURABILITY;
 
     public static void fillKeys(HashMap<String, NamespacedKey> keys) {
         if (keyMap != null) throw new RuntimeException("Keys are already supplied!");
@@ -28,7 +27,6 @@ public class Keys {
         UNSTACKABLE = new Properties.Unstackable(getKey("unstackable"));
         RENAMABLE = new Properties.Renamable(getKey("renamable"));
         ITEM_ID = new Properties.ItemId(getKey("item_id"));
-        DURABILITY = new Properties.Durability(getKey("durability"));
     }
 
     public static @Nullable NamespacedKey getKey(String key) {

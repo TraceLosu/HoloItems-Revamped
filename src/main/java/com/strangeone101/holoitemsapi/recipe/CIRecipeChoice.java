@@ -20,8 +20,7 @@ public class CIRecipeChoice extends RecipeChoice.ExactChoice {
         for (ItemStack match : this.getChoices()) {
             if (CustomItemManager.isCustomItem(match)) {
                 CustomItem ci = CustomItemManager.getCustomItem(match);
-                if (ci != null && ci == CustomItemManager.getCustomItem(t) &&
-                        (ci.getMaxDurability() == 0 || ci.getDurability(match) == ci.getDurability(t)))
+                if (ci != null && ci == CustomItemManager.getCustomItem(t))
                     return true;
             }
             else if (match.isSimilar(t))

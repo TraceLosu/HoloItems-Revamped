@@ -34,7 +34,6 @@ public class CustomItem implements Keyed {
     private Material material;
     private Component displayName;
     private List<Component> lore = new ArrayList<>();
-    private int maxDurability = 0;
     private int cooldown = 0;
     private boolean stackable = true;
     private Set<Property<?>> properties = new HashSet<>();
@@ -115,10 +114,6 @@ public class CustomItem implements Keyed {
         }
 
         Keys.ITEM_ID.set(meta.getPersistentDataContainer(), getInternalName());
-
-        if (getMaxDurability() > 0) {
-            Keys.DURABILITY.set(meta.getPersistentDataContainer(), 0);
-        }
 
          //If the item shouldn't be stackable, add a random INTEGER to the NBT
         Keys.UNSTACKABLE.set(meta.getPersistentDataContainer(), !isStackable());
@@ -237,79 +232,13 @@ public class CustomItem implements Keyed {
     }
 
     /**
-     * Damages the item's durability
-     * @param stack The itemstack
-     * @param amount The amount to damage it
-     * @param player The player damageing it
-     */
-    public void damageItem(ItemStack stack, int amount, Player player) {
-        if (getMaxDurability() > 0 && player.getGameMode() != GameMode.CREATIVE) {
-            ItemMeta meta = stack.getItemMeta();
-            int damage = Keys.DURABILITY.get(meta.getPersistentDataContainer());
-            damage += amount;
-
-            if (damage >= getMaxDurability()) {
-                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
-                Location inFront = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().clone().multiply(0.3));
-                player.getWorld().spawnParticle(Particle.ITEM_CRACK, inFront, 16, 0.25F, 0.25F, 0.25F, 0.05F, stack);
-                stack.setType(Material.AIR);
-                return;
-            }
-
-            setDurability(stack, damage);
-            updateStack(stack, player);
-        }
-    }
-
-    /**
-     * Get the durability on this custom item
-     * @param stack The custom item stack
-     * @return The durability
-     */
-    public int getDurability(ItemStack stack) {
-        if (getMaxDurability() > 0) {
-            ItemMeta meta = stack.getItemMeta();
-            return Keys.DURABILITY.get(meta.getPersistentDataContainer());
-        }
-        return 0;
-    }
-
-    /**
-     * Set the durability of this custom item
-     * @param stack The custom item stack
-     * @param durability The durability
-     */
-    public void setDurability(ItemStack stack, int durability) {
-        if (getMaxDurability() > 0) {
-            if (durability <= 0) {
-                stack.setType(Material.AIR);
-                return;
-            }
-            ItemMeta meta = stack.getItemMeta();
-            Keys.DURABILITY.set(meta.getPersistentDataContainer(), durability);
-
-            if (meta instanceof Damageable) {
-                ((Damageable) meta).setDamage((int)(((double)durability / (double)getMaxDurability()) * stack.getType().getMaxDurability()));
-            }
-
-            stack.setItemMeta(meta); //Update item
-        }
-    }
-
-    /**
      * Replaces the string provided with variables
      * @param component The component
      * @param dataHolder The data holder
      * @return The replaced string
      */
     public Component replaceVariables(Component component, PersistentDataContainer dataHolder) {
-        Component result;
-
-        // Default durability replacement
-        result = component.replaceText(
-            TextReplacementConfig.builder().matchLiteral("{durability}")
-                .replacement(ItemUtils.getDurabilityString(Keys.DURABILITY.get(dataHolder), getMaxDurability())).build()
-        );
+        var result = component;
 
         for (var entry : variables.entrySet()) {
             result = result.replaceText(
@@ -510,24 +439,6 @@ public class CustomItem implements Keyed {
         return this;
     }
 
-    /**
-     * Get the max durability of the item
-     * @return The durability
-     */
-    public int getMaxDurability() {
-        return maxDurability;
-    }
-
-    /**
-     * Set the max durability of the item
-     * @param maxDurability The durability
-     * @return Itself
-     */
-    public CustomItem setMaxDurability(int maxDurability) {
-        this.maxDurability = maxDurability;
-        return this;
-    }
-
     public CustomItem setInternalID(int id) {
         this.internalIntID = id;
         return this;
@@ -589,7 +500,6 @@ public class CustomItem implements Keyed {
                 ", textureID=" + internalIntID +
                 ", material=" + material +
                 ", displayName='" + displayName + "\'\u00A7r'" +
-                ", maxDurability=" + maxDurability +
                 ", stackable=" + stackable +
                 ", properties=" + properties +
                 '}';

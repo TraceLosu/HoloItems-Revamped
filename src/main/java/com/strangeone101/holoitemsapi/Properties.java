@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-
 public class Properties {
 
     public static class Owner extends Property<UUID> {
@@ -213,40 +212,6 @@ public class Properties {
         @Override
         public String getPropertyName() {
             return "Renamed";
-        }
-
-        @Override
-        public @NotNull NamespacedKey getKey() {
-            return key;
-        }
-    }
-
-    public static class Durability extends Property<Integer> {
-
-        private final NamespacedKey key;
-
-        public Durability(NamespacedKey key) {
-            this.key = key;
-        }
-
-        @Override
-        public boolean has(PersistentDataContainer data) {
-            return data.has(getKey(), PersistentDataType.INTEGER);
-        }
-
-        @Override
-        public Integer get(PersistentDataContainer data) {
-            return data.getOrDefault(getKey(), PersistentDataType.INTEGER, 0);
-        }
-
-        @Override
-        public void set(PersistentDataContainer data, Integer value) {
-            data.set(getKey(), PersistentDataType.INTEGER, value);
-        }
-
-        @Override
-        public String getPropertyName() {
-            return "Durability";
         }
 
         @Override
