@@ -2,7 +2,7 @@ package com.strangeone101.holoitemsapi;
 
 import org.bukkit.NamespacedKey;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.UUID;
 
