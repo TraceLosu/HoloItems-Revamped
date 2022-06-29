@@ -26,7 +26,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.strangeone101.holoitemsapi.Keys;
 import com.strangeone101.holoitemsapi.Property;
-import com.strangeone101.holoitemsapi.util.StatsWrapper;
+import com.strangeone101.holoitemsapi.statistic.StatsWrapper;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;

@@ -1,4 +1,4 @@
-package com.strangeone101.holoitemsapi.util;
+package com.strangeone101.holoitemsapi.statistic;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;

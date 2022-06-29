@@ -1,6 +1,5 @@
 package com.strangeone101.holoitemsapi;
 
-import com.strangeone101.holoitemsapi.util.UUIDTagType;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -21,17 +20,17 @@ public class Properties {
 
         @Override
         public boolean has(PersistentDataContainer data) {
-            return data.has(getKey(), UUIDTagType.TYPE);
+            return data.has(getKey(), DataType.UUID);
         }
 
         @Override
         public UUID get(PersistentDataContainer data) {
-            return data.get(getKey(), UUIDTagType.TYPE);
+            return data.get(getKey(), DataType.UUID);
         }
 
         @Override
         public void set(PersistentDataContainer data, UUID value) {
-            data.set(getKey(), UUIDTagType.TYPE, value);
+            data.set(getKey(), DataType.UUID, value);
         }
 
         @Override
