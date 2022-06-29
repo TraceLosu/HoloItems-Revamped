@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.strangeone101.holoitemsapi.CustomItem;
+import com.strangeone101.holoitemsapi.item.CustomItem;
 
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.collection.en1.EN1Collection;

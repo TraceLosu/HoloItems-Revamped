@@ -1,4 +1,4 @@
-package com.strangeone101.holoitemsapi.enchantments;
+package com.strangeone101.holoitemsapi.enchantment;
 
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import org.bukkit.NamespacedKey;

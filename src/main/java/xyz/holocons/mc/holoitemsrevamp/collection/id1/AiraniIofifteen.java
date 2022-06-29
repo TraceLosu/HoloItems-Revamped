@@ -2,9 +2,9 @@ package xyz.holocons.mc.holoitemsrevamp.collection.id1;
 
 import java.util.List;
 
-import com.strangeone101.holoitemsapi.CustomItem;
-
 import org.jetbrains.annotations.NotNull;
+
+import com.strangeone101.holoitemsapi.item.CustomItem;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;

@@ -1,5 +1,7 @@
-package com.strangeone101.holoitemsapi;
+package com.strangeone101.holoitemsapi.item;
 
+import com.strangeone101.holoitemsapi.Keys;
+import com.strangeone101.holoitemsapi.Property;
 import com.strangeone101.holoitemsapi.util.ItemUtils;
 import com.strangeone101.holoitemsapi.util.StatsWrapper;
 import net.kyori.adventure.text.Component;

@@ -1,6 +1,8 @@
-package com.strangeone101.holoitemsapi;
+package com.strangeone101.holoitemsapi.item;
 
 import org.bukkit.inventory.ItemStack;
+
+import com.strangeone101.holoitemsapi.Keys;
 
 import java.util.HashMap;
 import java.util.Map;

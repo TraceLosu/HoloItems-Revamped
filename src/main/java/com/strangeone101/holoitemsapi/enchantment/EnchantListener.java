@@ -1,6 +1,5 @@
-package com.strangeone101.holoitemsapi.enchantments;
+package com.strangeone101.holoitemsapi.enchantment;
 
-import com.strangeone101.holoitemsapi.CustomItemManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -19,6 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.strangeone101.holoitemsapi.item.CustomItemManager;
+
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;

@@ -1,4 +1,4 @@
-package com.strangeone101.holoitemsapi.enchantments;
+package com.strangeone101.holoitemsapi.enchantment;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;

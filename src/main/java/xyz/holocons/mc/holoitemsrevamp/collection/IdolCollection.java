@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.strangeone101.holoitemsapi.CustomItem;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import com.strangeone101.holoitemsapi.item.CustomItem;
 
 import net.kyori.adventure.text.Component;
 

@@ -1,8 +1,8 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
-import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.enchantments.EnchantManager;
-import com.strangeone101.holoitemsapi.enchantments.Enchantable;
+import com.strangeone101.holoitemsapi.enchantment.EnchantManager;
+import com.strangeone101.holoitemsapi.enchantment.Enchantable;
+import com.strangeone101.holoitemsapi.item.CustomItem;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

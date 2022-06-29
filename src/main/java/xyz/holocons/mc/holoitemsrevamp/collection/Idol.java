@@ -3,11 +3,11 @@ package xyz.holocons.mc.holoitemsrevamp.collection;
 import java.util.List;
 import java.util.Set;
 
-import com.strangeone101.holoitemsapi.CustomItem;
-
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import com.strangeone101.holoitemsapi.item.CustomItem;
 
 import net.kyori.adventure.text.Component;
 import xyz.holocons.mc.holoitemsrevamp.Util;

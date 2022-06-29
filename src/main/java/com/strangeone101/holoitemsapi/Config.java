@@ -1,10 +1,12 @@
 package com.strangeone101.holoitemsapi;
 
-import com.strangeone101.holoitemsapi.util.CustomDamageSource;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.bukkit.configuration.file.FileConfiguration;
+
+import com.strangeone101.holoitemsapi.item.CustomItem;
+import com.strangeone101.holoitemsapi.util.CustomDamageSource;
 
 public class Config {
 

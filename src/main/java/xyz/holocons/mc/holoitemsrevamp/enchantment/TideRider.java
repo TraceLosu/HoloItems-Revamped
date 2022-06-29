@@ -13,13 +13,14 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
 import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
-import com.strangeone101.holoitemsapi.enchantments.CustomEnchantment;
 
 public class TideRider extends CustomEnchantment implements PlayerInteract, ProjectileLaunch {
 

@@ -1,9 +1,10 @@
 package com.strangeone101.holoitemsapi.recipe;
 
-import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.CustomItemManager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
+
+import com.strangeone101.holoitemsapi.item.CustomItem;
+import com.strangeone101.holoitemsapi.item.CustomItemManager;
 
 /**
  * A recipe choice that uses a custom item

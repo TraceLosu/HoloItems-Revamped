@@ -4,11 +4,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.command.SubCommand;
-import com.strangeone101.holoitemsapi.enchantments.CustomEnchantment;
 
 import java.util.List;
 

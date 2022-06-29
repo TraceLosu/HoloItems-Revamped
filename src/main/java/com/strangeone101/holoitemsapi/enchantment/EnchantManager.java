@@ -1,4 +1,4 @@
-package com.strangeone101.holoitemsapi.enchantments;
+package com.strangeone101.holoitemsapi.enchantment;
 
 import java.lang.reflect.Field;
 import java.util.List;

@@ -1,6 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
 import com.destroystokyo.paper.MaterialTags;
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
@@ -15,7 +16,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.Util;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
-import com.strangeone101.holoitemsapi.enchantments.CustomEnchantment;
 
 public class Magnet extends CustomEnchantment implements BlockBreak {
 
