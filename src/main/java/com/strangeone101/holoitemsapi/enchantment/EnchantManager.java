@@ -1,5 +1,17 @@
 package com.strangeone101.holoitemsapi.enchantment;
 
+import it.unimi.dsi.fastutil.Pair;
+import net.kyori.adventure.text.Component;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -9,17 +21,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import it.unimi.dsi.fastutil.Pair;
-import net.kyori.adventure.text.Component;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
 
 public class EnchantManager {
 
@@ -59,18 +60,32 @@ public class EnchantManager {
      * to the itemstack as lore. If any custom enchantment lore is already on the given
      * itemstack, {@code EnchantManager#removeCustomEnchantmentLore} should be
      * done first.
+     *
+     * If the item stack is an enchanted book, it will get the enchantments using {@link EnchantmentStorageMeta#getStoredEnchants()}
      * @param itemStack An ItemStack that has custom enchantments
-     * @return The same ItemStack with custom enchantment lore applied
      */
     public void applyCustomEnchantmentLore(ItemStack itemStack) {
-        final var enchantmentLore = itemStack.getEnchantments()
-            .entrySet()
-            .stream()
-            .map(entry -> customEnchantmentDisplayNames.get(Pair.of(entry.getKey(), entry.getValue())))
-            .filter(Objects::nonNull);
+        var enchantmentLore = itemStack.getItemMeta() instanceof EnchantmentStorageMeta ?
+            getCustomEnchantmentLore((EnchantmentStorageMeta) itemStack.getItemMeta()) :
+            getCustomEnchantmentLore(itemStack.getItemMeta());
+
         final var oldLore = itemStack.lore();
         final var newLore = oldLore == null ? enchantmentLore.toList() : Stream.concat(enchantmentLore, oldLore.stream()).toList();
         itemStack.lore(newLore.isEmpty() ? null : newLore);
+    }
+
+    public Stream<Component> getCustomEnchantmentLore(EnchantmentStorageMeta enchantmentMeta) {
+        return getCustomEnchantmentLore(enchantmentMeta.getStoredEnchants());
+    }
+
+    public Stream<Component> getCustomEnchantmentLore(ItemMeta enchantmentMeta) {
+        return getCustomEnchantmentLore(enchantmentMeta.getEnchants());
+    }
+
+    public Stream<Component> getCustomEnchantmentLore(Map<Enchantment, Integer> enchantments) {
+        return enchantments.entrySet().stream()
+            .map(entry -> customEnchantmentDisplayNames.get(Pair.of(entry.getKey(), entry.getValue())))
+            .filter(Objects::nonNull);
     }
 
     /**

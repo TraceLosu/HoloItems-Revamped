@@ -6,21 +6,19 @@ import com.strangeone101.holoitemsapi.item.CustomItem;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.List;
 
 public class MagnetBook extends CustomItem implements Enchantable {
 
-    // TODO: The magnet enchantment should be given on an enchanted book
     private final static String name = "magnet";
-    private final static Material material = Material.IRON_PICKAXE;
+    private final static Material material = Material.ENCHANTED_BOOK;
     private final static Component displayName = Component.text("Magnet", NamedTextColor.RED);
     private final static List<Component> lore = List.of(
         Component.text("Automatically put mined items to your inventory!", NamedTextColor.DARK_PURPLE)
@@ -33,11 +31,6 @@ public class MagnetBook extends CustomItem implements Enchantable {
         this.enchantManager = plugin.getEnchantManager();
         this.register();
         this.registerRecipe();
-    }
-
-    @Override
-    public ItemStack buildStack(Player player) {
-        return applyEnchantment(super.buildStack(player));
     }
 
     private void registerRecipe() {
@@ -65,7 +58,7 @@ public class MagnetBook extends CustomItem implements Enchantable {
     @Override
     public ItemStack applyEnchantment(ItemStack itemStack) {
         var enchantedStack = itemStack.clone();
-        var enchantedMeta = enchantedStack.hasItemMeta() ? enchantedStack.getItemMeta() : Bukkit.getItemFactory().getItemMeta(enchantedStack.getType());
+        var enchantedMeta = (EnchantmentStorageMeta) enchantedStack.getItemMeta();
 
         if (enchantedMeta.addEnchant(getEnchantment(), 1, false)) {
             enchantedStack.setItemMeta(enchantedMeta);

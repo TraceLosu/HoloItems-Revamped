@@ -1,13 +1,12 @@
 package com.strangeone101.holoitemsapi.item;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
+import com.strangeone101.holoitemsapi.Keys;
+import com.strangeone101.holoitemsapi.Property;
+import com.strangeone101.holoitemsapi.enchantment.Enchantable;
+import com.strangeone101.holoitemsapi.statistic.StatsWrapper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -22,15 +21,15 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import com.strangeone101.holoitemsapi.Keys;
-import com.strangeone101.holoitemsapi.Property;
-import com.strangeone101.holoitemsapi.statistic.StatsWrapper;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.format.NamedTextColor;
 import xyz.holocons.mc.holoitemsrevamp.Util;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * A class for creating custom items. Be sure to call {@link #register()} after creating it
@@ -74,7 +73,7 @@ public class CustomItem implements Keyed {
     }
 
     /**
-     * Create a new ItemStack for use. NOT for updating existing ones; see {@link #updateStack(ItemStack, Player)}
+     * Create a new ItemStack for use. NOT for updating existing ones; see updateStack
      * @param player The player
      * @return The ItemStack
      */
@@ -118,6 +117,10 @@ public class CustomItem implements Keyed {
 
         stack.setItemMeta(meta);
 
+        if (this instanceof Enchantable enchantable) {
+            stack = enchantable.applyEnchantment(stack);
+        }
+
         return stack;
     }
 
@@ -150,6 +153,8 @@ public class CustomItem implements Keyed {
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
+
+    //TODO re-add UpdateStack
 
     /**
      * Replaces the string provided with variables
