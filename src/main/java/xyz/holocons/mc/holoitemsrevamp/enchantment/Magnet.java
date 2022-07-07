@@ -50,7 +50,7 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
 
     @Override
     public int getLevelMultiplier() {
-        return 0;
+        return 50;
     }
 
     @Override
