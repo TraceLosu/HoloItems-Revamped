@@ -1,8 +1,8 @@
 package com.strangeone101.holoitemsapi.enchantment;
 
+import com.strangeone101.holoitemsapi.item.CustomItemManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -16,11 +16,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.strangeone101.holoitemsapi.item.CustomItemManager;
-
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
@@ -114,34 +112,38 @@ public class EnchantListener implements Listener {
             return;
 
         var base = event.getInventory().getFirstItem();
-
-        if (base == null)
-            return;
-
-        var baseMeta = base.hasItemMeta() ? base.getItemMeta() : Bukkit.getItemFactory().getItemMeta(base.getType());
         var addition = event.getInventory().getSecondItem();
+
+        if (base == null || !(base.getItemMeta() instanceof Repairable))
+            return;
 
         // Only handle events that contain custom enchantments
         if (hasNoCustomEnchants(base) && hasNoCustomEnchants(addition))
             return;
 
+        if (CustomItemManager.isCustomItem(base)) { // Disallow players to modify custom items
+            event.setResult(null);
+            plugin.getServer().getScheduler().runTask(plugin, () -> event.getInventory().setResult(null));
+            return;
+        }
+
+        // Name handling with base item containing custom enchantments
         if (addition == null) {
             var renameText = event.getInventory().getRenameText();
-            var displayName = baseMeta.hasDisplayName() ?
-                PlainTextComponentSerializer.plainText().serialize(baseMeta.displayName()) : "";
+            var displayName = base.getItemMeta().hasDisplayName() ?
+                PlainTextComponentSerializer.plainText().serialize(base.getItemMeta().displayName()) : "";
             if (renameText != null && !renameText.equals("")
-                && !displayName.equals(renameText)) { // If the player just wants to rename.
+                && !displayName.equals(renameText)) {
                 var result = base.clone();
-                var resultMeta = baseMeta.clone();
+                var resultMeta = result.getItemMeta();
 
                 resultMeta.displayName(Component.text(renameText));
                 result.setItemMeta(resultMeta);
 
                 final int levelCost = event.getInventory().getRepairCost();
-                final var finalBase = base.clone();
 
                 plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    if (!finalBase.equals(event.getInventory().getFirstItem()))
+                    if (!base.equals(event.getInventory().getFirstItem()))
                         return;
 
                     event.getInventory().setResult(result);
@@ -152,54 +154,52 @@ public class EnchantListener implements Listener {
             return;
         }
 
-        // Only handle recipes that would work in vanilla
-        if ((event.getInventory().getResult() == null || event.getInventory().getResult().getType() == Material.AIR)) {
-            if (CustomItemManager.isCustomItem(addition)) { // Unless that second item is a custom item
-                var customItem = CustomItemManager.getCustomItem(addition);
-                if (customItem instanceof Enchantable enchantable) { // And it must implement the enchantable interface.
-                    if (!enchantable.getEnchantment().canEnchantItem(base))
-                        return;
-                    if (!hasNoConflictEnchants(base.getEnchantments(), enchantable.getEnchantment()))
-                        return;
-                    var resultItem = enchantable.applyEnchantment(base);
+        // Enchantment handling if addition item is an enchanted book
+        if (addition.getType() == Material.ENCHANTED_BOOK) {
+            var customEnchants = combineCustomEnchants(base, addition);
+            var result = event.getResult();
+            int levelCost = event.getInventory().getRepairCost();
 
-                    if (resultItem == null) // Applying enchantment failed
-                        return;
-
-                    var resultItemMeta = resultItem.getItemMeta();
-                    int levelCost = ((CustomEnchantment) enchantable.getEnchantment()).getItemStackCost(resultItem);
-
-                    var renameText = event.getInventory().getRenameText();
-                    if (renameText != null && !renameText.equals("")) { // The player is trying to rename
-                        ++levelCost;
-                        resultItemMeta.displayName(Component.text(renameText));
-                        resultItem.setItemMeta(resultItemMeta);
-                    }
-
-                    event.setResult(resultItem);
-
-                    final int finalLevelCost = capLevelCost(levelCost);
-                    final var finalBase = base.clone();
-                    final var finalAddition = addition.clone();
-
-                    plugin.getServer().getScheduler().runTask(plugin, () -> {
-                        if (!finalBase.equals(event.getInventory().getFirstItem()) || !finalAddition.equals(event.getInventory().getSecondItem()))
-                            return;
-
-                        event.getInventory().setRepairCost(finalLevelCost);
-                        event.getInventory().setResult(resultItem);
-                        player.setWindowProperty(InventoryView.Property.REPAIR_COST, finalLevelCost);
-                    });
-                }
+            if (result == null) { // Enchanted book contains only custom enchants, resulting in no result item
+                result = base.clone();
+                levelCost = ((Repairable) base.getItemMeta()).getRepairCost();
             }
+
+            result.addEnchantments(customEnchants);
+            plugin.getEnchantManager().removeCustomEnchantmentLore(result);
+            plugin.getEnchantManager().applyCustomEnchantmentLore(result);
+
+            final var finalLevelCost = getCustomEnchantCost(customEnchants, levelCost);
+            final var finalResult = result;
+
+            event.setResult(finalResult);
+            event.getInventory().setRepairCost(finalLevelCost);
+
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                if (!base.equals(event.getInventory().getFirstItem()) && !addition.equals(event.getInventory().getSecondItem()))
+                    return;
+
+                event.getInventory().setResult(finalResult);
+                event.getInventory().setRepairCost(finalLevelCost);
+                player.setWindowProperty(InventoryView.Property.REPAIR_COST, finalLevelCost);
+            });
+        }
+
+        // Enchantment handling if the addition is not an enchanted book
+        if (CustomItemManager.isCustomItem(addition)) {
+            // It's a custom item, but not an enchanted book. Should not be used to enchant/repair stuff
+            event.setResult(null);
+            plugin.getServer().getScheduler().runTask(plugin, () -> event.getInventory().setResult(null));
             return;
         }
 
         var result = event.getInventory().getResult();
+        if (result == null) {
+            return;
+        }
+
         var customEnchants = combineCustomEnchants(base, addition);
-        var levelCost = customEnchants.entrySet().stream().reduce(event.getInventory().getRepairCost(),
-            (num, entry) -> num + ((CustomEnchantment) entry.getKey()).getItemStackCost(result), Integer::sum);
-        result.addEnchantments(customEnchants);
+        var levelCost = getCustomEnchantCost(customEnchants, event.getInventory().getRepairCost());
 
         event.setResult(result);
 
@@ -226,20 +226,20 @@ public class EnchantListener implements Listener {
     private static Map<Enchantment, Integer> combineCustomEnchants(@NotNull ItemStack base, @NotNull ItemStack addition) {
         var additionMeta = addition.getItemMeta();
 
-        var baseEnchantments = base.getEnchantments();
+        var baseEnchants = base.getEnchantments();
 
         if (additionMeta instanceof EnchantmentStorageMeta) {
             var additionEnchants = ((EnchantmentStorageMeta) additionMeta).getStoredEnchants().entrySet().stream()
-                .filter(entry -> hasNoConflictEnchants(baseEnchantments, entry.getKey()))
+                .filter(entry -> hasNoConflictEnchants(baseEnchants, entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            return combineCustomEnchants(base.getEnchantments(), additionEnchants);
+            return combineCustomEnchants(baseEnchants, additionEnchants);
         }
 
         var additionEnchants = addition.getEnchantments().entrySet().stream()
-            .filter(entry -> hasNoConflictEnchants(baseEnchantments, entry.getKey()))
+            .filter(entry -> hasNoConflictEnchants(baseEnchants, entry.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return combineCustomEnchants(baseEnchantments, additionEnchants);
+        return combineCustomEnchants(baseEnchants, additionEnchants);
     }
 
     private static Map<Enchantment, Integer> combineCustomEnchants(Map<Enchantment, Integer> base, Map<Enchantment, Integer> addition) {
@@ -259,6 +259,19 @@ public class EnchantListener implements Listener {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) ->
                 Integer.min(a, b)
             ));
+    }
+
+    /**
+     * Get the total enchantment cost from the map of enchantments.
+     * @param enchantments Enchantments to calculate level cost
+     * @param initial Initial value to add from
+     * @return Level cost needed to add enchantments to an item
+     */
+    private static int getCustomEnchantCost(Map<Enchantment, Integer> enchantments, int initial) {
+        return enchantments.entrySet().stream()
+            .reduce(initial,
+                (num, entry) -> num + ((CustomEnchantment) entry.getKey()).getLevelMultiplier() * entry.getValue(),
+                Integer::sum);
     }
 
     private static boolean hasNoConflictEnchants(Map<Enchantment, Integer> enchants, Enchantment filter) {

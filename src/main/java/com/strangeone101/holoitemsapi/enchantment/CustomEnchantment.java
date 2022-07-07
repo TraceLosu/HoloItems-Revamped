@@ -39,11 +39,12 @@ public abstract class CustomEnchantment extends Enchantment {
     }
 
     /**
-     * Gets the cost of enchanting an itemstack with the enchantment.
-     * @param itemStack The itemstack to check for
-     * @return Amount of levels to enchant the itemstack
+     * Returns the multiplier used to add levels when combining the enchantment. This method is simillar to vanilla
+     * anvil mechanics
+     * @see <a href="https://minecraft.fandom.com/wiki/Anvil_mechanics#Costs_for_combining_enchantments">Anvil Mechanics</a>
+     * @return The multiplier for combining this enchantment
      */
-    public abstract int getItemStackCost(ItemStack itemStack);
+    public abstract int getLevelMultiplier();
 
     @NotNull
     @Override

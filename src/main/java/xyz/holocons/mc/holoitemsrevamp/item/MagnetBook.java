@@ -60,7 +60,7 @@ public class MagnetBook extends CustomItem implements Enchantable {
         var enchantedStack = itemStack.clone();
         var enchantedMeta = (EnchantmentStorageMeta) enchantedStack.getItemMeta();
 
-        if (enchantedMeta.addEnchant(getEnchantment(), 1, false)) {
+        if (enchantedMeta.addStoredEnchant(getEnchantment(), 1, false)) {
             enchantedStack.setItemMeta(enchantedMeta);
             enchantManager.removeCustomEnchantmentLore(enchantedStack);
             enchantManager.applyCustomEnchantmentLore(enchantedStack);

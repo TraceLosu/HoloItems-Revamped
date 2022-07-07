@@ -2,19 +2,16 @@ package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
-
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.Util;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
 
 public class Magnet extends CustomEnchantment implements BlockBreak {
@@ -52,26 +49,8 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
     }
 
     @Override
-    public int getItemStackCost(ItemStack itemStack) {
-        int levels = switch (Util.getOreLevel(itemStack.getType())) {
-            case NETHERITE_INGOT -> 9;
-            case DIAMOND -> 7;
-            case IRON_INGOT -> 5;
-            case GOLD_INGOT -> 3;
-            case OAK_PLANKS -> 1;
-            default -> 0;
-        };
-
-        for (var entry : itemStack.getEnchantments().entrySet()) {
-            levels += switch (entry.getKey().getRarity()) {
-                case VERY_RARE -> 4 * entry.getValue();
-                case RARE -> 3 * entry.getValue();
-                case UNCOMMON -> 2 * entry.getValue();
-                default -> 1 * entry.getValue();
-            };
-        }
-
-        return levels;
+    public int getLevelMultiplier() {
+        return 0;
     }
 
     @Override

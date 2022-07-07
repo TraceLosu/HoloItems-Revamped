@@ -53,7 +53,7 @@ public class TideRider extends CustomEnchantment implements PlayerInteract, Proj
     }
 
     @Override
-    public int getItemStackCost(ItemStack itemStack) {
+    public int getLevelMultiplier() {
         return Integer.MAX_VALUE;
     }
 

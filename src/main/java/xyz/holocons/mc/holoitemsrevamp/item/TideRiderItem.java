@@ -9,7 +9,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.NotNull;
@@ -34,17 +33,6 @@ public class TideRiderItem extends CustomItem implements Enchantable {
         this.setStackable(false);
         this.register();
         this.registerRecipe();
-    }
-
-    /**
-     * Overrides the buildStack method to add riptide enchant.
-     * @param player The player to add ownership of the item
-     * @return The itemstack
-     */
-
-    @Override
-    public ItemStack buildStack(Player player) {
-        return applyEnchantment(super.buildStack(player));
     }
 
     private void registerRecipe() {
