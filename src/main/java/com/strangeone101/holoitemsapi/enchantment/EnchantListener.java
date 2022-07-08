@@ -108,13 +108,13 @@ public class EnchantListener implements Listener {
      * Makes sure that after a player closes an anvil inventory, their instant build abilitiy gets disabled
      */
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onAnvilClose(InventoryCloseEvent event) {
+    public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getInventory() instanceof AnvilInventory) ||
             !(event.getPlayer() instanceof Player player) ||
             player.getGameMode() == GameMode.CREATIVE)
             return;
 
-        new PlayerAbilitiesPacket(player, false);
+        new PlayerAbilitiesPacket(player, false).sendPacket(player);
     }
 
     /**
@@ -169,7 +169,7 @@ public class EnchantListener implements Listener {
                     inventory.setResult(result);
                     inventory.setRepairCost(levelCost);
                     player.setWindowProperty(InventoryView.Property.REPAIR_COST, levelCost);
-                    new PlayerAbilitiesPacket(player, hasEnoughLevels(player, inventory.getRepairCost())).sendPacket(player);
+                    new PlayerAbilitiesPacket(player, player.getLevel() >= levelCost).sendPacket(player);
                 });
             }
             return;
@@ -206,7 +206,7 @@ public class EnchantListener implements Listener {
                 inventory.setResult(finalResult);
                 inventory.setRepairCost(finalLevelCost);
                 player.setWindowProperty(InventoryView.Property.REPAIR_COST, finalLevelCost);
-                new PlayerAbilitiesPacket(player, hasEnoughLevels(player, inventory.getRepairCost())).sendPacket(player);
+                new PlayerAbilitiesPacket(player, player.getLevel() >= finalLevelCost).sendPacket(player);
             });
             return;
         }
@@ -241,7 +241,7 @@ public class EnchantListener implements Listener {
             inventory.setResult(result);
             inventory.setRepairCost(levelCost);
             player.setWindowProperty(InventoryView.Property.REPAIR_COST, levelCost);
-            new PlayerAbilitiesPacket(player, hasEnoughLevels(player, inventory.getRepairCost())).sendPacket(player);
+            new PlayerAbilitiesPacket(player, player.getLevel() >= levelCost).sendPacket(player);
         });
     }
 
@@ -324,9 +324,5 @@ public class EnchantListener implements Listener {
 
         return itemStack.getEnchantments().entrySet().stream()
             .noneMatch(entry -> entry.getKey() instanceof CustomEnchantment);
-    }
-
-    private static boolean hasEnoughLevels(Player player, int repairCost) {
-        return !(repairCost >= MAX_REPAIR_COST || player.getLevel() < repairCost);
     }
 }
