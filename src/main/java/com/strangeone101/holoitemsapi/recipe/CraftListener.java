@@ -1,5 +1,6 @@
 package com.strangeone101.holoitemsapi.recipe;
 
+import com.strangeone101.holoitemsapi.item.CustomItemManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,9 +13,6 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.strangeone101.holoitemsapi.item.CustomItemManager;
-
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.HashMap;

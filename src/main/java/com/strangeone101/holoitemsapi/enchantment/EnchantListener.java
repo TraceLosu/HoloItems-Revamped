@@ -9,11 +9,14 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -36,6 +39,7 @@ public class EnchantListener implements Listener {
 
     private final HoloItemsRevamp plugin;
     private final EnchantManager enchantManager;
+    private final static int MAX_REPAIR_COST = Short.MAX_VALUE;
 
     public EnchantListener(HoloItemsRevamp plugin, EnchantManager enchantManager) {
         this.plugin = plugin;
@@ -101,36 +105,47 @@ public class EnchantListener implements Listener {
     }
 
     /**
+     * Makes sure that after a player closes an anvil inventory, their instant build abilitiy gets disabled
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onAnvilClose(InventoryCloseEvent event) {
+        if (!(event.getInventory() instanceof AnvilInventory) ||
+            !(event.getPlayer() instanceof Player player) ||
+            player.getGameMode() == GameMode.CREATIVE)
+            return;
+
+        new PlayerAbilitiesPacket(player, false);
+    }
+
+    /**
      * Handles anvil craftings regarding custom enchantments and custom items.
-     * @param event
      */
     @EventHandler(ignoreCancelled = true)
-    public void onPrepareAnvil(PrepareAnvilEvent event) {
+    public void onPrepareAnvil(PrepareAnvilEvent    event) {
 
-        var player = event.getView().getPlayer();
-        var inventory = event.getInventory();
-
-        // Avoid creative bypasses
-        if (player.getGameMode() == GameMode.CREATIVE)
+        // Make sure viewer is a player and they don't have creative bypasses
+        if (!(event.getView().getPlayer() instanceof Player player) || player.getGameMode() == GameMode.CREATIVE)
             return;
+
+        var inventory = event.getInventory();
 
         var base = inventory.getFirstItem();
         var addition = inventory.getSecondItem();
 
-        if (base == null || !(base.getItemMeta() instanceof Repairable))
+        if (base == null || !(base.getItemMeta() instanceof Repairable) || base.getAmount() != 1)
             return;
 
         // Only handle events that contain custom enchantments
         if (hasNoCustomEnchants(base) && hasNoCustomEnchants(addition))
             return;
 
-        event.getInventory().setMaximumRepairCost(10000);
-
         if (CustomItemManager.isCustomItem(base)) { // Disallow players to modify custom items
             event.setResult(null);
             plugin.getServer().getScheduler().runTask(plugin, () -> inventory.setResult(null));
             return;
         }
+
+        inventory.setMaximumRepairCost(MAX_REPAIR_COST);
 
         // Name handling with base item containing custom enchantments
         if (addition == null) {
@@ -154,7 +169,7 @@ public class EnchantListener implements Listener {
                     inventory.setResult(result);
                     inventory.setRepairCost(levelCost);
                     player.setWindowProperty(InventoryView.Property.REPAIR_COST, levelCost);
-                    new PlayerAbilitiesPacket((Player) player, true).sendPacket((Player) player);
+                    new PlayerAbilitiesPacket(player, hasEnoughLevels(player, inventory.getRepairCost())).sendPacket(player);
                 });
             }
             return;
@@ -191,7 +206,7 @@ public class EnchantListener implements Listener {
                 inventory.setResult(finalResult);
                 inventory.setRepairCost(finalLevelCost);
                 player.setWindowProperty(InventoryView.Property.REPAIR_COST, finalLevelCost);
-                new PlayerAbilitiesPacket((Player) player, true).sendPacket((Player) player);
+                new PlayerAbilitiesPacket(player, hasEnoughLevels(player, inventory.getRepairCost())).sendPacket(player);
             });
             return;
         }
@@ -226,7 +241,7 @@ public class EnchantListener implements Listener {
             inventory.setResult(result);
             inventory.setRepairCost(levelCost);
             player.setWindowProperty(InventoryView.Property.REPAIR_COST, levelCost);
-            new PlayerAbilitiesPacket((Player) player, true).sendPacket((Player) player);
+            new PlayerAbilitiesPacket(player, hasEnoughLevels(player, inventory.getRepairCost())).sendPacket(player);
         });
     }
 
@@ -311,12 +326,7 @@ public class EnchantListener implements Listener {
             .noneMatch(entry -> entry.getKey() instanceof CustomEnchantment);
     }
 
-    /**
-     * method to cap level cost. Any level cost above 39 in anvils results in "Too Expensive" to be shown.
-     * @param level The current level cost
-     * @return A level lower than 40
-     */
-    private static int capLevelCost(int level) {
-        return Integer.min(level, 39);
+    private static boolean hasEnoughLevels(Player player, int repairCost) {
+        return !(repairCost >= MAX_REPAIR_COST || player.getLevel() < repairCost);
     }
 }

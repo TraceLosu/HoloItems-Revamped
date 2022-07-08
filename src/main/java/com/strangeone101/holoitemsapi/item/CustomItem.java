@@ -16,8 +16,10 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -124,6 +126,59 @@ public class CustomItem implements Keyed {
         return stack;
     }
 
+    public ItemStack updateStack(Player player, ItemStack itemStack) {
+        var originalMeta = itemStack.getItemMeta();
+        var meta = originalMeta;
+
+        if (getMaterial() != itemStack.getType()) {
+            if (originalMeta instanceof Damageable) {
+                int damage = ((Damageable) originalMeta).getDamage();
+                itemStack = buildStack(player);
+                meta = itemStack.getItemMeta();
+                if (meta instanceof Damageable) {
+                    ((Damageable) meta).setDamage(damage);
+                }
+            }
+        }
+
+        if (properties.contains(Keys.OWNER)) {
+            var uuid = Keys.OWNER.get(meta.getPersistentDataContainer());
+            if (uuid == null) { // There should be a UUID, so we'll add the player's UUID as a failsafe
+                Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
+            }
+        }
+
+        if (properties.contains(Keys.UNSTACKABLE)) {
+            if (!Keys.UNSTACKABLE.has(meta.getPersistentDataContainer())) {
+                Keys.UNSTACKABLE.set(meta.getPersistentDataContainer(), true);
+            }
+        } else {
+            if (Keys.UNSTACKABLE.has(meta.getPersistentDataContainer())) {
+                Keys.UNSTACKABLE.set(meta.getPersistentDataContainer(), false);
+            }
+        }
+
+        var lore = new ArrayList<Component>();
+
+        for (var line : getLore()) {
+            lore.add(replaceVariables(line, meta.getPersistentDataContainer()));
+        }
+
+        if (meta instanceof LeatherArmorMeta) {
+            ((LeatherArmorMeta) meta).setColor(Color.fromRGB(hex));
+        } else if (meta instanceof PotionMeta) {
+            ((PotionMeta) meta).setColor(Color.fromRGB(hex));
+        }
+
+        itemStack.setItemMeta(meta);
+
+        if (this instanceof Enchantable enchantable) {
+            itemStack = enchantable.applyEnchantment(itemStack);
+        }
+
+        return itemStack;
+    }
+
     /**
      * Builds an ItemStack that should only be used for showing an item through an inventory or any other methods
      * that does not allow the player to use the item. This will add missing statistics to the lore.
@@ -153,8 +208,6 @@ public class CustomItem implements Keyed {
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
-
-    //TODO re-add UpdateStack
 
     /**
      * Replaces the string provided with variables
