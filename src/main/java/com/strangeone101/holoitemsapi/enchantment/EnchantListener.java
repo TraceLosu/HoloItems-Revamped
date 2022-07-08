@@ -121,7 +121,7 @@ public class EnchantListener implements Listener {
      * Handles anvil craftings regarding custom enchantments and custom items.
      */
     @EventHandler(ignoreCancelled = true)
-    public void onPrepareAnvil(PrepareAnvilEvent    event) {
+    public void onPrepareAnvil(PrepareAnvilEvent event) {
 
         // Make sure viewer is a player and they don't have creative bypasses
         if (!(event.getView().getPlayer() instanceof Player player) || player.getGameMode() == GameMode.CREATIVE)
