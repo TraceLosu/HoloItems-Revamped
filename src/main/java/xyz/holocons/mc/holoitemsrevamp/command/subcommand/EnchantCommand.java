@@ -33,7 +33,7 @@ public class EnchantCommand implements SubCommand {
 
     @Override
     public String getFormat() {
-        return "<enchant>";
+        return "<enchant> [level]";
     }
 
     @Override
@@ -82,8 +82,17 @@ public class EnchantCommand implements SubCommand {
             return false;
         }
 
-        if (itemMeta.addEnchant(customEnchantment, 1, false)) {
+        int level;
+        try {
+            level = Integer.parseInt(args[1]);
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+            level = customEnchantment.getStartLevel();
+        }
+
+        if (itemMeta.addEnchant(customEnchantment, level, false)) {
             itemStack.setItemMeta(itemMeta);
+            plugin.getEnchantManager().removeCustomEnchantmentLore(itemStack);
+            plugin.getEnchantManager().applyCustomEnchantmentLore(itemStack);
             player.sendMessage("Enchanted!");
         } else {
             player.sendMessage("Could not set enchant!");
