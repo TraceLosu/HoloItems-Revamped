@@ -299,7 +299,8 @@ public class EnchantListener implements Listener {
     }
 
     private static int levelCostAccumulator(int partialCost, Map.Entry<CustomEnchantment, Integer> nextEnchantment) {
-        return partialCost + nextEnchantment.getKey().getLevelMultiplier() * nextEnchantment.getValue();
+        return partialCost + Integer.min(nextEnchantment.getKey().getLevelMultiplier(), MAX_REPAIR_COST)
+                * nextEnchantment.getValue();
     }
 
     private static boolean hasNoConflictEnchants(Map<Enchantment, Integer> enchantments, Enchantment other) {
