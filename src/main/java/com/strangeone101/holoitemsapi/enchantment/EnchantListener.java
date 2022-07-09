@@ -19,7 +19,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -261,25 +260,8 @@ public class EnchantListener implements Listener {
      */
     private static Map<CustomEnchantment, Integer> combineCustomEnchants(@NotNull ItemStack base,
             @NotNull ItemStack addition) {
-        var additionMeta = addition.getItemMeta();
-
-        Map<Enchantment, Integer> baseEnchants;
-
-        if (base.getItemMeta() instanceof EnchantmentStorageMeta enchantmentMeta) {
-            baseEnchants = enchantmentMeta.getStoredEnchants();
-        } else {
-            baseEnchants = base.getEnchantments();
-        }
-
-        if (additionMeta instanceof EnchantmentStorageMeta) {
-            var additionEnchants = ((EnchantmentStorageMeta) additionMeta).getStoredEnchants().entrySet().stream()
-                    .filter(entry -> hasNoConflictEnchants(baseEnchants, entry.getKey())
-                            && entry.getKey().canEnchantItem(base))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            return combineCustomEnchants(baseEnchants, additionEnchants);
-        }
-
-        var additionEnchants = addition.getEnchantments().entrySet().stream()
+        final var baseEnchants = EnchantManager.getEnchantments(base);
+        final var additionEnchants = EnchantManager.getEnchantments(addition).entrySet().stream()
                 .filter(entry -> hasNoConflictEnchants(baseEnchants, entry.getKey())
                         && entry.getKey().canEnchantItem(base))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -289,13 +271,13 @@ public class EnchantListener implements Listener {
 
     private static Map<CustomEnchantment, Integer> combineCustomEnchants(Map<Enchantment, Integer> base,
             Map<Enchantment, Integer> addition) {
-        var combined = Stream.of(base, addition)
+        final var combined = Stream.of(base, addition)
                 .map(Map::entrySet)
                 .flatMap(Set::stream)
                 .filter(entry -> entry.getKey() instanceof CustomEnchantment)
                 .collect(Collectors.toMap(entry -> (CustomEnchantment) entry.getKey(), Map.Entry::getValue,
                         (a, b) -> a.equals(b) ? a + 1 : Integer.max(a, b)));
-        var maxLevels = combined.keySet()
+        final var maxLevels = combined.keySet()
                 .stream()
                 .collect(Collectors.toMap(Function.identity(), Enchantment::getMaxLevel));
         return Stream.of(combined, maxLevels)
@@ -320,21 +302,13 @@ public class EnchantListener implements Listener {
         return partialCost + nextEnchantment.getKey().getLevelMultiplier() * nextEnchantment.getValue();
     }
 
-    private static boolean hasNoConflictEnchants(Map<Enchantment, Integer> enchants, Enchantment filter) {
-        return enchants.keySet().stream()
-                .noneMatch(filter::conflictsWith);
+    private static boolean hasNoConflictEnchants(Map<Enchantment, Integer> enchantments, Enchantment other) {
+        return enchantments.keySet().stream().noneMatch(other::conflictsWith);
     }
 
     private static boolean hasNoCustomEnchants(@Nullable ItemStack itemStack) {
-        if (itemStack == null || !itemStack.hasItemMeta())
-            return true;
-
-        if (itemStack.getItemMeta() instanceof EnchantmentStorageMeta enchantmentMeta) {
-            return enchantmentMeta.getStoredEnchants().entrySet().stream()
-                    .noneMatch(entry -> entry.getKey() instanceof CustomEnchantment);
-        }
-
-        return itemStack.getEnchantments().entrySet().stream()
-                .noneMatch(entry -> entry.getKey() instanceof CustomEnchantment);
+        return itemStack == null || !itemStack.hasItemMeta()
+                || EnchantManager.getEnchantments(itemStack).keySet().stream()
+                        .noneMatch(entry -> entry instanceof CustomEnchantment);
     }
 }
