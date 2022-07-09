@@ -184,7 +184,8 @@ public class EnchantListener implements Listener {
             if (customEnchants.isEmpty())
                 return;
 
-            if (result == null) { // Enchanted book contains only custom enchants, resulting in no result item
+            // Enchantment handling if the enchanted book contains only custom enchantments
+            if (result == null) {
                 result = base.clone();
                 levelCost = ((Repairable) base.getItemMeta()).getRepairCost();
             }
