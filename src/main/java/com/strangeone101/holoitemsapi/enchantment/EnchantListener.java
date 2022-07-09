@@ -299,7 +299,7 @@ public class EnchantListener implements Listener {
     }
 
     private static int levelCostAccumulator(int partialCost, Map.Entry<CustomEnchantment, Integer> nextEnchantment) {
-        return partialCost + Integer.min(nextEnchantment.getKey().getLevelMultiplier(), MAX_REPAIR_COST)
+        return partialCost + Integer.min(nextEnchantment.getKey().getCostMultiplier(), MAX_REPAIR_COST)
                 * nextEnchantment.getValue();
     }
 

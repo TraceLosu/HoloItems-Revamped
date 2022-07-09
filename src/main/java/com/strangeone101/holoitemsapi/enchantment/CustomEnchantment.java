@@ -44,7 +44,7 @@ public abstract class CustomEnchantment extends Enchantment {
      * @see <a href="https://minecraft.fandom.com/wiki/Anvil_mechanics#Costs_for_combining_enchantments">Anvil Mechanics</a>
      * @return The multiplier for combining this enchantment
      */
-    public abstract int getLevelMultiplier();
+    public abstract int getCostMultiplier();
 
     @NotNull
     @Override
