@@ -39,11 +39,9 @@ public class EnchantListener implements Listener {
     private final static int MAX_REPAIR_COST = Short.MAX_VALUE;
 
     private final HoloItemsRevamp plugin;
-    private final EnchantManager enchantManager;
 
-    public EnchantListener(HoloItemsRevamp plugin, EnchantManager enchantManager) {
+    public EnchantListener(HoloItemsRevamp plugin) {
         this.plugin = plugin;
-        this.enchantManager = enchantManager;
     }
 
     /**
@@ -191,8 +189,8 @@ public class EnchantListener implements Listener {
             }
 
             customEnchants.forEach(result::addEnchantment);
-            enchantManager.removeCustomEnchantmentLore(result);
-            enchantManager.applyCustomEnchantmentLore(result);
+            plugin.getEnchantManager().removeCustomEnchantmentLore(result);
+            plugin.getEnchantManager().applyCustomEnchantmentLore(result);
 
             final var finalLevelCost = getCustomEnchantCost(customEnchants, levelCost);
             final var finalResult = result;
@@ -230,8 +228,8 @@ public class EnchantListener implements Listener {
         var levelCost = getCustomEnchantCost(customEnchants, inventory.getRepairCost());
 
         customEnchants.forEach(result::addEnchantment);
-        enchantManager.removeCustomEnchantmentLore(result);
-        enchantManager.applyCustomEnchantmentLore(result);
+        plugin.getEnchantManager().removeCustomEnchantmentLore(result);
+        plugin.getEnchantManager().applyCustomEnchantmentLore(result);
 
         event.setResult(result);
         inventory.setRepairCost(levelCost);

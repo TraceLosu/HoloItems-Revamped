@@ -46,7 +46,7 @@ public class EnchantManager {
                 })
                 .collect(Collectors.toMap(Function.identity(), EnchantManager::displayNameFromEnchantmentPair));
 
-        plugin.getServer().getPluginManager().registerEvents(new EnchantListener(plugin, this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new EnchantListener(plugin), plugin);
     }
 
     private static Component displayNameFromEnchantmentPair(Pair<Enchantment, Integer> enchantmentPair) {
