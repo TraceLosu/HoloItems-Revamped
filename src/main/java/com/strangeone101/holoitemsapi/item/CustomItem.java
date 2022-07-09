@@ -83,8 +83,8 @@ public class CustomItem implements Keyed {
         ItemStack stack = new ItemStack(getMaterial());
         ItemMeta meta = stack.getItemMeta();
 
-        //It's important to use the functions `getDisplayName()` and `getLore()` bellow
-        //instead of the field names in case an object overrides them
+        // It's important to use the functions `getDisplayName()` and `getLore()` below
+        // instead of the field names in case an object overrides them
         meta.displayName(replaceVariables(getDisplayName(), meta.getPersistentDataContainer()));
 
         if (meta instanceof LeatherArmorMeta) {
@@ -101,18 +101,17 @@ public class CustomItem implements Keyed {
 
         if (customModelID != 0) meta.setCustomModelData(customModelID); //Used for resource packs
 
-        if (player != null) {
-            if (properties.contains(Keys.OWNER)) {
-                Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
-            }
+        if (properties.contains(Keys.OWNER) && player != null) {
+            Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
         }
+
         if (properties.contains(Keys.COOLDOWN)) {
             Keys.COOLDOWN.set(meta.getPersistentDataContainer(), 0L);
         }
 
         Keys.ITEM_ID.set(meta.getPersistentDataContainer(), getInternalName());
 
-         //If the item shouldn't be stackable, add a random INTEGER to the NBT
+        // If the item shouldn't be stackable, add a random INTEGER to the NBT
         Keys.UNSTACKABLE.set(meta.getPersistentDataContainer(), !isStackable());
 
         if (flags != null && flags.length > 0) meta.addItemFlags(flags);
@@ -127,21 +126,18 @@ public class CustomItem implements Keyed {
     }
 
     public ItemStack updateStack(Player player, ItemStack itemStack) {
-        var originalMeta = itemStack.getItemMeta();
-        var meta = originalMeta;
+        var meta = itemStack.getItemMeta();
 
-        if (getMaterial() != itemStack.getType()) {
-            if (originalMeta instanceof Damageable) {
-                int damage = ((Damageable) originalMeta).getDamage();
-                itemStack = buildStack(player);
-                meta = itemStack.getItemMeta();
-                if (meta instanceof Damageable) {
-                    ((Damageable) meta).setDamage(damage);
-                }
+        if (getMaterial() != itemStack.getType() && meta instanceof Damageable originalDamageable) {
+            int damage = originalDamageable.getDamage();
+            itemStack = buildStack(player);
+            meta = itemStack.getItemMeta();
+            if (meta instanceof Damageable newDamageable) {
+                newDamageable.setDamage(damage);
             }
         }
 
-        if (properties.contains(Keys.OWNER)) {
+        if (properties.contains(Keys.OWNER) && player != null) {
             var uuid = Keys.OWNER.get(meta.getPersistentDataContainer());
             if (uuid == null) { // There should be a UUID, so we'll add the player's UUID as a failsafe
                 Keys.OWNER.set(meta.getPersistentDataContainer(), player.getUniqueId());
@@ -185,8 +181,7 @@ public class CustomItem implements Keyed {
      * @return An ItemStack with extra information.
      */
     public ItemStack buildGuiStack(OfflinePlayer player) {
-
-        var itemStack = this.buildStack(null);
+        var itemStack = buildStack(null);
         var itemMeta = itemStack.getItemMeta();
 
         var lore = itemMeta.lore();
