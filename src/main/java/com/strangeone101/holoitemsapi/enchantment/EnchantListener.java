@@ -152,7 +152,7 @@ public class EnchantListener implements Listener {
             var displayName = base.getItemMeta().hasDisplayName()
                     ? PlainTextComponentSerializer.plainText().serialize(base.getItemMeta().displayName())
                     : "";
-            if (renameText != null && !renameText.isEmpty() && !displayName.equals(renameText)) {
+            if (renameText != null && !renameText.isBlank() && !displayName.equals(renameText)) {
                 var result = base.clone();
                 var resultMeta = result.getItemMeta();
 
