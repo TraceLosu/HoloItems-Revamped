@@ -5,7 +5,6 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 
@@ -35,11 +34,6 @@ public class MementoItem extends CustomItem implements Enchantable {
         this.enchantManager = plugin.getEnchantManager();
         this.register();
         this.registerRecipe();
-    }
-
-    @Override
-    public ItemStack buildStack(Player player) {
-        return applyEnchantment(super.buildStack(player));
     }
 
     private void registerRecipe() {
