@@ -18,11 +18,8 @@ import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
 
 public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlace {
 
-    private final HoloItemsRevamp plugin;
-
     public Memento(HoloItemsRevamp plugin) {
         super(plugin, "memento");
-        this.plugin = plugin;
     }
 
     @Override
@@ -32,14 +29,12 @@ public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlac
 
     @Override
     public boolean conflictsWith(@NotNull Enchantment other) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
         return item.getType() == Material.ENDER_CHEST;
-        // Is there a better way to do this?
-        // Not sure why, but I feel like this can be done better.
     }
 
     @Override
@@ -58,11 +53,12 @@ public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlac
 
     @Override
     public void run(PlayerDeathEvent event, ItemStack itemStack) {
-        // Set keepInv and keepExp on (For this event and player only)
+        // Don't do anything if keepInv is already on for this event
         if (event.getKeepInventory()){
             return;
         }
 
+        // Set keepInv and keepExp on for this event
         event.setKeepInventory(true);
         event.setKeepLevel(true);
 
@@ -70,8 +66,8 @@ public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlac
         event.setShouldDropExperience(false);
         event.getDrops().clear();
 
-        // Decrease amount of Mementos by 1
-        itemStack.subtract(1);
+        // Remove a Memento
+        itemStack.subtract();
     }
 
     @Override
