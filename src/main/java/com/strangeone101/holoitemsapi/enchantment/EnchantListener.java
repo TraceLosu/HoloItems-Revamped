@@ -87,10 +87,9 @@ public class EnchantListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        final var player = event.getPlayer();
-        final var inventory = player.getInventory();
+        final var playerInventory = event.getPlayer().getInventory();
 
-        for (var itemStack : inventory) {
+        for (final var itemStack : playerInventory) {
             itemStack.getEnchantments().keySet().forEach(enchantment -> {
                 if (enchantment instanceof PlayerDeath ability) {
                     ability.run(event, itemStack);
