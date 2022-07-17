@@ -7,7 +7,7 @@ import com.strangeone101.holoitemsapi.recipe.CraftListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.holocons.mc.holoitemsrevamp.collection.CollectionManager;
 import xyz.holocons.mc.holoitemsrevamp.command.MainCommand;
-import xyz.holocons.mc.holoitemsrevamp.integration.IntegrationManager;
+import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
 public final class HoloItemsRevamp extends JavaPlugin {
 
@@ -18,12 +18,12 @@ public final class HoloItemsRevamp extends JavaPlugin {
     public void onLoad() {
         Keys.fillKeys(this);
 
-        IntegrationManager.onLoad(this);
+        Integrations.onLoad(this);
     }
 
     @Override
     public void onEnable() {
-        IntegrationManager.onEnable(this);
+        Integrations.onEnable(this);
 
         try {
             this.enchantManager = new EnchantManager(this);

@@ -4,11 +4,11 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
-public final class IntegrationManager {
+public final class Integrations {
 
     private static WorldGuardHook worldGuard;
 
-    private IntegrationManager() {
+    private Integrations() {
     }
 
     public static void onLoad(HoloItemsRevamp plugin) {
