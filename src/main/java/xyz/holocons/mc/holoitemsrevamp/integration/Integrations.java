@@ -1,5 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.integration;
 
+import org.bukkit.plugin.Plugin;
+
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
@@ -11,8 +13,19 @@ public final class Integrations {
     private Integrations() {
     }
 
+    private static Plugin getPlugin(HoloItemsRevamp plugin, String otherPluginName) {
+        final var otherPlugin = plugin.getServer().getPluginManager().getPlugin(otherPluginName);
+        if (otherPlugin != null) {
+            plugin.getLogger()
+                    .info("Found " + otherPlugin.getName() + " v" + otherPlugin.getDescription().getVersion());
+        }
+        return otherPlugin;
+    }
+
     public static void onLoad(HoloItemsRevamp plugin) {
-        hookWorldGuard(plugin);
+        worldGuard = getPlugin(plugin, "WorldGuard") instanceof WorldGuardPlugin
+                ? new WorldGuardHook.Integration()
+                : new WorldGuardHook.Stub();
         worldGuard.onLoad();
     }
 
@@ -25,15 +38,5 @@ public final class Integrations {
             throw new NullPointerException("WorldGuard was not hooked yet!");
         }
         return worldGuard;
-    }
-
-    private static void hookWorldGuard(HoloItemsRevamp plugin) {
-        final var otherPlugin = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
-        if (otherPlugin != null) {
-            plugin.getLogger()
-                    .info("Found " + otherPlugin.getName() + " v" + otherPlugin.getDescription().getVersion());
-        }
-        worldGuard = otherPlugin instanceof WorldGuardPlugin ? new WorldGuardIntegration() : new WorldGuardHook() {
-        };
     }
 }
