@@ -13,19 +13,17 @@ public final class HoloItemsRevamp extends JavaPlugin {
 
     private CollectionManager collectionManager;
     private EnchantManager enchantManager;
-    private IntegrationManager integrationManager;
 
     @Override
     public void onLoad() {
         Keys.fillKeys(this);
 
-        this.integrationManager = new IntegrationManager(this);
-        integrationManager.onLoad();
+        IntegrationManager.onLoad(this);
     }
 
     @Override
     public void onEnable() {
-        integrationManager.onEnable();
+        IntegrationManager.onEnable(this);
 
         try {
             this.enchantManager = new EnchantManager(this);
@@ -51,9 +49,5 @@ public final class HoloItemsRevamp extends JavaPlugin {
 
     public EnchantManager getEnchantManager() {
         return enchantManager;
-    }
-
-    public IntegrationManager getIntegrationManager() {
-        return integrationManager;
     }
 }

@@ -6,31 +6,34 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 public final class IntegrationManager {
 
-    private WorldGuardHook worldGuard;
+    private static WorldGuardHook worldGuard;
 
-    public IntegrationManager(HoloItemsRevamp plugin) {
-        hookWorldGuard(plugin);
+    private IntegrationManager() {
     }
 
-    public void onLoad() {
+    public static void onLoad(HoloItemsRevamp plugin) {
+        hookWorldGuard(plugin);
         worldGuard.onLoad();
     }
 
-    public void onEnable() {
+    public static void onEnable(HoloItemsRevamp plugin) {
         worldGuard.onEnable();
     }
 
-    public WorldGuardHook getWorldGuard() {
+    public static WorldGuardHook getWorldGuard() {
+        if (worldGuard == null) {
+            throw new NullPointerException("WorldGuard was not hooked yet!");
+        }
         return worldGuard;
     }
 
-    private void hookWorldGuard(HoloItemsRevamp plugin) {
+    private static void hookWorldGuard(HoloItemsRevamp plugin) {
         final var otherPlugin = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
         if (otherPlugin != null) {
             plugin.getLogger()
                     .info("Found " + otherPlugin.getName() + " v" + otherPlugin.getDescription().getVersion());
         }
-        this.worldGuard = otherPlugin instanceof WorldGuardPlugin ? new WorldGuardIntegration() : new WorldGuardHook() {
+        worldGuard = otherPlugin instanceof WorldGuardPlugin ? new WorldGuardIntegration() : new WorldGuardHook() {
         };
     }
 }

@@ -30,6 +30,7 @@ import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
 import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
+import xyz.holocons.mc.holoitemsrevamp.integration.IntegrationManager;
 import xyz.holocons.mc.holoitemsrevamp.integration.WorldGuardHook;
 import xyz.holocons.mc.holoitemsrevamp.packet.PlayerAbilitiesPacket;
 
@@ -48,7 +49,7 @@ public class EnchantListener implements Listener {
 
     public EnchantListener(HoloItemsRevamp plugin) {
         this.plugin = plugin;
-        this.worldGuard = plugin.getIntegrationManager().getWorldGuard();
+        this.worldGuard = IntegrationManager.getWorldGuard();
     }
 
     /**
