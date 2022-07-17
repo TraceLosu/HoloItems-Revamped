@@ -9,17 +9,15 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 
-import xyz.holocons.mc.holoitemsrevamp.ability.Ability;
-import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
-import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
-import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
-import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
-import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
 
 public interface WorldGuardHook extends Hook {
 
-    default boolean testAbilityAllowed(Location location, Class<? extends Ability> ability) {
+    default boolean canUseEnchantment(Location location, Class<? extends CustomEnchantment> enchantmentCls) {
         return true;
     }
 
@@ -28,18 +26,16 @@ public interface WorldGuardHook extends Hook {
 
     public class Integration implements WorldGuardHook {
 
-        public static final Map<Class<? extends Ability>, Flag<?>> ABILITY_FLAGS = Map.ofEntries(
-                Map.entry(BlockBreak.class, new StateFlag("holoitems-block-break", true)),
-                Map.entry(BlockPlace.class, new StateFlag("holoitems-block-place", true)),
-                Map.entry(PlayerDeath.class, new StateFlag("holoitems-player-death", true)),
-                Map.entry(PlayerInteract.class, new StateFlag("holoitems-player-interact", true)),
-                Map.entry(ProjectileLaunch.class, new StateFlag("holoitems-projectile-launch", true)));
+        public static final Map<Class<? extends CustomEnchantment>, Flag<?>> ENCHANTMENT_FLAGS = Map.ofEntries(
+                Map.entry(Magnet.class, new StateFlag("holoitems-magnet", true)),
+                Map.entry(Memento.class, new StateFlag("holoitems-memento", true)),
+                Map.entry(TideRider.class, new StateFlag("holoitems-tide-rider", true)));
 
         private RegionContainer regionContainer;
 
         @Override
         public void onLoad() {
-            WorldGuard.getInstance().getFlagRegistry().registerAll(ABILITY_FLAGS.values());
+            WorldGuard.getInstance().getFlagRegistry().registerAll(ENCHANTMENT_FLAGS.values());
         }
 
         @Override
@@ -48,9 +44,9 @@ public interface WorldGuardHook extends Hook {
         }
 
         @Override
-        public boolean testAbilityAllowed(Location location, Class<? extends Ability> ability) {
+        public boolean canUseEnchantment(Location location, Class<? extends CustomEnchantment> enchantmentCls) {
             final var value = regionContainer.createQuery()
-                    .queryValue(BukkitAdapter.adapt(location), null, ABILITY_FLAGS.get(ability));
+                    .queryValue(BukkitAdapter.adapt(location), null, ENCHANTMENT_FLAGS.get(enchantmentCls));
             return value != StateFlag.State.DENY;
         }
     }
