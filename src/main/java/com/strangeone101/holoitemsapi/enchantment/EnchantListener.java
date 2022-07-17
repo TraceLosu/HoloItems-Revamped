@@ -30,6 +30,7 @@ import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
 import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
+import xyz.holocons.mc.holoitemsrevamp.integration.WorldGuardHook;
 import xyz.holocons.mc.holoitemsrevamp.packet.PlayerAbilitiesPacket;
 
 import java.util.Map;
@@ -43,9 +44,11 @@ public class EnchantListener implements Listener {
     private final static int MAX_REPAIR_COST = Short.MAX_VALUE;
 
     private final HoloItemsRevamp plugin;
+    private final WorldGuardHook worldGuard;
 
     public EnchantListener(HoloItemsRevamp plugin) {
         this.plugin = plugin;
+        this.worldGuard = plugin.getIntegrationManager().getWorldGuard();
     }
 
     /**
@@ -59,6 +62,12 @@ public class EnchantListener implements Listener {
 
         itemStack.getEnchantments().keySet().forEach(enchantment -> {
             if (enchantment instanceof BlockBreak ability) {
+                final var location = event.getBlock().getLocation();
+                if (!worldGuard.testAbilityAllowed(location, BlockBreak.class)) {
+                    event.setCancelled(true);
+                    return;
+                }
+
                 ability.run(event, itemStack);
             }
         });
@@ -75,6 +84,12 @@ public class EnchantListener implements Listener {
 
         itemStack.getEnchantments().keySet().forEach(enchantment -> {
             if (enchantment instanceof BlockPlace ability) {
+                final var location = event.getBlock().getLocation();
+                if (!worldGuard.testAbilityAllowed(location, BlockPlace.class)) {
+                    event.setCancelled(true);
+                    return;
+                }
+
                 ability.run(event, itemStack);
             }
         });
@@ -87,6 +102,11 @@ public class EnchantListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
+        final var location = event.getPlayer().getLocation();
+        if (!worldGuard.testAbilityAllowed(location, PlayerDeath.class)) {
+            return;
+        }
+
         final var playerInventory = event.getPlayer().getInventory();
 
         for (final var itemStack : playerInventory) {
@@ -116,6 +136,12 @@ public class EnchantListener implements Listener {
 
         itemStack.getEnchantments().keySet().forEach(enchantment -> {
             if (enchantment instanceof PlayerInteract ability) {
+                final var location = event.getPlayer().getLocation();
+                if (!worldGuard.testAbilityAllowed(location, PlayerInteract.class)) {
+                    event.setCancelled(true);
+                    return;
+                }
+
                 ability.run(event, itemStack);
             }
         });
@@ -135,6 +161,12 @@ public class EnchantListener implements Listener {
 
         itemStack.getEnchantments().keySet().forEach(enchantment -> {
             if (enchantment instanceof ProjectileLaunch ability) {
+                final var location = event.getLocation();
+                if (!worldGuard.testAbilityAllowed(location, ProjectileLaunch.class)) {
+                    event.setCancelled(true);
+                    return;
+                }
+
                 ability.run(event, itemStack);
             }
         });

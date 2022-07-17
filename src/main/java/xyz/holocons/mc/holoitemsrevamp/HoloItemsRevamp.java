@@ -7,24 +7,34 @@ import com.strangeone101.holoitemsapi.recipe.CraftListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.holocons.mc.holoitemsrevamp.collection.CollectionManager;
 import xyz.holocons.mc.holoitemsrevamp.command.MainCommand;
+import xyz.holocons.mc.holoitemsrevamp.integration.IntegrationManager;
 
 public final class HoloItemsRevamp extends JavaPlugin {
 
     private CollectionManager collectionManager;
     private EnchantManager enchantManager;
+    private IntegrationManager integrationManager;
+
+    @Override
+    public void onLoad() {
+        Keys.fillKeys(this);
+
+        this.integrationManager = new IntegrationManager(this);
+        integrationManager.onLoad();
+    }
 
     @Override
     public void onEnable() {
-        Keys.fillKeys(this);
+        integrationManager.onEnable();
 
         try {
-            enchantManager = new EnchantManager(this);
+            this.enchantManager = new EnchantManager(this);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
-        collectionManager = new CollectionManager(this);
+        this.collectionManager = new CollectionManager(this);
 
-        this.getServer().getPluginManager().registerEvents(new CraftListener(this), this);
+        getServer().getPluginManager().registerEvents(new CraftListener(this), this);
 
         getCommand("holoitems").setExecutor(new MainCommand(this));
         getLogger().info("HoloItems-Revamped [ON]");
@@ -41,5 +51,9 @@ public final class HoloItemsRevamp extends JavaPlugin {
 
     public EnchantManager getEnchantManager() {
         return enchantManager;
+    }
+
+    public IntegrationManager getIntegrationManager() {
+        return integrationManager;
     }
 }

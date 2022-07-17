@@ -3,7 +3,7 @@ package xyz.holocons.mc.holoitemsrevamp.ability;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public interface PlayerInteract {
+public interface PlayerInteract extends Ability {
 
-    public void run(PlayerInteractEvent event, ItemStack itemStack);
+    void run(PlayerInteractEvent event, ItemStack itemStack);
 }
