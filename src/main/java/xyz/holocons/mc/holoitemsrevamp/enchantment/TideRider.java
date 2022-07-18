@@ -63,7 +63,7 @@ public class TideRider extends CustomEnchantment implements PlayerInteract, Proj
         final var player = event.getPlayer();
         final var world = player.getWorld();
 
-        if (!Integrations.WORLD_GUARD.canUseEnchantment(player.getLocation(), TideRider.class)) {
+        if (!Integrations.WORLDGUARD.canUseEnchantment(player.getLocation(), TideRider.class)) {
             return;
         }
 

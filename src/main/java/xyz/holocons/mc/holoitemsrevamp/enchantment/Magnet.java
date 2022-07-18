@@ -59,7 +59,7 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
         final var location = event.getBlock().getLocation().toCenterLocation();
         final var player = event.getPlayer();
 
-        if (!Integrations.WORLD_GUARD.canUseEnchantment(location, Magnet.class)) {
+        if (!Integrations.WORLDGUARD.canUseEnchantment(location, Magnet.class)) {
             return;
         }
 

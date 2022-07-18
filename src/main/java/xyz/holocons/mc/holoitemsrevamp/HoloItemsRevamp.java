@@ -22,12 +22,12 @@ public final class HoloItemsRevamp extends JavaPlugin {
         this.enchantManager = new EnchantManager(this);
         this.collectionManager = new CollectionManager(this);
 
-        Integrations.onLoad(this);
+        Integrations.onLoad();
     }
 
     @Override
     public void onEnable() {
-        Integrations.onEnable(this);
+        Integrations.onEnable();
 
         getServer().getPluginManager().registerEvents(new EnchantListener(this), this);
         getServer().getPluginManager().registerEvents(new CraftListener(this), this);

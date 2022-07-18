@@ -41,7 +41,7 @@ public class EnchantManager {
         customEnchantments.forEach(Enchantment::registerEnchantment);
         Enchantment.stopAcceptingRegistrations();
 
-        customEnchantments.forEach(Integrations.WORLD_GUARD::registerEnchantment);
+        customEnchantments.forEach(Integrations.WORLDGUARD::registerEnchantment);
 
         // Key is a pair of Enchantment and level, value is the display name
         this.customEnchantmentDisplayNames = customEnchantments.stream()

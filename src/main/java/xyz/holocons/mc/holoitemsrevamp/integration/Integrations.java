@@ -11,12 +11,12 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 public final class Integrations {
 
-    public static final WorldGuardHook WORLD_GUARD;
+    public static final WorldGuardHook WORLDGUARD;
 
     static {
         final var thisPlugin = Arrays.stream(Bukkit.getPluginManager().getPlugins())
                 .filter(plugin -> plugin instanceof HoloItemsRevamp).findFirst().get();
-        WORLD_GUARD = getPlugin(thisPlugin, "WorldGuard") instanceof WorldGuardPlugin
+        WORLDGUARD = getPlugin(thisPlugin, "WorldGuard") instanceof WorldGuardPlugin
                 ? new WorldGuardHook.Integration()
                 : new WorldGuardHook.Stub();
     }
@@ -33,11 +33,11 @@ public final class Integrations {
         return otherPlugin;
     }
 
-    public static void onLoad(HoloItemsRevamp plugin) {
-        WORLD_GUARD.onLoad();
+    public static void onLoad() {
+        WORLDGUARD.onLoad();
     }
 
-    public static void onEnable(HoloItemsRevamp plugin) {
-        WORLD_GUARD.onEnable();
+    public static void onEnable() {
+        WORLDGUARD.onEnable();
     }
 }
