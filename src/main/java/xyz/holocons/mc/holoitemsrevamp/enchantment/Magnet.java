@@ -14,17 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
 import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
-import xyz.holocons.mc.holoitemsrevamp.integration.WorldGuardHook;
 
 public class Magnet extends CustomEnchantment implements BlockBreak {
 
     private final HoloItemsRevamp plugin;
-    private final WorldGuardHook worldGuard;
 
     public Magnet(HoloItemsRevamp plugin) {
         super(plugin, "magnet");
         this.plugin = plugin;
-        this.worldGuard = Integrations.getWorldGuard();
     }
 
     @Override
@@ -62,7 +59,7 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
         final var location = event.getBlock().getLocation().toCenterLocation();
         final var player = event.getPlayer();
 
-        if (!worldGuard.canUseEnchantment(location, Magnet.class)) {
+        if (!Integrations.WORLD_GUARD.canUseEnchantment(location, Magnet.class)) {
             return;
         }
 

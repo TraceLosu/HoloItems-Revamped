@@ -1,5 +1,8 @@
 package xyz.holocons.mc.holoitemsrevamp.integration;
 
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -8,35 +11,33 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 public final class Integrations {
 
-    private static WorldGuardHook worldGuard;
+    public static final WorldGuardHook WORLD_GUARD;
+
+    static {
+        final var thisPlugin = Arrays.stream(Bukkit.getPluginManager().getPlugins())
+                .filter(plugin -> plugin instanceof HoloItemsRevamp).findFirst().get();
+        WORLD_GUARD = getPlugin(thisPlugin, "WorldGuard") instanceof WorldGuardPlugin
+                ? new WorldGuardHook.Integration()
+                : new WorldGuardHook.Stub();
+    }
 
     private Integrations() {
     }
 
-    private static Plugin getPlugin(HoloItemsRevamp plugin, String otherPluginName) {
-        final var otherPlugin = plugin.getServer().getPluginManager().getPlugin(otherPluginName);
+    private static Plugin getPlugin(Plugin thisPlugin, String otherPluginName) {
+        final var otherPlugin = thisPlugin.getServer().getPluginManager().getPlugin(otherPluginName);
         if (otherPlugin != null) {
-            plugin.getLogger()
+            thisPlugin.getLogger()
                     .info("Found " + otherPlugin.getName() + " v" + otherPlugin.getDescription().getVersion());
         }
         return otherPlugin;
     }
 
     public static void onLoad(HoloItemsRevamp plugin) {
-        worldGuard = getPlugin(plugin, "WorldGuard") instanceof WorldGuardPlugin
-                ? new WorldGuardHook.Integration()
-                : new WorldGuardHook.Stub();
-        worldGuard.onLoad();
+        WORLD_GUARD.onLoad();
     }
 
     public static void onEnable(HoloItemsRevamp plugin) {
-        worldGuard.onEnable();
-    }
-
-    public static WorldGuardHook getWorldGuard() {
-        if (worldGuard == null) {
-            throw new NullPointerException("WorldGuard was not hooked yet!");
-        }
-        return worldGuard;
+        WORLD_GUARD.onEnable();
     }
 }

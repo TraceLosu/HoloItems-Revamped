@@ -22,17 +22,14 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
 import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
 import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
-import xyz.holocons.mc.holoitemsrevamp.integration.WorldGuardHook;
 
 public class TideRider extends CustomEnchantment implements PlayerInteract, ProjectileLaunch {
 
     private final HoloItemsRevamp plugin;
-    private final WorldGuardHook worldGuard;
 
     public TideRider(HoloItemsRevamp plugin) {
         super(plugin, "tide_rider");
         this.plugin = plugin;
-        this.worldGuard = Integrations.getWorldGuard();
     }
 
     @Override
@@ -66,7 +63,7 @@ public class TideRider extends CustomEnchantment implements PlayerInteract, Proj
         final var player = event.getPlayer();
         final var world = player.getWorld();
 
-        if (!worldGuard.canUseEnchantment(player.getLocation(), TideRider.class)) {
+        if (!Integrations.WORLD_GUARD.canUseEnchantment(player.getLocation(), TideRider.class)) {
             return;
         }
 
