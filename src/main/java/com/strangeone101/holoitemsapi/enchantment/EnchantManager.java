@@ -11,6 +11,7 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
+import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -27,17 +28,20 @@ public class EnchantManager {
     private final Set<CustomEnchantment> customEnchantments;
     private final Map<Pair<Enchantment, Integer>, Component> customEnchantmentDisplayNames;
 
-    public EnchantManager(HoloItemsRevamp plugin) throws ReflectiveOperationException {
+    public EnchantManager(HoloItemsRevamp plugin) {
         try {
             final Field field = Enchantment.class.getDeclaredField("acceptingNew");
             field.setAccessible(true);
             field.set(null, true);
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            throw new ReflectiveOperationException(e);
+            throw new RuntimeException(e);
         }
+
         this.customEnchantments = buildCustomEnchantments(plugin);
         customEnchantments.forEach(Enchantment::registerEnchantment);
         Enchantment.stopAcceptingRegistrations();
+
+        customEnchantments.forEach(Integrations.WORLD_GUARD::registerEnchantment);
 
         // Key is a pair of Enchantment and level, value is the display name
         this.customEnchantmentDisplayNames = customEnchantments.stream()
@@ -46,8 +50,6 @@ public class EnchantManager {
                             .forEach(level -> mapper.accept(Pair.of(customEnchantment, level)));
                 })
                 .collect(Collectors.toMap(Function.identity(), EnchantManager::displayNameFromEnchantmentPair));
-
-        plugin.getServer().getPluginManager().registerEvents(new EnchantListener(plugin), plugin);
     }
 
     private static Component displayNameFromEnchantmentPair(Pair<Enchantment, Integer> enchantmentPair) {

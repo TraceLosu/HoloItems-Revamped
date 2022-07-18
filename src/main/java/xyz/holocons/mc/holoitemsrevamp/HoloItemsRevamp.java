@@ -1,6 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp;
 
 import com.strangeone101.holoitemsapi.Keys;
+import com.strangeone101.holoitemsapi.enchantment.EnchantListener;
 import com.strangeone101.holoitemsapi.enchantment.EnchantManager;
 
 import com.strangeone101.holoitemsapi.recipe.CraftListener;
@@ -18,6 +19,9 @@ public final class HoloItemsRevamp extends JavaPlugin {
     public void onLoad() {
         Keys.fillKeys(this);
 
+        this.enchantManager = new EnchantManager(this);
+        this.collectionManager = new CollectionManager(this);
+
         Integrations.onLoad(this);
     }
 
@@ -25,13 +29,7 @@ public final class HoloItemsRevamp extends JavaPlugin {
     public void onEnable() {
         Integrations.onEnable(this);
 
-        try {
-            this.enchantManager = new EnchantManager(this);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-        this.collectionManager = new CollectionManager(this);
-
+        getServer().getPluginManager().registerEvents(new EnchantListener(this), this);
         getServer().getPluginManager().registerEvents(new CraftListener(this), this);
 
         getCommand("holoitems").setExecutor(new MainCommand(this));

@@ -1,5 +1,6 @@
 package xyz.holocons.mc.holoitemsrevamp.integration;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Location;
@@ -11,11 +12,10 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
-
 public interface WorldGuardHook extends Hook {
+
+    default void registerEnchantment(CustomEnchantment enchantment) {
+    }
 
     default boolean canUseEnchantment(Location location, Class<? extends CustomEnchantment> enchantmentCls) {
         return true;
@@ -26,16 +26,18 @@ public interface WorldGuardHook extends Hook {
 
     public class Integration implements WorldGuardHook {
 
-        public static final Map<Class<? extends CustomEnchantment>, Flag<?>> ENCHANTMENT_FLAGS = Map.ofEntries(
-                Map.entry(Magnet.class, new StateFlag("holoitems-magnet", true)),
-                Map.entry(Memento.class, new StateFlag("holoitems-memento", true)),
-                Map.entry(TideRider.class, new StateFlag("holoitems-tide-rider", true)));
+        public static final Map<Class<? extends CustomEnchantment>, Flag<?>> ENCHANTMENT_FLAGS = new HashMap<>();
 
-        private RegionContainer regionContainer;
+        private boolean loaded = false;
+        private RegionContainer regionContainer = null;
 
         @Override
         public void onLoad() {
+            if (loaded) {
+                return;
+            }
             WorldGuard.getInstance().getFlagRegistry().registerAll(ENCHANTMENT_FLAGS.values());
+            loaded = true;
         }
 
         @Override
@@ -44,9 +46,18 @@ public interface WorldGuardHook extends Hook {
         }
 
         @Override
+        public void registerEnchantment(CustomEnchantment enchantment) {
+            if (loaded) {
+                throw new IllegalStateException("New enchantments cannot be registered at this time");
+            }
+            final var name = "holoitems-" + enchantment.getKey().getKey().replace('_', '-');
+            ENCHANTMENT_FLAGS.put(enchantment.getClass(), new StateFlag(name, true));
+        }
+
+        @Override
         public boolean canUseEnchantment(Location location, Class<? extends CustomEnchantment> enchantmentCls) {
-            final var value = regionContainer.createQuery()
-                    .queryValue(BukkitAdapter.adapt(location), null, ENCHANTMENT_FLAGS.get(enchantmentCls));
+            final var flag = ENCHANTMENT_FLAGS.get(enchantmentCls);
+            final var value = regionContainer.createQuery().queryValue(BukkitAdapter.adapt(location), null, flag);
             return value != StateFlag.State.DENY;
         }
     }
