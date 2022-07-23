@@ -17,10 +17,10 @@ import java.util.List;
 
 public class MagnetBook extends CustomItem implements Enchantable {
 
-    private final static String name = "magnet";
-    private final static Material material = Material.ENCHANTED_BOOK;
-    private final static Component displayName = Component.text("Magnet", NamedTextColor.RED);
-    private final static List<Component> lore = List.of(
+    private static final String name = "magnet";
+    private static final Material material = Material.ENCHANTED_BOOK;
+    private static final Component displayName = Component.text("Magnet", NamedTextColor.RED);
+    private static final List<Component> lore = List.of(
         Component.text("Automatically put mined items to your inventory!", NamedTextColor.DARK_PURPLE)
     );
 

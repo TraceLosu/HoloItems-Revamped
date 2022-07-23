@@ -21,6 +21,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
 import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
+import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
 public class TideRider extends CustomEnchantment implements PlayerInteract, ProjectileLaunch {
 
@@ -61,6 +62,10 @@ public class TideRider extends CustomEnchantment implements PlayerInteract, Proj
     public void run(PlayerInteractEvent event, ItemStack itemStack) {
         final var player = event.getPlayer();
         final var world = player.getWorld();
+
+        if (!Integrations.WORLDGUARD.canUseEnchantment(player.getLocation(), TideRider.class)) {
+            return;
+        }
 
         if (itemStack.getItemMeta() instanceof Damageable damageable) {
             final var damage = damageable.getDamage() + 1;

@@ -7,10 +7,10 @@ This plugin uses HoloItemsAPI to register and listen to custom items. To learn m
 ### Adding an item
 To create a new custom item, create a class that extends the `CustomItem` class. The internal name of the item should have no spaces. The internal ID of the item will be used as the custom model data. Anything else you can add/set (enchantments, cooldowns, etc.) can be found in the `CustomItem` class. Make sure to register the item at its constructor.
 ```java
-    private final static String name = "tide_rider";
-    private final static Material material = Material.TRIDENT;
-    private final static String displayName = ChatColor.BLUE + "Tide Rider";
-    private final static List<String> lore = List.of(
+    private static final String name = "tide_rider";
+    private static final Material material = Material.TRIDENT;
+    private static final String displayName = ChatColor.BLUE + "Tide Rider";
+    private static final List<String> lore = List.of(
         "Surf the waves"
     );
 

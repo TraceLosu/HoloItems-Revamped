@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
+import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
 public class Magnet extends CustomEnchantment implements BlockBreak {
 
@@ -57,6 +58,10 @@ public class Magnet extends CustomEnchantment implements BlockBreak {
     public void run(BlockBreakEvent event, ItemStack itemStack) {
         final var location = event.getBlock().getLocation().toCenterLocation();
         final var player = event.getPlayer();
+
+        if (!Integrations.WORLDGUARD.canUseEnchantment(location, Magnet.class)) {
+            return;
+        }
 
         new BukkitRunnable() {
             @Override

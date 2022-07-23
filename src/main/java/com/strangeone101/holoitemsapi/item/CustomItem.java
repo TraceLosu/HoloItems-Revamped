@@ -404,7 +404,7 @@ public class CustomItem implements Keyed {
      * @return True if stackable
      */
     public boolean isStackable() {
-        return stackable;
+        return stackable && material.getMaxStackSize() != 1;
     }
 
     /**

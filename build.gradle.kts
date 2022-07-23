@@ -17,12 +17,13 @@ java {
 repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.dmulloy2.net/repository/public/")
-    maven("https://raw.githubusercontent.com/TraceLosu/HoloItemsAPI/mvn-repo/")
+    maven("https://maven.enginehub.org/repo/")
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7-SNAPSHOT")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.6")
 }
 
@@ -75,6 +76,7 @@ bukkit {
     authors = listOf("TraceL", "dlee13")
     website = "holocons.xyz"
     depend = listOf("ProtocolLib")
+    softDepend = listOf("WorldGuard")
     prefix = "HoloItems"
 
     commands {

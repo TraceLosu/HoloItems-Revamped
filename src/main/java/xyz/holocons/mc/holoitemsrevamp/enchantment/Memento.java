@@ -15,6 +15,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
 import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
+import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
 public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlace {
 
@@ -53,8 +54,10 @@ public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlac
 
     @Override
     public void run(PlayerDeathEvent event, ItemStack itemStack) {
+        final var location = event.getPlayer().getLocation();
+
         // Don't do anything if keepInv is already on for this event
-        if (event.getKeepInventory()){
+        if (event.getKeepInventory() || !Integrations.WORLDGUARD.canUseEnchantment(location, Memento.class)) {
             return;
         }
 
@@ -71,7 +74,7 @@ public class Memento extends CustomEnchantment implements PlayerDeath, BlockPlac
     }
 
     @Override
-    public void run(BlockPlaceEvent event, ItemStack itemStack){
+    public void run(BlockPlaceEvent event, ItemStack itemStack) {
         event.setCancelled(true);
     }
 }

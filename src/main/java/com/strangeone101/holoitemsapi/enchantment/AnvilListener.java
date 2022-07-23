@@ -7,17 +7,11 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -25,11 +19,6 @@ import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.ability.BlockBreak;
-import xyz.holocons.mc.holoitemsrevamp.ability.BlockPlace;
-import xyz.holocons.mc.holoitemsrevamp.ability.PlayerDeath;
-import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
-import xyz.holocons.mc.holoitemsrevamp.ability.ProjectileLaunch;
 import xyz.holocons.mc.holoitemsrevamp.packet.PlayerAbilitiesPacket;
 
 import java.util.Map;
@@ -38,106 +27,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EnchantListener implements Listener {
+public class AnvilListener implements Listener {
 
-    private final static int MAX_REPAIR_COST = Short.MAX_VALUE;
+    private static final int MAX_REPAIR_COST = Short.MAX_VALUE;
 
     private final HoloItemsRevamp plugin;
 
-    public EnchantListener(HoloItemsRevamp plugin) {
+    public AnvilListener(HoloItemsRevamp plugin) {
         this.plugin = plugin;
-    }
-
-    /**
-     * Handles BlockBreak enchantments.
-     *
-     * @param event The BlockBreakEvent
-     */
-    @EventHandler(ignoreCancelled = true)
-    public void onBlockBreak(BlockBreakEvent event) {
-        final var itemStack = event.getPlayer().getInventory().getItemInMainHand();
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof BlockBreak ability) {
-                ability.run(event, itemStack);
-            }
-        });
-    }
-
-    /**
-     * Handles BlockPlace enchantments.
-     *
-     * @param event The BlockPlaceEvent
-     */
-    @EventHandler(ignoreCancelled = true)
-    public void onBlockPlace(BlockPlaceEvent event) {
-        final var itemStack = event.getItemInHand();
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof BlockPlace ability) {
-                ability.run(event, itemStack);
-            }
-        });
-    }
-
-    /**
-     * Handles PlayerDeath enchantments.
-     *
-     * @param event The PlayerDeathEvent
-     */
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        final var playerInventory = event.getPlayer().getInventory();
-
-        for (final var itemStack : playerInventory) {
-            itemStack.getEnchantments().keySet().forEach(enchantment -> {
-                if (enchantment instanceof PlayerDeath ability) {
-                    ability.run(event, itemStack);
-                }
-            });
-        }
-    }
-
-    /**
-     * Handles PlayerInteract enchantments.
-     *
-     * @param event The PlayerInteractEvent
-     */
-    @EventHandler(ignoreCancelled = false)
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.isBlockInHand() || !event.getAction().isRightClick() || !event.hasItem()) {
-            return;
-        }
-        final var itemStack = switch (event.getHand()) {
-            case HAND -> event.getPlayer().getInventory().getItemInMainHand();
-            case OFF_HAND -> event.getPlayer().getInventory().getItemInOffHand();
-            default -> new ItemStack(Material.AIR);
-        };
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof PlayerInteract ability) {
-                ability.run(event, itemStack);
-            }
-        });
-    }
-
-    /**
-     * Handles ProjectileLaunch enchantments.
-     *
-     * @param event The ProjectileLaunchEvent
-     */
-    @EventHandler(ignoreCancelled = true)
-    public void onProjectileLaunch(ProjectileLaunchEvent event) {
-        if (!(event.getEntity() instanceof ThrowableProjectile throwableProjectile)) {
-            return;
-        }
-        final var itemStack = throwableProjectile.getItem();
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof ProjectileLaunch ability) {
-                ability.run(event, itemStack);
-            }
-        });
     }
 
     /**
@@ -146,10 +43,11 @@ public class EnchantListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getInventory() instanceof AnvilInventory) ||
-                !(event.getPlayer() instanceof Player player) ||
-                player.getGameMode() == GameMode.CREATIVE)
+        if (!(event.getInventory() instanceof AnvilInventory)
+                || !(event.getPlayer() instanceof Player player)
+                || player.getGameMode() == GameMode.CREATIVE) {
             return;
+        }
 
         new PlayerAbilitiesPacket(player, false).sendPacket(player);
     }
@@ -332,7 +230,7 @@ public class EnchantListener implements Listener {
      */
     private static int getCustomEnchantCost(Map<CustomEnchantment, Integer> enchantments, int initialCost) {
         return enchantments.entrySet().stream()
-                .reduce(initialCost, EnchantListener::levelCostAccumulator, Integer::sum);
+                .reduce(initialCost, AnvilListener::levelCostAccumulator, Integer::sum);
     }
 
     private static int levelCostAccumulator(int partialCost, Map.Entry<CustomEnchantment, Integer> nextEnchantment) {

@@ -12,7 +12,7 @@ import net.kyori.adventure.text.Component;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Util {
+public final class Util {
 
     private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
     private static final UUID SKULL_OWNER = new UUID(0, 0);
@@ -20,8 +20,12 @@ public class Util {
     private static long epochTick = -1;
     private static int previousCurrentTick = Integer.MAX_VALUE;
 
+    private Util() {
+    }
+
     /**
      * Convenience method to call the deprecated {@code UnsafeValues#nextEntityId()}.
+     * 
      * @return The next EntityId available
      */
     @SuppressWarnings("deprecation")
@@ -33,7 +37,8 @@ public class Util {
      * Calling {@code UUID#randomUUID()} uses {@code SecureRandom} to get a cryptographically
      * secure random UUID, but for our use cases, we don't need it to be
      * cryptographically secure. We can generate our UUIDs a little more cheaply using
-     * {@code ThreadLocalRandom} instead.
+     * {@code ThreadLocalRandom} instead. Should not be called from any async threads.
+     * 
      * @return A pseudo randomly generated UUID
      */
     public static UUID randomUUID() {
@@ -42,6 +47,7 @@ public class Util {
 
     /**
      * Returns a player head with the base64 texture. Mostly used for GUI.
+     * 
      * @param base64 A base 64 string that contains ONLY the texture
      * @return The ItemStack player head
      */
@@ -62,12 +68,13 @@ public class Util {
      * it begins counting from 0 when the server starts. Instead, we'll use the system
      * time as an epoch and add the current tick to it to efficiently get an absolute
      * current time.
+     * 
      * @return The current time represented in terms of game ticks, assuming 20 TPS
      */
     public static long currentTimeTicks() {
         final var currentTick = Bukkit.getCurrentTick();
         if (currentTick < Util.previousCurrentTick) {
-            Util.epochTick = System.currentTimeMillis() / 1000 * 20;
+            Util.epochTick = System.currentTimeMillis() / 50;
         }
         Util.previousCurrentTick = currentTick;
         return Util.epochTick + currentTick;
@@ -75,6 +82,7 @@ public class Util {
 
     /**
      * Returns the ore rarity of a tool material.
+     * 
      * @param material The material to check
      * @return An ingot material that corresponds to the provided material, or air if there is none.
      */
@@ -104,6 +112,7 @@ public class Util {
     /**
      * Returns the roman numeral equivalent of a number. This is only useful for numbers 1 through 10.
      * Mainly used for enchantments.
+     * 
      * @param number A number from 1 through 10
      * @return A TranslatableComponent, or empty Component if it is outside the available range.
      */

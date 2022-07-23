@@ -20,10 +20,10 @@ import java.util.List;
 
 public class MementoItem extends CustomItem implements Enchantable {
 
-    private final static String name = "memento";
-    private final static Material material = Material.ENDER_CHEST;
-    private final static Component displayName = Component.text("Memento", NamedTextColor.DARK_PURPLE);
-    private final static List<Component> lore = List.of(
+    private static final String name = "memento";
+    private static final Material material = Material.ENDER_CHEST;
+    private static final Component displayName = Component.text("Memento", NamedTextColor.DARK_PURPLE);
+    private static final List<Component> lore = List.of(
         Component.text("Keep your items on death. Consumable.", NamedTextColor.DARK_PURPLE)
     );
 
