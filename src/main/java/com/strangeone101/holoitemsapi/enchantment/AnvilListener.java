@@ -23,7 +23,6 @@ import xyz.holocons.mc.holoitemsrevamp.packet.PlayerAbilitiesPacket;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -195,30 +194,23 @@ public class AnvilListener implements Listener {
      */
     private static Map<CustomEnchantment, Integer> combineCustomEnchants(@NotNull ItemStack base,
             @NotNull ItemStack addition) {
-        final var baseEnchants = EnchantManager.getEnchantments(base);
-        final var additionEnchants = EnchantManager.getEnchantments(addition).entrySet().stream()
-                .filter(entry -> hasNoConflictEnchants(baseEnchants, entry.getKey())
+        final var baseEnchantments = EnchantManager.getEnchantments(base);
+        final var additionEnchantments = EnchantManager.getEnchantments(addition)
+                .entrySet()
+                .stream()
+                .filter(entry -> hasNoConflictEnchants(baseEnchantments, entry.getKey())
                         && entry.getKey().canEnchantItem(base))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return combineCustomEnchants(baseEnchants, additionEnchants);
-    }
-
-    private static Map<CustomEnchantment, Integer> combineCustomEnchants(Map<Enchantment, Integer> base,
-            Map<Enchantment, Integer> addition) {
-        final var combined = Stream.of(base, addition)
+        final var combined = Stream.of(baseEnchantments, additionEnchantments)
                 .map(Map::entrySet)
                 .flatMap(Set::stream)
                 .filter(entry -> entry.getKey() instanceof CustomEnchantment)
                 .collect(Collectors.toMap(entry -> (CustomEnchantment) entry.getKey(), Map.Entry::getValue,
                         (a, b) -> a.equals(b) ? a + 1 : Integer.max(a, b)));
-        final var maxLevels = combined.keySet()
-                .stream()
-                .collect(Collectors.toMap(Function.identity(), Enchantment::getMaxLevel));
-        return Stream.of(combined, maxLevels)
-                .map(Map::entrySet)
-                .flatMap(Set::stream)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::min));
+        combined.replaceAll((enchantment, level) -> Integer.min(level, enchantment.getMaxLevel()));
+
+        return combined;
     }
 
     /**
