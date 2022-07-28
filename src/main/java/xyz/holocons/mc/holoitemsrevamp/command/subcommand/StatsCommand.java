@@ -12,7 +12,6 @@ import xyz.holocons.mc.holoitemsrevamp.command.SubCommand;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StatsCommand implements SubCommand {
 
@@ -45,7 +44,7 @@ public class StatsCommand implements SubCommand {
         return switch (args.length) {
             case 1 -> List.of("get","set");
             case 2 -> null;
-            case 3 -> Arrays.stream(Statistic.values()).map(Statistic::toString).collect(Collectors.toList());
+            case 3 -> Arrays.stream(Statistic.values()).map(Statistic::toString).toList();
             case 4 -> {
                 Statistic statistic;
                 try {
@@ -58,8 +57,8 @@ public class StatsCommand implements SubCommand {
                 }
 
                 yield switch (statistic.getType()) {
-                    case BLOCK, ITEM -> Arrays.stream(Material.values()).map(Material::toString).collect(Collectors.toList());
-                    case ENTITY -> Arrays.stream(EntityType.values()).map(EntityType::toString).collect(Collectors.toList());
+                    case BLOCK, ITEM -> Arrays.stream(Material.values()).map(Material::toString).toList();
+                    case ENTITY -> Arrays.stream(EntityType.values()).map(EntityType::toString).toList();
                     case UNTYPED -> List.of();
                 };
             }

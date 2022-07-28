@@ -20,7 +20,6 @@ import xyz.holocons.mc.holoitemsrevamp.command.subcommand.StatsCommand;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MainCommand implements TabExecutor {
 
@@ -78,7 +77,7 @@ public class MainCommand implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length <= 1) {
-            return subCommands.stream().map(SubCommand::getName).collect(Collectors.toList());
+            return subCommands.stream().map(SubCommand::getName).toList();
         } else {
             for (var subCommand : subCommands) {
                 if (args[0].equalsIgnoreCase(subCommand.getName())) {
