@@ -101,14 +101,21 @@ public class CollectionManager {
     public CollectionManager(HoloItemsRevamp plugin) {
         this.idolCollections = buildIdolCollections(plugin);
 
-        // Creates a map from the list of idols, key is the internal name, value is the initialized class.
+        // Key is the internal name, value is the initialized custom item
         this.customItems = idolCollections.stream()
-            .flatMap(i -> i.getAllItem().stream())
-            .collect(Collectors.toMap(CustomItem::getInternalName, Function.identity()));
+                .<CustomItem>mapMulti((idolCollection, consumer) -> {
+                    for (final var idol : idolCollection.getIdolSet()) {
+                        for (final var customItem : idol.getItemSet()) {
+                            consumer.accept(customItem);
+                        }
+                    }
+                })
+                .collect(Collectors.toMap(CustomItem::getInternalName, Function.identity()));
     }
 
     /**
      * Gets a list of all generations
+     * 
      * @return a list
      */
     public List<IdolCollection> getAllGens() {
@@ -116,8 +123,10 @@ public class CollectionManager {
     }
 
     /**
-     * Gets a map that contains all custom items as its values, and their internal name as the key. Used for
+     * Gets a map that contains all custom items as its values, and their internal
+     * name as the key. Used for
      * autocompletion
+     * 
      * @return All custom items that the plugin contains
      */
     public Map<String, CustomItem> getAllItems() {
@@ -126,12 +135,10 @@ public class CollectionManager {
 
     private static List<IdolCollection> buildIdolCollections(HoloItemsRevamp plugin) {
         var gura = new GawrGura(
-            new TideRiderItem(plugin)
-        );
+                new TideRiderItem(plugin));
         var irys = new IRyS();
         var calliope = new MoriCalliope(
-            new MementoItem(plugin)
-        );
+                new MementoItem(plugin));
         var ina = new NinomaeInanis();
         var kiara = new TakanashiKiara();
         var amelia = new WatsonAmelia();
@@ -149,8 +156,7 @@ public class CollectionManager {
         var azki = new AZKi();
         var suisei = new HoshimachiSuisei();
         var roboco = new Roboco(
-            new MagnetBook(plugin)
-        );
+                new MagnetBook(plugin));
         var miko = new SakuraMiko();
         var sora = new TokinoSora();
 
@@ -214,22 +220,21 @@ public class CollectionManager {
         var shien = new KageyamaShien();
 
         return List.of(
-            new EN1Collection(gura, irys, calliope, ina, kiara, amelia),
-            new EN2Collection(fauna, baelz, mumei, kronii, sana),
-            new GamersCollection(korone, okayu, mio),
-            new Gen0Collection(azki, suisei, roboco, miko, sora),
-            new Gen1Collection(haato, aki, matsuri, fubuki, mel),
-            new Gen2Collection(aqua, shion, ayame, subaru, choco),
-            new Gen3Collection(marine, flare, noel, rushia, pekora),
-            new Gen4Collection(kanata, luna, coco, towa, watame),
-            new Gen5Collection(nene, polka, botan, lamy),
-            new Gen6Collection(koyori, iroha, laplus, chloe, lui),
-            new ID1Collection(iofi, risu, moona),
-            new ID2Collection(anya, ollie, reine),
-            new MiscCollection(achan),
-            new Stars1Collection(aruran, miyabi, izuru, rikka),
-            new Stars2Collection(astel, temma, roberu),
-            new Stars3Collection(oga, shien)
-        );
+                new EN1Collection(gura, irys, calliope, ina, kiara, amelia),
+                new EN2Collection(fauna, baelz, mumei, kronii, sana),
+                new GamersCollection(korone, okayu, mio),
+                new Gen0Collection(azki, suisei, roboco, miko, sora),
+                new Gen1Collection(haato, aki, matsuri, fubuki, mel),
+                new Gen2Collection(aqua, shion, ayame, subaru, choco),
+                new Gen3Collection(marine, flare, noel, rushia, pekora),
+                new Gen4Collection(kanata, luna, coco, towa, watame),
+                new Gen5Collection(nene, polka, botan, lamy),
+                new Gen6Collection(koyori, iroha, laplus, chloe, lui),
+                new ID1Collection(iofi, risu, moona),
+                new ID2Collection(anya, ollie, reine),
+                new MiscCollection(achan),
+                new Stars1Collection(aruran, miyabi, izuru, rikka),
+                new Stars2Collection(astel, temma, roberu),
+                new Stars3Collection(oga, shien));
     }
 }

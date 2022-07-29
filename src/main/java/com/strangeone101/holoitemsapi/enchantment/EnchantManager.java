@@ -1,12 +1,9 @@
 package com.strangeone101.holoitemsapi.enchantment;
 
-import it.unimi.dsi.fastutil.Pair;
 import net.kyori.adventure.text.Component;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
@@ -26,7 +23,7 @@ import java.util.stream.Stream;
 public class EnchantManager {
 
     private final Set<CustomEnchantment> customEnchantments;
-    private final Map<Pair<Enchantment, Integer>, Component> customEnchantmentDisplayNames;
+    private final Map<Map.Entry<Enchantment, Integer>, Component> customEnchantmentDisplayNames;
 
     public EnchantManager(HoloItemsRevamp plugin) {
         try {
@@ -44,16 +41,16 @@ public class EnchantManager {
         customEnchantments.forEach(Integrations.WORLDGUARD::registerEnchantment);
 
         // Key is a pair of Enchantment and level, value is the display name
-        this.customEnchantmentDisplayNames = customEnchantments.stream()
-                .<Pair<Enchantment, Integer>>mapMulti((customEnchantment, mapper) -> {
+        this.customEnchantmentDisplayNames = customEnchantments
+                .stream().<Map.Entry<Enchantment, Integer>>mapMulti((customEnchantment, consumer) -> {
                     IntStream.rangeClosed(customEnchantment.getStartLevel(), customEnchantment.getMaxLevel())
-                            .forEach(level -> mapper.accept(Pair.of(customEnchantment, level)));
+                            .forEach(level -> consumer.accept(Map.entry(customEnchantment, level)));
                 })
-                .collect(Collectors.toMap(Function.identity(), EnchantManager::displayNameFromEnchantmentPair));
+                .collect(Collectors.toMap(Function.identity(), EnchantManager::displayName));
     }
 
-    private static Component displayNameFromEnchantmentPair(Pair<Enchantment, Integer> enchantmentPair) {
-        return enchantmentPair.left().displayName(enchantmentPair.right());
+    private static Component displayName(Map.Entry<Enchantment, Integer> enchantment) {
+        return enchantment.getKey().displayName(enchantment.getValue());
     }
 
     /**
@@ -79,7 +76,7 @@ public class EnchantManager {
      */
     public void applyCustomEnchantmentLore(ItemStack itemStack) {
         final var enchantmentLore = getEnchantments(itemStack).entrySet().stream()
-                .map(entry -> customEnchantmentDisplayNames.get(Pair.of(entry.getKey(), entry.getValue())))
+                .map(customEnchantmentDisplayNames::get)
                 .filter(Objects::nonNull);
 
         final var oldLore = itemStack.lore();
@@ -106,18 +103,6 @@ public class EnchantManager {
 
     public List<String> getCustomEnchantmentNames() {
         return customEnchantments.stream().map(CustomEnchantment::getName).toList();
-    }
-
-    /**
-     * Gets a custom enchantment from the plugin by class.
-     * 
-     * @param enchantmentCls The class of the enchantment
-     * @return Resulting CustomEnchantment, or null if not found
-     */
-    @Nullable
-    public <E extends CustomEnchantment> E getCustomEnchantment(@NotNull Class<E> enchantmentCls) {
-        return enchantmentCls
-                .cast(customEnchantments.stream().filter(enchantmentCls::isInstance).findAny().orElse(null));
     }
 
     private static Set<CustomEnchantment> buildCustomEnchantments(HoloItemsRevamp plugin) {

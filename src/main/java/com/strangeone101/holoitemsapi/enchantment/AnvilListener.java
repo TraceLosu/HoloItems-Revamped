@@ -22,7 +22,6 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.packet.PlayerAbilitiesPacket;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -192,7 +191,8 @@ public class AnvilListener implements Listener {
      * @param addition The second item
      * @return A map containing all custom enchants
      */
-    private static Map<CustomEnchantment, Integer> combineCustomEnchants(@NotNull ItemStack base,
+    private static Map<CustomEnchantment, Integer> combineCustomEnchants(
+            @NotNull ItemStack base,
             @NotNull ItemStack addition) {
         final var baseEnchantments = EnchantManager.getEnchantments(base);
         final var additionEnchantments = EnchantManager.getEnchantments(addition)
@@ -202,15 +202,20 @@ public class AnvilListener implements Listener {
                         && entry.getKey().canEnchantItem(base))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        final var combined = Stream.of(baseEnchantments, additionEnchantments)
-                .map(Map::entrySet)
-                .flatMap(Set::stream)
-                .filter(entry -> entry.getKey() instanceof CustomEnchantment)
-                .collect(Collectors.toMap(entry -> (CustomEnchantment) entry.getKey(), Map.Entry::getValue,
+        final var combinedEnchantments = Stream
+                .of(baseEnchantments, additionEnchantments).<Map.Entry<CustomEnchantment, Integer>>mapMulti(
+                        (enchantments, consumer) -> {
+                            for (final var entry : enchantments.entrySet()) {
+                                if (entry.getKey() instanceof CustomEnchantment enchantment) {
+                                    consumer.accept(Map.entry(enchantment, entry.getValue()));
+                                }
+                            }
+                        })
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (a, b) -> a.equals(b) ? a + 1 : Integer.max(a, b)));
-        combined.replaceAll((enchantment, level) -> Integer.min(level, enchantment.getMaxLevel()));
+        combinedEnchantments.replaceAll((enchantment, level) -> Integer.min(level, enchantment.getMaxLevel()));
 
-        return combined;
+        return combinedEnchantments;
     }
 
     /**
