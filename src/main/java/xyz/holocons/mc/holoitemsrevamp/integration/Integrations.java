@@ -1,8 +1,5 @@
 package xyz.holocons.mc.holoitemsrevamp.integration;
 
-import java.util.Arrays;
-
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -14,8 +11,7 @@ public final class Integrations {
     public static final WorldGuardHook WORLDGUARD;
 
     static {
-        final var thisPlugin = Arrays.stream(Bukkit.getPluginManager().getPlugins())
-                .filter(plugin -> plugin instanceof HoloItemsRevamp).findFirst().get();
+        final var thisPlugin = HoloItemsRevamp.getPlugin(HoloItemsRevamp.class);
         WORLDGUARD = getPlugin(thisPlugin, "WorldGuard") instanceof WorldGuardPlugin
                 ? new WorldGuardHook.Integration()
                 : new WorldGuardHook.Stub();
