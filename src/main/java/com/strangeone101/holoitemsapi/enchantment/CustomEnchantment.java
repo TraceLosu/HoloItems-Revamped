@@ -47,8 +47,14 @@ public abstract class CustomEnchantment extends Enchantment {
     public abstract int getCostMultiplier();
 
     @NotNull
+    @Deprecated
     @Override
-    public String getName() {
+    public final String getName() {
+        return name();
+    }
+
+    @NotNull
+    public final String name() {
         return getKey().getKey();
     }
 

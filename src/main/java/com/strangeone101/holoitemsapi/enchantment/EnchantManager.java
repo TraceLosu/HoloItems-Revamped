@@ -102,7 +102,7 @@ public class EnchantManager {
     }
 
     public List<String> getCustomEnchantmentNames() {
-        return customEnchantments.stream().map(CustomEnchantment::getName).toList();
+        return customEnchantments.stream().map(CustomEnchantment::name).toList();
     }
 
     private static Set<CustomEnchantment> buildCustomEnchantments(HoloItemsRevamp plugin) {
