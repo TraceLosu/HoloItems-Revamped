@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -23,7 +22,7 @@ import java.util.stream.Stream;
 public class EnchantManager {
 
     private final Set<CustomEnchantment> customEnchantments;
-    private final Map<Map.Entry<Enchantment, Integer>, Component> customEnchantmentDisplayNames;
+    private final Map<Map.Entry<Enchantment, Integer>, Component> customEnchantmentLores;
 
     public EnchantManager(HoloItemsRevamp plugin) {
         try {
@@ -40,17 +39,18 @@ public class EnchantManager {
 
         customEnchantments.forEach(Integrations.WORLDGUARD::registerEnchantment);
 
-        // Key is a pair of Enchantment and level, value is the display name
-        this.customEnchantmentDisplayNames = customEnchantments
-                .stream().<Map.Entry<Enchantment, Integer>>mapMulti((customEnchantment, consumer) -> {
-                    IntStream.rangeClosed(customEnchantment.getStartLevel(), customEnchantment.getMaxLevel())
-                            .forEach(level -> consumer.accept(Map.entry(customEnchantment, level)));
-                })
-                .collect(Collectors.toMap(Function.identity(), EnchantManager::displayName));
-    }
-
-    private static Component displayName(Map.Entry<Enchantment, Integer> enchantment) {
-        return enchantment.getKey().displayName(enchantment.getValue());
+        // Key is a pair of Enchantment and level, value is the lore
+        this.customEnchantmentLores = customEnchantments
+                .stream().<Map.Entry<Map.Entry<Enchantment, Integer>, Component>>mapMulti(
+                        (customEnchantment, consumer) -> IntStream
+                                .rangeClosed(customEnchantment.getStartLevel(), customEnchantment.getMaxLevel())
+                                .forEach(level -> {
+                                    final var lore = customEnchantment.lore(level);
+                                    if (lore != null) {
+                                        consumer.accept(Map.entry(Map.entry(customEnchantment, level), lore));
+                                    }
+                                }))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -76,7 +76,7 @@ public class EnchantManager {
      */
     public void applyCustomEnchantmentLore(ItemStack itemStack) {
         final var enchantmentLore = getEnchantments(itemStack).entrySet().stream()
-                .map(customEnchantmentDisplayNames::get)
+                .map(customEnchantmentLores::get)
                 .filter(Objects::nonNull);
 
         final var oldLore = itemStack.lore();
@@ -95,7 +95,7 @@ public class EnchantManager {
         final var oldLore = itemStack.lore();
         if (oldLore != null) {
             final var newLore = oldLore.stream()
-                    .filter(loreComponent -> !customEnchantmentDisplayNames.containsValue(loreComponent))
+                    .filter(loreComponent -> !customEnchantmentLores.containsValue(loreComponent))
                     .toList();
             itemStack.lore(newLore.isEmpty() ? null : newLore);
         }

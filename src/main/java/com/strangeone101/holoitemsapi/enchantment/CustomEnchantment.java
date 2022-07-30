@@ -1,6 +1,8 @@
 package com.strangeone101.holoitemsapi.enchantment;
 
 import io.papermc.paper.enchantments.EnchantmentRarity;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
@@ -36,6 +38,17 @@ public abstract class CustomEnchantment extends Enchantment {
     @Nullable
     public static final CustomEnchantment getByKey(@Nullable NamespacedKey key) {
         return Enchantment.getByKey(key) instanceof CustomEnchantment customEnchantment ? customEnchantment : null;
+    }
+
+    /**
+     * Gets the lore that will be applied to items that have this enchantment. Lore will
+     * not be applied if this returns null.
+     * @param level The level of the enchantment
+     * @return Lore corresponding to the given enchantment level
+     */
+    @Nullable
+    public Component lore(int level) {
+        return displayName(level);
     }
 
     /**
