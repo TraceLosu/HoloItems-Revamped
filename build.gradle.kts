@@ -21,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
+    compileOnly("io.papermc.paper:paper-api:1.19.1-R0.1-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7-SNAPSHOT")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.6")
 }
@@ -64,7 +64,7 @@ tasks {
     // Configure the Minecraft version for runServer task
     // https://github.com/jpenilla/run-paper
     runServer {
-        minecraftVersion("1.18.2")
+        minecraftVersion("1.19.1")
     }
 }
 
@@ -72,7 +72,7 @@ tasks {
 // https://github.com/Minecrell/plugin-yml
 bukkit {
     main = "xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp"
-    apiVersion = "1.18"
+    apiVersion = "1.19"
     authors = listOf("TraceL", "dlee13")
     website = "holocons.xyz"
     depend = listOf("ProtocolLib")

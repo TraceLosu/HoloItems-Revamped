@@ -1,7 +1,5 @@
 package xyz.holocons.mc.holoitemsrevamp.packet;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -22,11 +20,7 @@ public abstract class AbstractPacket {
     }
 
     public void sendPacket(Player player) {
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, getHandle());
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, getHandle());
     }
 
     public void broadcastNearbyPacket(Location origin, int maxObserverDistance) {
