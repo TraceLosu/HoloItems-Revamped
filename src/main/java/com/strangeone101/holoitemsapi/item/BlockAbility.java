@@ -1,5 +1,6 @@
 package com.strangeone101.holoitemsapi.item;
 
+import org.bukkit.Keyed;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -12,7 +13,7 @@ import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
  * An interface that represents an enchantment belonging to a custom item that
  * executes code when placed/broken
  */
-public interface BlockAbility {
+public interface BlockAbility extends Keyed {
 
     default void onBlockBreak(BlockBreakEvent event, BlockState blockState) {
     }

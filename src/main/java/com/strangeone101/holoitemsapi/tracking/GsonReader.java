@@ -29,7 +29,7 @@ public class GsonReader extends JsonReader {
         }
 
         final var loadedBukkitWorlds = Bukkit.getWorlds().stream().map(World::getUID).toList();
-        final var customBlockStrings = new ArrayList<String>();
+        final var palette = new ArrayList<String>();
 
         beginObject();
         while (hasNext()) {
@@ -37,7 +37,7 @@ public class GsonReader extends JsonReader {
                 case "palette" -> {
                     beginArray();
                     while (hasNext()) {
-                        customBlockStrings.add(nextString());
+                        palette.add(nextString());
                     }
                     endArray();
                 }
@@ -80,10 +80,12 @@ public class GsonReader extends JsonReader {
                                 final var blockAbilityInt = nextInt();
                                 final BlockAbility blockAbility;
                                 try {
-                                    blockAbility = (BlockAbility) CustomItemManager
-                                        .getCustomItem(customBlockStrings.get(blockAbilityInt));
-                                } catch (IndexOutOfBoundsException e) {
-                                    throw new IOException("Failed to translate integer: " + blockAbilityInt);
+                                    blockAbility = CustomItemManager.getCustomBlock(palette.get(blockAbilityInt));
+                                    if (blockAbility == null) {
+                                        throw new NullPointerException();
+                                    }
+                                } catch (IndexOutOfBoundsException | NullPointerException e) {
+                                    throw new IOException("Failed to translate Integer: " + blockAbilityInt);
                                 }
 
                                 if (loadedBukkitWorlds.contains(worldKey)) {

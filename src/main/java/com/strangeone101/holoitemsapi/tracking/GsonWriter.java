@@ -2,7 +2,6 @@ package com.strangeone101.holoitemsapi.tracking;
 
 import com.google.gson.stream.JsonWriter;
 import com.strangeone101.holoitemsapi.item.BlockAbility;
-import com.strangeone101.holoitemsapi.item.CustomItem;
 import com.strangeone101.holoitemsapi.item.CustomItemManager;
 
 import java.io.BufferedWriter;
@@ -56,7 +55,7 @@ public class GsonWriter extends JsonWriter {
                 beginObject();
                 for (final var block : chunk.getValue().entrySet()) {
                     name(block.getKey().toString());
-                    value(palette.indexOf(((CustomItem) block.getValue()).getKey().value()));
+                    value(palette.indexOf(block.getValue().getKey().getKey()));
                 }
                 endObject();
             }

@@ -80,4 +80,12 @@ public class CustomItemManager {
             .toList();
     }
 
+    /**
+     * Get a custom block from the identifier, or null if it is not a custom block
+     * @param id The block identifier
+     * @return The custom block
+     */
+    public static BlockAbility getCustomBlock(String id) {
+        return CUSTOM_ITEMS.get(id) instanceof BlockAbility ability ? ability : null;
+    }
 }
