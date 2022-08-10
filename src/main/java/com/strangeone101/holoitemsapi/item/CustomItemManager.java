@@ -1,10 +1,10 @@
 package com.strangeone101.holoitemsapi.item;
 
+import com.strangeone101.holoitemsapi.Keys;
 import org.bukkit.inventory.ItemStack;
 
-import com.strangeone101.holoitemsapi.Keys;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,7 +16,6 @@ public class CustomItemManager {
     private static final int INVALID_ID = 404;
 
     private static final Map<String, CustomItem> CUSTOM_ITEMS = new HashMap<>();
-    private static final Map<Short, BlockAbility> CUSTOM_BLOCKS = new HashMap<>();
 
     /**
      * Register a custom item
@@ -30,12 +29,6 @@ public class CustomItemManager {
 
             NEXT_ID++;
             if (NEXT_ID == INVALID_ID) NEXT_ID++;
-        }
-
-        if (item instanceof BlockAbility ability) {
-            if (CUSTOM_BLOCKS.containsKey(ability.getIdentifier()))
-                throw new IllegalArgumentException("Identifier " + ability.getIdentifier() + " has already been registered!");
-            CUSTOM_BLOCKS.put(ability.getIdentifier(), ability);
         }
     }
 
@@ -72,16 +65,19 @@ public class CustomItemManager {
         return null;
     }
 
-    public static BlockAbility getCustomBlock(short identifier) {
-        return CUSTOM_BLOCKS.get(identifier);
-    }
-
     /**
      * Get all custom items
      * @return The many many items
      */
     public static Map<String, CustomItem> getCustomItems() {
         return CUSTOM_ITEMS;
+    }
+
+    public static List<String> getCustomBlocks() {
+        return CUSTOM_ITEMS.entrySet().stream()
+            .filter(entry -> entry.getValue() instanceof BlockAbility)
+            .map(Map.Entry::getKey)
+            .toList();
     }
 
 }

@@ -2,6 +2,8 @@ package com.strangeone101.holoitemsapi.tracking;
 
 import com.google.gson.stream.JsonWriter;
 import com.strangeone101.holoitemsapi.item.BlockAbility;
+import com.strangeone101.holoitemsapi.item.CustomItem;
+import com.strangeone101.holoitemsapi.item.CustomItemManager;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,8 +21,22 @@ public class GsonWriter extends JsonWriter {
     }
 
     public void writeBlocks(final Map<TrackedBlock, BlockAbility> blocks) throws IOException {
+        final var palette = CustomItemManager.getCustomBlocks();
+
+        // Save palette, always.
+        beginObject();
+        name("palette");
+        beginArray();
+        for (final var stringKey : palette) {
+            value(stringKey);
+        }
+        endArray();
+
+        // Save blocks
+        name("blocks");
         if (blocks.isEmpty()) {
             nullValue();
+            endObject();
             return;
         }
 
@@ -40,12 +56,13 @@ public class GsonWriter extends JsonWriter {
                 beginObject();
                 for (final var block : chunk.getValue().entrySet()) {
                     name(block.getKey().toString());
-                    value(block.getValue().getIdentifier());
+                    value(palette.indexOf(((CustomItem) block.getValue()).getKey().value()));
                 }
                 endObject();
             }
             endObject();
         }
+        endObject();
         endObject();
     }
 }

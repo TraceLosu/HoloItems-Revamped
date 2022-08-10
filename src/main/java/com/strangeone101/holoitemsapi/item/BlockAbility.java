@@ -28,6 +28,4 @@ public interface BlockAbility {
 
     default void onPlayerChunkLoad(PlayerChunkLoadEvent event, BlockState blockState) {
     }
-
-    short getIdentifier();
 }

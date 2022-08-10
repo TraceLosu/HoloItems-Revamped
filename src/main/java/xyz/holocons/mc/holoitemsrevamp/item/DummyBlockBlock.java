@@ -40,14 +40,10 @@ public class DummyBlockBlock extends CustomItem implements BlockAbility {
     }
 
     @Override
-    public short getIdentifier() {
-        return 0;
-    }
-
-    @Override
     public void onBlockPlace(BlockPlaceEvent event, BlockState blockState) {
         event.getPlayer().sendMessage(Component.text("You placed a custom block!"));
         event.getPlayer().sendBlockChange(blockState.getLocation(), Material.BEDROCK.createBlockData());
+        // TODO Player#sendBlockChange doesn't seem to work on placement, only when player reloads the chunk.
     }
 
     @Override
@@ -86,6 +82,7 @@ public class DummyBlockBlock extends CustomItem implements BlockAbility {
             player.sendBlockChange(blockState.getLocation(), Material.BEDROCK.createBlockData());
             player.playSound(blockState.getLocation(), Sound.ENTITY_GOAT_SCREAMING_AMBIENT, 1.0f, 1.0f);
         }
+        // TODO Why does this get executed on inventory open?
     }
 
     @Override
