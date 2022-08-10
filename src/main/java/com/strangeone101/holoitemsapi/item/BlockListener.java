@@ -1,7 +1,5 @@
-package com.strangeone101.holoitemsapi.tracking;
+package com.strangeone101.holoitemsapi.item;
 
-import com.strangeone101.holoitemsapi.item.BlockAbility;
-import com.strangeone101.holoitemsapi.item.CustomItemManager;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,14 +14,17 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
+
+import com.strangeone101.holoitemsapi.tracking.TrackingManager;
+
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
-public class TrackingListener implements Listener {
+public class BlockListener implements Listener {
 
-    private final HoloItemsRevamp plugin;
+    private final TrackingManager trackingManager;
 
-    public TrackingListener(HoloItemsRevamp plugin) {
-        this.plugin = plugin;
+    public BlockListener(HoloItemsRevamp plugin) {
+        this.trackingManager = plugin.getTrackingManager();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -33,77 +34,83 @@ public class TrackingListener implements Listener {
         if (!(CustomItemManager.getCustomItem(itemStack) instanceof BlockAbility ability))
             return;
 
-        plugin.getTrackingManager().track(event.getBlockPlaced(), ability);
+        trackingManager.track(event.getBlockPlaced(), ability);
         ability.onBlockPlace(event, event.getBlock().getState());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event) {
-
-        var ability = plugin.getTrackingManager().untrack(event.getBlock());
-        if (ability == null)
+        final var ability = trackingManager.untrack(event.getBlock());
+        if (ability == null) {
             return;
+        }
+
         ability.onBlockBreak(event, event.getBlock().getState());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
-        if (!plugin.getTrackingManager().isTracked(event.getBlock())) {
+        if (!trackingManager.isTracked(event.getBlock())) {
             return;
         }
 
-        plugin.getTrackingManager().getBlockAbility(event.getBlock())
-            .onBlockDispense(event, event.getBlock().getState());
+        trackingManager.getBlockAbility(event.getBlock())
+                .onBlockDispense(event, event.getBlock().getState());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getInventory().getHolder(true) instanceof BlockInventoryHolder blockInventoryHolder)
-            || !plugin.getTrackingManager().isTracked(blockInventoryHolder.getBlock())) {
+                || !trackingManager.isTracked(blockInventoryHolder.getBlock())) {
             return;
         }
 
-        plugin.getTrackingManager().getBlockAbility(blockInventoryHolder.getBlock())
-            .onInventoryClose(event, blockInventoryHolder.getBlock().getState());
+        trackingManager.getBlockAbility(blockInventoryHolder.getBlock())
+                .onInventoryClose(event, blockInventoryHolder.getBlock().getState());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChunkLoad(PlayerChunkLoadEvent event) {
-        plugin.getTrackingManager().getTrackedBlocks(event.getWorld().getUID(), event.getChunk().getChunkKey())
-            .forEach(entry -> entry.getValue().onPlayerChunkLoad(event, entry.getKey().blockState()));
+        trackingManager.getTrackedBlocks(event.getWorld().getUID(), event.getChunk().getChunkKey())
+                .forEach(entry -> entry.getValue().onPlayerChunkLoad(event, entry.getKey().blockState()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockExplode(final BlockExplodeEvent event) {
-        event.blockList().forEach(plugin.getTrackingManager()::untrack);
+        event.blockList().forEach(trackingManager::untrack);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBurn(final BlockBurnEvent event) {
-        plugin.getTrackingManager().untrack(event.getBlock());
+        trackingManager.untrack(event.getBlock());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockFade(final BlockFadeEvent event) {
-        plugin.getTrackingManager().untrack(event.getBlock());
+        trackingManager.untrack(event.getBlock());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        var hasCustomBlock = event.getBlocks().stream().anyMatch(block -> plugin.getTrackingManager().isTracked(block));
-
-        if (hasCustomBlock)
-            event.setCancelled(true);
+        for (final var block : event.getBlocks()) {
+            if (trackingManager.isTracked(block)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent event) {
-        if (!event.isSticky())
+        if (!event.isSticky()) {
             return;
+        }
 
-        var hasCustomBlock = event.getBlocks().stream().anyMatch(block -> plugin.getTrackingManager().isTracked(block));
-
-        if (hasCustomBlock)
-            event.setCancelled(true);
+        for (final var block : event.getBlocks()) {
+            if (trackingManager.isTracked(block)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 }
