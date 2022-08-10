@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 /**
  * Shoutout to Flo0 (a.k.a 7Smiley7 on Spigot) for sharing the block tracking
  * concept which initially guided the design of our own system.
- * 
+ *
  * @see <a href=
  *      "https://www.spigotmc.org/threads/tracking-blocks-that-were-placed-by-players.500216/">Resource
  *      thread</a>
@@ -105,8 +105,8 @@ public class TrackingManager {
         touchedChunks.add(trackedBlock.chunkKey());
     }
 
-    public void untrack(final Block block) {
-        trackedBlocks.remove(new TrackedBlock(block));
+    public BlockAbility untrack(final Block block) {
+         return trackedBlocks.remove(new TrackedBlock(block));
     }
 
     public void move(final Block from, final Block to) {
