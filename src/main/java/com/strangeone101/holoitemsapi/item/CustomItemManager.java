@@ -12,9 +12,6 @@ import java.util.Map;
  */
 public class CustomItemManager {
 
-    private static int NEXT_ID = 2300;
-    private static final int INVALID_ID = 404;
-
     private static final Map<String, CustomItem> CUSTOM_ITEMS = new HashMap<>();
 
     /**
@@ -23,13 +20,6 @@ public class CustomItemManager {
      */
     public static void register(CustomItem item) {
         CUSTOM_ITEMS.put(item.getInternalName(), item);
-
-        if (item.getCustomModelID() == 0) {
-            item.setCustomModelID(NEXT_ID);
-
-            NEXT_ID++;
-            if (NEXT_ID == INVALID_ID) NEXT_ID++;
-        }
     }
 
     /**
