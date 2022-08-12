@@ -1,10 +1,10 @@
 package com.strangeone101.holoitemsapi.item;
 
+import com.strangeone101.holoitemsapi.Keys;
 import org.bukkit.inventory.ItemStack;
 
-import com.strangeone101.holoitemsapi.Keys;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,4 +73,19 @@ public class CustomItemManager {
         return CUSTOM_ITEMS;
     }
 
+    public static List<String> getCustomBlocks() {
+        return CUSTOM_ITEMS.entrySet().stream()
+            .filter(entry -> entry.getValue() instanceof BlockAbility)
+            .map(Map.Entry::getKey)
+            .toList();
+    }
+
+    /**
+     * Get a custom block from the identifier, or null if it is not a custom block
+     * @param id The block identifier
+     * @return The custom block
+     */
+    public static BlockAbility getCustomBlock(String id) {
+        return CUSTOM_ITEMS.get(id) instanceof BlockAbility ability ? ability : null;
+    }
 }
