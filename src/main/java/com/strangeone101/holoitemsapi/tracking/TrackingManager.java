@@ -109,12 +109,6 @@ public class TrackingManager {
          return trackedBlocks.remove(new TrackedBlock(block));
     }
 
-    public void move(final Block from, final Block to) {
-        final var ability = getBlockAbility(from);
-        untrack(from);
-        track(to, ability);
-    }
-
     public Stream<Map.Entry<TrackedBlock, BlockAbility>> getTrackedBlocks(final UUID worldKey, final long chunkKey) {
         return touchedChunks.contains(chunkKey)
                 ? trackedBlocks.entrySet().stream().filter(
