@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 
@@ -63,9 +64,9 @@ public class BlockListener implements Listener {
         ability.onBlockDropItem(event, event.getBlock().getState());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockExplode(final BlockExplodeEvent event) {
-        event.blockList().forEach(trackingManager::untrack);
+        event.blockList().removeIf(trackingManager::isTracked);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -83,6 +84,11 @@ public class BlockListener implements Listener {
 
         trackingManager.track(event.getBlockPlaced(), ability);
         ability.onBlockPlace(event, event.getBlock().getState());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityExplode(final EntityExplodeEvent event) {
+        event.blockList().removeIf(trackingManager::isTracked);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
