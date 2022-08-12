@@ -3,14 +3,12 @@ package xyz.holocons.mc.holoitemsrevamp.item;
 import com.strangeone101.holoitemsapi.item.BlockAbility;
 import com.strangeone101.holoitemsapi.item.CustomItem;
 
-import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -20,9 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.Util;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class DummyBlockBlock extends CustomItem implements BlockAbility {
 
@@ -42,25 +38,11 @@ public class DummyBlockBlock extends CustomItem implements BlockAbility {
     @Override
     public void onBlockPlace(BlockPlaceEvent event, BlockState blockState) {
         event.getPlayer().sendMessage(Component.text("You placed a custom block!"));
-        event.getPlayer().sendBlockChange(blockState.getLocation(), Material.BEDROCK.createBlockData());
-        // TODO Player#sendBlockChange doesn't seem to work on placement, only when player reloads the chunk.
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event, BlockState blockState) {
         event.getPlayer().sendMessage(Component.text("You broke a custom block!"));
-        event.setDropItems(false);
-
-        var location = blockState.getLocation();
-
-        // Drop custom block
-        blockState.getWorld().dropItemNaturally(location, buildStack(null));
-
-        // Drop contents
-        if (blockState instanceof Container container) {
-            Arrays.stream(container.getInventory().getContents()).filter(Objects::nonNull)
-                .forEach(itemStack -> container.getWorld().dropItemNaturally(location, itemStack));
-        }
     }
 
     @Override
@@ -79,14 +61,7 @@ public class DummyBlockBlock extends CustomItem implements BlockAbility {
     @Override
     public void onInventoryClose(InventoryCloseEvent event, BlockState blockState) {
         if (event.getPlayer() instanceof Player player) {
-            player.sendBlockChange(blockState.getLocation(), Material.BEDROCK.createBlockData());
             player.playSound(blockState.getLocation(), Sound.ENTITY_GOAT_SCREAMING_AMBIENT, 1.0f, 1.0f);
         }
-        // TODO Why does this get executed on inventory open?
-    }
-
-    @Override
-    public void onPlayerChunkLoad(PlayerChunkLoadEvent event, BlockState blockState) {
-        event.getPlayer().sendBlockChange(blockState.getLocation(), Material.BEDROCK.createBlockData());
     }
 }
