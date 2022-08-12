@@ -13,17 +13,10 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
-import net.kyori.adventure.text.Component;
 
-/**
- * An interface that represents an enchantment belonging to a custom item that
- * executes code when placed/broken
- */
 public interface BlockAbility extends Keyed {
 
     ItemStack buildStack(Player player);
-
-    Component getDisplayName();
 
     Material getMaterial();
 
