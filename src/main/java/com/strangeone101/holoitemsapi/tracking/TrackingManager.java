@@ -52,10 +52,8 @@ public class TrackingManager {
 
         final Object2ObjectOpenHashMap<TrackedBlock, BlockAbility> invalidBlocks = new Object2ObjectOpenHashMap<>();
 
-        try {
-            final var reader = new GsonReader(file);
+        try (final var reader = new GsonReader(file)) {
             reader.readBlocks(trackedBlocks, invalidBlocks);
-            reader.close();
         } catch (IOException e) {
             final var invalidBlocksFolder = new File(dataFolder, "invalid-blocks");
             invalidBlocksFolder.mkdir();
@@ -73,10 +71,8 @@ public class TrackingManager {
 
             final var invalidBlocksFile = new File(invalidBlocksFolder, Instant.now().toString() + ".json");
 
-            try {
-                final var writer = new GsonWriter(invalidBlocksFile);
+            try (final var writer = new GsonWriter(invalidBlocksFile)) {
                 writer.writeBlocks(invalidBlocks);
-                writer.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -90,10 +86,8 @@ public class TrackingManager {
 
         final var file = new File(dataFolder, FILENAME);
 
-        try {
-            final var writer = new GsonWriter(file);
+        try (final var writer = new GsonWriter(file)) {
             writer.writeBlocks(trackedBlocks);
-            writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
