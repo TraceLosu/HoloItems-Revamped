@@ -74,7 +74,7 @@ public final class Util {
     public static long currentTimeTicks() {
         final var currentTick = Bukkit.getCurrentTick();
         if (currentTick < Util.previousCurrentTick) {
-            Util.epochTick = System.currentTimeMillis() / 50;
+            Util.epochTick = System.currentTimeMillis() / 50 - currentTick < 0 ? Integer.MIN_VALUE : 0;
         }
         Util.previousCurrentTick = currentTick;
         return Util.epochTick + currentTick;
