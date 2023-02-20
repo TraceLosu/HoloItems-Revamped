@@ -2,7 +2,7 @@ plugins {
     `java-library`
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2" // Generates plugin.yml
     id("com.github.johnrengelman.shadow") version "7.1.2" // Shades and relocates dependencies into our plugin jar
-    id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
+    id("xyz.jpenilla.run-paper") version "2.0.1" // Adds runServer and runMojangMappedServer tasks for testing
 }
 
 group = "xyz.holocons.mc"
@@ -21,10 +21,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7-SNAPSHOT")
-    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.6")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8-SNAPSHOT")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.8")
 }
 
 tasks {
@@ -64,7 +64,7 @@ tasks {
     // Configure the Minecraft version for runServer task
     // https://github.com/jpenilla/run-paper
     runServer {
-        minecraftVersion("1.19.1")
+        minecraftVersion("1.19.3")
     }
 }
 
