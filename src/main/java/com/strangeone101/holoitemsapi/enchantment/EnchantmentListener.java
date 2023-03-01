@@ -121,7 +121,7 @@ public class EnchantmentListener implements Listener {
             ItemStack item =  player.getInventory().getArmorContents()[i];
 
             if (item == null){
-                return;
+                continue;
             }
 
             item.getEnchantments().keySet().forEach(enchantment -> {
