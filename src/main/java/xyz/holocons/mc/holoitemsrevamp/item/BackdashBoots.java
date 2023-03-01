@@ -1,17 +1,18 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
-import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.interfaces.Enchantable;
+import com.strangeone101.holoitemsapi.enchantment.EnchantManager;
+import com.strangeone101.holoitemsapi.item.CustomItem;
+import com.strangeone101.holoitemsapi.enchantment.Enchantable;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchant.EnchantManager;
 
 import java.util.List;
 
@@ -19,24 +20,19 @@ public class BackdashBoots extends CustomItem implements Enchantable {
 
     private final static String name = "backdash";
     private final static Material material = Material.LEATHER_BOOTS;
-    private final static String displayName = ChatColor.DARK_GRAY + "Backdash";
-    private final static List<String> lore = List.of(
-        "Crouch to backdash"
+    private final static Component displayName = Component.text("Backdash", NamedTextColor.DARK_GRAY);
+    private final static List<Component> lore = List.of(
+        Component.text("Crouch to backdash")
     );
 
     private final EnchantManager enchantManager;
 
     public BackdashBoots(HoloItemsRevamp plugin) {
-        super(name, material, displayName, lore);
+        super(plugin, name, material, displayName, lore);
         this.enchantManager = plugin.getEnchantManager();
         this.setStackable(false);
         this.register();
         this.registerRecipe();
-    }
-
-    @Override
-    public ItemStack buildStack(Player player) {
-        return applyEnchantment(super.buildStack(player));
     }
 
     private void registerRecipe() {

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.strangeone101.holoitemsapi.CustomItem;
+import com.strangeone101.holoitemsapi.item.CustomItem;
 
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.collection.en1.EN1Collection;
@@ -193,8 +193,7 @@ public class CollectionManager {
         var nene = new MomosuzuNene();
         var polka = new OmaruPolka();
         var botan = new ShishiroBotan(
-            new BackdashBoots(plugin)
-        );
+            new BackdashBoots(plugin));
         var lamy = new YukihanaLamy();
 
         var koyori = new HakuiKoyori();

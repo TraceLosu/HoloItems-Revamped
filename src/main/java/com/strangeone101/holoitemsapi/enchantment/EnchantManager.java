@@ -5,6 +5,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.Backdash;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
@@ -56,7 +57,7 @@ public class EnchantManager {
     /**
      * If the item stack is an enchanted book, it will get the enchantments using
      * {@link EnchantmentStorageMeta#getStoredEnchants()}
-     * 
+     *
      * @param itemStack An ItemStack that has enchantments
      * @return A map of the enchantments
      */
@@ -71,7 +72,7 @@ public class EnchantManager {
      * to the itemstack as lore. If any custom enchantment lore is already on the
      * given itemstack, {@code EnchantManager#removeCustomEnchantmentLore} should be
      * done first.
-     * 
+     *
      * @param itemStack An ItemStack that has custom enchantments
      */
     public void applyCustomEnchantmentLore(ItemStack itemStack) {
@@ -88,7 +89,7 @@ public class EnchantManager {
 
     /**
      * Removes all custom enchantment lore from the given itemstack.
-     * 
+     *
      * @param itemStack An ItemStack without custom enchantments
      */
     public void removeCustomEnchantmentLore(ItemStack itemStack) {
@@ -109,6 +110,7 @@ public class EnchantManager {
         return Set.of(
                 new Magnet(plugin),
                 new Memento(plugin),
-                new TideRider(plugin));
+                new TideRider(plugin),
+                new Backdash(plugin));
     }
 }

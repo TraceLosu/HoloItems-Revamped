@@ -9,6 +9,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EnchantmentListener implements Listener {
@@ -103,5 +104,33 @@ public class EnchantmentListener implements Listener {
                 ability.onProjectileLaunch(event, itemStack);
             }
         });
+    }
+
+    /**
+     * Handles PlayerToggleSneak enchantments.
+     * Only does armor slots for now.
+     *
+     * @param event The ProjectileLaunchEvent
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+        final var player = event.getPlayer();
+        final var inventory = player.getInventory();
+
+        for (int i = 0; i < inventory.getArmorContents().length; i++) {
+            ItemStack item =  player.getInventory().getArmorContents()[i];
+
+            if (item == null){
+                return;
+            }
+
+            item.getEnchantments().keySet().forEach(enchantment -> {
+                if (enchantment instanceof EnchantmentAbility ability) {
+                    ability.onPlayerToggleSneak(event, item);
+                }
+            });
+        }
+
+
     }
 }
