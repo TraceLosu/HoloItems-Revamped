@@ -6,8 +6,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Container;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -97,6 +100,10 @@ public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
 
         // Deletes item if it was used.
         if(consumeItem){
+            final Player player = event.getPlayer();
+            final World world = player.getWorld();
+
+            world.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 0.01f );
             event.getItem().setAmount(0);
         }
     }
