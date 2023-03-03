@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Container;
@@ -103,7 +104,11 @@ public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
             final Player player = event.getPlayer();
             final World world = player.getWorld();
 
-            world.playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.25f, 0.1f );
+            world.playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.1f, 0.1f );
+            world.spawnParticle(
+                Particle.ENCHANTMENT_TABLE,
+                clickedBlock.getLocation().add(0.5, 1.5, 0.5),
+                250, 0.5, 0.5, 0.5,0.25);
             event.getItem().setAmount(0);
         }
     }
