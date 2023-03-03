@@ -54,8 +54,15 @@ public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
     @Override
     public void onPlayerInteract(PlayerInteractEvent event, ItemStack itemStack) {
 
+        final var clickedBlock = event.getClickedBlock();
+
+        // If the clicked block is null, return
+        if (clickedBlock == null){
+            return;
+        }
+
         // If not right-clicked or a container, return
-        final var blockState = event.getClickedBlock().getState();
+        final var blockState = clickedBlock.getState();
         if(!event.getAction().isRightClick() || !(blockState instanceof Container)){
             return;
         }
@@ -92,8 +99,6 @@ public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
         if(consumeItem){
             event.getItem().setAmount(0);
         }
-
-
     }
 }
 
