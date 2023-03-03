@@ -9,6 +9,7 @@ import xyz.holocons.mc.holoitemsrevamp.enchantment.Backdash;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
 import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.TimeLapse;
 import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
 import java.lang.reflect.Field;
@@ -111,6 +112,7 @@ public class EnchantManager {
                 new Magnet(plugin),
                 new Memento(plugin),
                 new TideRider(plugin),
+                new TimeLapse(plugin),
                 new Backdash(plugin));
     }
 }

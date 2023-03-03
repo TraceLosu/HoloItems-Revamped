@@ -1,5 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -10,12 +12,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
-import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
+
 
 import java.util.Map;
 
-public class TimeLapse extends CustomEnchantment implements PlayerInteract {
+public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
 
     private final HoloItemsRevamp plugin;
 
@@ -46,12 +47,12 @@ public class TimeLapse extends CustomEnchantment implements PlayerInteract {
     }
 
     @Override
-    public int getItemStackCost(ItemStack itemStack) {
+    public int getCostMultiplier() {
         return Integer.MAX_VALUE;
     }
 
     @Override
-    public void run(PlayerInteractEvent event, ItemStack itemStack) {
+    public void onPlayerInteract(PlayerInteractEvent event, ItemStack itemStack) {
 
         // If not right-clicked or a container, return
         final var blockState = event.getClickedBlock().getState();
