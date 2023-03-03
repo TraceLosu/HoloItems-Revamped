@@ -103,7 +103,7 @@ public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
             final Player player = event.getPlayer();
             final World world = player.getWorld();
 
-            world.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 0.01f );
+            world.playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.25f, 0.1f );
             event.getItem().setAmount(0);
         }
     }
