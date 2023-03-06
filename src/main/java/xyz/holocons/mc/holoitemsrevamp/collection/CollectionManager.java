@@ -86,6 +86,12 @@ import xyz.holocons.mc.holoitemsrevamp.item.DummyBlockBlock;
 import xyz.holocons.mc.holoitemsrevamp.item.MagnetBook;
 import xyz.holocons.mc.holoitemsrevamp.item.MementoItem;
 import xyz.holocons.mc.holoitemsrevamp.item.TideRiderItem;
+import xyz.holocons.mc.holoitemsrevamp.item.UnlimitedKrisWorksItem;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.Map;
@@ -198,7 +204,9 @@ public class CollectionManager {
         var risu = new AyundaRisu();
         var moona = new MoonaHoshinova();
 
-        var anya = new AnyaMelfissa();
+        var anya = new AnyaMelfissa(
+          new UnlimitedKrisWorksItem(plugin)
+        );
         var ollie = new KureijiOllie();
         var reine = new PavoliaReine();
 
