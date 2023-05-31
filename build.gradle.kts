@@ -24,7 +24,6 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8-SNAPSHOT")
-    implementation("com.typesafe:config:1.4.2")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.10.9")
 }
 
@@ -57,7 +56,6 @@ tasks {
     // Shade and relocate dependencies
     // https://github.com/johnrengelman/shadow
     shadowJar {
-        relocate("com.typesafe.config", "shadow.config")
         relocate("com.github.stefvanschie.inventoryframework", "shadow.inventoryframework")
 
         archiveClassifier.set("")
