@@ -43,7 +43,7 @@ public class CollectionManager {
     /**
      * @return a list of all idol collections
      */
-    public List<IdolCollection> getAllGens() {
+    public List<IdolCollection> getAllCollections() {
         return idolCollections;
     }
 
