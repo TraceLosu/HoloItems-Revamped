@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3" // Generates plugin.yml
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0" // Generates plugin.yml
     id("com.github.johnrengelman.shadow") version "8.1.1" // Shades and relocates dependencies into our plugin jar
     id("xyz.jpenilla.run-paper") version "2.1.0" // Adds runServer and runMojangMappedServer tasks for testing
 }
@@ -21,10 +21,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8-SNAPSHOT")
-    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.9")
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.11")
 }
 
 tasks {
@@ -64,7 +64,7 @@ tasks {
     // Configure the Minecraft version for runServer task
     // https://github.com/jpenilla/run-paper
     runServer {
-        minecraftVersion("1.19.4")
+        minecraftVersion("1.20.1")
     }
 }
 
@@ -72,7 +72,7 @@ tasks {
 // https://github.com/Minecrell/plugin-yml
 bukkit {
     main = "xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp"
-    apiVersion = "1.19"
+    apiVersion = "1.20"
     authors = listOf("TraceL", "dlee13")
     website = "holocons.xyz"
     depend = listOf("ProtocolLib")
