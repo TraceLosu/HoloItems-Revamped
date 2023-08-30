@@ -16,7 +16,7 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.List;
 
-public class TimeLapseItem extends CustomItem implements Enchantable {
+public class TimeLapseroniItem extends CustomItem implements Enchantable {
 
     private final static String name = "time_lapseroni";
     private final static Material material = Material.CLOCK;
@@ -27,7 +27,7 @@ public class TimeLapseItem extends CustomItem implements Enchantable {
 
     private final EnchantManager enchantManager;
 
-    public TimeLapseItem(HoloItemsRevamp plugin) {
+    public TimeLapseroniItem(HoloItemsRevamp plugin) {
         super(plugin, name, material, displayName, lore);
         this.enchantManager = plugin.getEnchantManager();
         this.setStackable(false);

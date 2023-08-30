@@ -19,11 +19,11 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.Map;
 
-public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
+public class TimeLapseroni extends CustomEnchantment implements EnchantmentAbility {
 
     private final HoloItemsRevamp plugin;
 
-    public TimeLapse(HoloItemsRevamp plugin) {
+    public TimeLapseroni(HoloItemsRevamp plugin) {
         super(plugin, "time_lapseroni");
         this.plugin = plugin;
     }
