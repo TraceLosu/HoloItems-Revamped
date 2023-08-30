@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Container;
@@ -25,7 +24,7 @@ public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
     private final HoloItemsRevamp plugin;
 
     public TimeLapse(HoloItemsRevamp plugin) {
-        super(plugin, "time_lapse");
+        super(plugin, "time_lapseroni");
         this.plugin = plugin;
     }
 
@@ -46,7 +45,7 @@ public class TimeLapse extends CustomEnchantment implements EnchantmentAbility {
 
     @Override
     public @NotNull Component displayName(int level) {
-        return Component.text("Time Lapse", NamedTextColor.GOLD)
+        return Component.text("Time Lapseroni", NamedTextColor.GOLD)
             .decoration(TextDecoration.ITALIC, false);
     }
 
