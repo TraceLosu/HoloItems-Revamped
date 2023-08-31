@@ -19,6 +19,7 @@ import xyz.holocons.mc.holoitemsrevamp.item.DummyBlockBlock;
 import xyz.holocons.mc.holoitemsrevamp.item.MagnetBook;
 import xyz.holocons.mc.holoitemsrevamp.item.MementoItem;
 import xyz.holocons.mc.holoitemsrevamp.item.TideRiderItem;
+import xyz.holocons.mc.holoitemsrevamp.item.TimefallItem;
 
 public class CollectionManager {
 
@@ -572,7 +573,7 @@ public class CollectionManager {
     }
 
     private static Idol buildKronii(HoloItemsRevamp plguin) {
-        return new Idol() {
+        return new Idol(new TimefallItem(plguin)) {
 
             @Override
             public @NotNull String getSkinBase64() {

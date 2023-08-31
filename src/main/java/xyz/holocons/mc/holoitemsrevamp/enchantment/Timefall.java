@@ -1,5 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -14,13 +16,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.ability.PlayerInteract;
-import xyz.holocons.mc.holoitemsrevamp.enchant.CustomEnchantment;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Timefall extends CustomEnchantment implements PlayerInteract {
+public class Timefall extends CustomEnchantment implements EnchantmentAbility {
 
     private final HoloItemsRevamp plugin;
 
@@ -51,12 +51,12 @@ public class Timefall extends CustomEnchantment implements PlayerInteract {
     }
 
     @Override
-    public int getItemStackCost(ItemStack itemStack) {
+    public int getCostMultiplier() {
         return Integer.MAX_VALUE;
     }
 
     @Override
-    public void run(PlayerInteractEvent event, ItemStack itemStack) {
+    public void onPlayerInteract(PlayerInteractEvent event, ItemStack itemStack) {
 
         // If not right-clicked or a container, return
         if(!event.getAction().isRightClick() || event.getAction() != Action.RIGHT_CLICK_BLOCK){
@@ -105,8 +105,6 @@ public class Timefall extends CustomEnchantment implements PlayerInteract {
         if(consumeItem){
             event.getItem().setAmount(0);
         }
-
-
     }
 }
 

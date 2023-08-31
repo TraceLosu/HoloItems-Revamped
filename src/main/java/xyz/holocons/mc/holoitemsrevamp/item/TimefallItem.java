@@ -1,18 +1,21 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
-import com.strangeone101.holoitemsapi.CustomItem;
-import com.strangeone101.holoitemsapi.interfaces.Enchantable;
+import com.strangeone101.holoitemsapi.enchantment.EnchantManager;
+import com.strangeone101.holoitemsapi.enchantment.Enchantable;
+import com.strangeone101.holoitemsapi.item.CustomItem;
 import com.strangeone101.holoitemsapi.recipe.RecipeManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchant.EnchantManager;
 
 import java.util.List;
 
@@ -20,27 +23,23 @@ public class TimefallItem extends CustomItem implements Enchantable {
 
     private final static String name = "timefall";
     private final static Material material = Material.POWDER_SNOW_BUCKET;
-    private final static String displayName = ChatColor.BLUE + "Timefall";
-    private final static List<String> lore = List.of(
-        "Accelerate oxidation"
+    private final static Component displayName = Component.text("Timefall", NamedTextColor.BLUE);
+
+    private final static List<Component> lore = List.of(
+        Component.text("Accelerate oxidation")
     );
 
     private final EnchantManager enchantManager;
 
     public TimefallItem(HoloItemsRevamp plugin) {
-        super(name, material, displayName, lore);
+        super(plugin, name, material, displayName, lore);
         this.enchantManager = plugin.getEnchantManager();
         this.setStackable(false);
         this.register();
-        this.registerRecipe();
     }
 
     @Override
-    public ItemStack buildStack(Player player) {
-        return applyEnchantment(super.buildStack(player));
-    }
-
-    private void registerRecipe() {
+    protected Recipe getRecipe() {
         final var recipe = new ShapedRecipe(getKey(), buildStack(null));
         recipe.shape(
             "ABA",
@@ -50,7 +49,7 @@ public class TimefallItem extends CustomItem implements Enchantable {
         recipe.setIngredient('A', Material.SNOW);
         recipe.setIngredient('B', Material.BONE_BLOCK);
         recipe.setIngredient('C', Material.BUCKET);
-        RecipeManager.registerRecipe(recipe);
+        return recipe;
     }
 
     @Override
