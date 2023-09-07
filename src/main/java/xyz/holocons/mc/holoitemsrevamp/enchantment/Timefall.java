@@ -1,5 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
+import com.destroystokyo.paper.MaterialSetTag;
+import com.destroystokyo.paper.MaterialTags;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 import net.kyori.adventure.text.Component;
@@ -19,6 +21,7 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Timefall extends CustomEnchantment implements EnchantmentAbility {
 
@@ -63,22 +66,6 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
             return;
         }
 
-        final Map<Material, Material> age = new HashMap<>() {
-        };
-        age.put(Material.COPPER_BLOCK,                Material.EXPOSED_COPPER);
-        age.put(Material.CUT_COPPER,                  Material.EXPOSED_CUT_COPPER);
-        age.put(Material.CUT_COPPER_SLAB,             Material.EXPOSED_CUT_COPPER_SLAB);
-        age.put(Material.CUT_COPPER_STAIRS,           Material.EXPOSED_CUT_COPPER_STAIRS);
-        age.put(Material.EXPOSED_COPPER,              Material.WEATHERED_COPPER);
-        age.put(Material.EXPOSED_CUT_COPPER,          Material.WEATHERED_CUT_COPPER);
-        age.put(Material.EXPOSED_CUT_COPPER_SLAB,     Material.WEATHERED_CUT_COPPER_SLAB);
-        age.put(Material.EXPOSED_CUT_COPPER_STAIRS,   Material.WEATHERED_CUT_COPPER_STAIRS);
-        age.put(Material.WEATHERED_COPPER,            Material.OXIDIZED_COPPER);
-        age.put(Material.WEATHERED_CUT_COPPER,        Material.OXIDIZED_CUT_COPPER);
-        age.put(Material.WEATHERED_CUT_COPPER_SLAB,   Material.OXIDIZED_CUT_COPPER_SLAB);
-        age.put(Material.WEATHERED_CUT_COPPER_STAIRS, Material.OXIDIZED_CUT_COPPER_STAIRS);
-
-
         ItemStack item = event.getItem();
         item.setType(Material.BUCKET);
         item.setItemMeta(new ItemStack(Material.BUCKET).getItemMeta());
@@ -88,22 +75,29 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
         Location center = player.getLocation();
         player.getWorld().spawnParticle(Particle.WHITE_ASH, center, 200, 5, 5, 5);
 
+        int ticks = 25;
         boolean consumeItem = false;
+
         for (int x=-5; x<=5; x++) {
             for (int y=-5; y<=5; y++) {
                 for(int z=-5; z<=5; z++) {
                     Block block = center.clone().add(x, y, z).getBlock();
-                    Material type = age.get(block.getType());
-                    if(type!=null)
-                        block.setType(type);
+                    if(block.getBlockData().isRandomlyTicked())
+                    {
+                        for (int i = 0; i < ticks; i++) {
+                            block.randomTick();
+                        }
                         consumeItem = true;
+                    }
                 }
             }
         }
 
+
+
         // Deletes item if it was used.
         if(consumeItem){
-            event.getItem().setAmount(0);
+            event.getItem().subtract(1);
         }
     }
 }
