@@ -66,6 +66,11 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
             return;
         }
 
+        // If the block right-clicked is an interactable block, return
+        if(event.getClickedBlock().getBlockData().getMaterial().isInteractable()){
+            return;
+        }
+
         ItemStack item = event.getItem();
         item.setType(Material.BUCKET);
         item.setItemMeta(new ItemStack(Material.BUCKET).getItemMeta());
