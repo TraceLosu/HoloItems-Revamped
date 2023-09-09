@@ -109,7 +109,6 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
                 Block block = origin.clone().add(coords[0], coords[1], coords[2]).getBlock();
                 if (block.getBlockData().isRandomlyTicked()){
                     block.randomTick();
-                    plugin.getLogger().info(block.translationKey()+" at "+block.getLocation().toString());
                 }
             }
         }
