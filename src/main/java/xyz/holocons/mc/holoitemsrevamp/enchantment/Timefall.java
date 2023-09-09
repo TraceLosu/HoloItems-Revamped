@@ -4,6 +4,7 @@ import com.destroystokyo.paper.MaterialSetTag;
 import com.destroystokyo.paper.MaterialTags;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
+import net.kyori.adventure.text.BlockNBTComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -58,8 +60,19 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
         return Integer.MAX_VALUE;
     }
 
+    // TYSM: https://stackoverflow.com/a/34363187
+    private int[] get3DCoords(int id, int maxX, int maxY){
+        int z = id/(maxX*maxY);
+        id -= (z*maxX*maxY);
+        int y =id/maxX;
+        int x = id%maxX;
+        return new int[] {x, y, z};
+    }
+
     @Override
     public void onPlayerInteract(PlayerInteractEvent event, ItemStack itemStack) {
+
+        Block clickedBlock = event.getClickedBlock();
 
         // If not right-clicked or a container, return
         if(!event.getAction().isRightClick() || event.getAction() != Action.RIGHT_CLICK_BLOCK){
@@ -67,42 +80,38 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
         }
 
         // If the block right-clicked is an interactable block, return
-        if(event.getClickedBlock().getBlockData().getMaterial().isInteractable()){
+        if(clickedBlock.getBlockData().getMaterial().isInteractable()){
             return;
         }
 
-        ItemStack item = event.getItem();
-        item.setType(Material.BUCKET);
-        item.setItemMeta(new ItemStack(Material.BUCKET).getItemMeta());
+        itemStack.setItemMeta(null);
+        itemStack.setType(Material.BUCKET);
 
         Player player = event.getPlayer();
         player.setFreezeTicks(60);
         Location center = player.getLocation();
         player.getWorld().spawnParticle(Particle.WHITE_ASH, center, 200, 5, 5, 5);
 
-        int ticks = 25;
-        boolean consumeItem = false;
 
-        for (int x=-5; x<=5; x++) {
-            for (int y=-5; y<=5; y++) {
-                for(int z=-5; z<=5; z++) {
-                    Block block = center.clone().add(x, y, z).getBlock();
-                    if(block.getBlockData().isRandomlyTicked())
-                    {
-                        for (int i = 0; i < ticks; i++) {
-                            block.randomTick();
-                        }
-                        consumeItem = true;
-                    }
+        Random r = new Random();
+        // 125 = 5^3, or the dimensions of the AoE
+        // To change AoE to 8x8x8, change 125 to 8*8*8 (512) and get3DCoords' maxX and maxY accordingly
+        BitSet visitedKeys = new BitSet(125);
+        // Get origin to center AoE to center
+        Location origin = clickedBlock.getLocation().add(-2, -2, -2);
+
+
+        for (int i = 0; i < 25; i++) {
+            int blockKey = r.nextInt(125);
+            if (!visitedKeys.get(blockKey)){
+                visitedKeys.set(blockKey);
+                int[] coords = get3DCoords(blockKey, 5, 5);
+                Block block = origin.clone().add(coords[0], coords[1], coords[2]).getBlock();
+                if (block.getBlockData().isRandomlyTicked()){
+                    block.randomTick();
+                    plugin.getLogger().info(block.translationKey()+" at "+block.getLocation().toString());
                 }
             }
-        }
-
-
-
-        // Deletes item if it was used.
-        if(consumeItem){
-            event.getItem().subtract(1);
         }
     }
 }
