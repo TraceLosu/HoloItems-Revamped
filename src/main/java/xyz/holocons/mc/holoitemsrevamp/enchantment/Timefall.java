@@ -97,7 +97,7 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
         // 125 = 5^3, or the dimensions of the AoE
         // To change AoE to 8x8x8, change 125 to 8*8*8 (512) and get3DCoords' maxX and maxY accordingly
         BitSet visitedKeys = new BitSet(125);
-        // Get origin to center AoE to center
+        // Get origin to center AoE to clicked block
         Location origin = clickedBlock.getLocation().add(-2, -2, -2);
 
 
