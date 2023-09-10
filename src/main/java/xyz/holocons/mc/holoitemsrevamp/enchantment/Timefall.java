@@ -3,6 +3,7 @@ package xyz.holocons.mc.holoitemsrevamp.enchantment;
 import java.util.BitSet;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -87,6 +88,7 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
 
         final var visitedBlocks = new BitSet(blockCount);
         final var origin = player.getLocation().add(-radius, -1, -radius).getBlock();
+        final var randomTickSpeed = Math.min(player.getWorld().getGameRuleValue(GameRule.RANDOM_TICK_SPEED), 30);
         final var tickCount = TICK_COUNT_OPTIONs[RANDOM.nextInt(TICK_COUNT_OPTIONs.length)];
         for (var i = 0; i < tickCount; i++) {
             final var blockIndex = RANDOM.nextInt(blockCount);
@@ -94,7 +96,9 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
                 visitedBlocks.set(blockIndex);
                 final var block = getBlockByIndex(origin, distance, distance, blockIndex);
                 if (block.getBlockData().isRandomlyTicked()) {
-                    block.randomTick();
+                    for (var j = 0; j < randomTickSpeed; j++) {
+                        block.randomTick();
+                    }
                 }
             }
         }
