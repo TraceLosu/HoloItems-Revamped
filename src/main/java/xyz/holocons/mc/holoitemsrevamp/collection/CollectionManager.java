@@ -572,8 +572,8 @@ public class CollectionManager {
         };
     }
 
-    private static Idol buildKronii(HoloItemsRevamp plguin) {
-        return new Idol(new TimefallItem(plguin)) {
+    private static Idol buildKronii(HoloItemsRevamp plugin) {
+        return new Idol(new TimefallItem(plugin)) {
 
             @Override
             public @NotNull String getSkinBase64() {
