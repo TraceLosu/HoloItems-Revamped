@@ -73,9 +73,6 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
             return;
         }
 
-        itemStack.setItemMeta(null);
-        itemStack.setType(Material.BUCKET);
-
         final var radius = RANDOM.nextInt(3) + 2;
         final var distance = (radius * 2) + 1;
         final var blockCount = distance * distance * distance;
@@ -101,6 +98,11 @@ public class Timefall extends CustomEnchantment implements EnchantmentAbility {
                     }
                 }
             }
+        }
+
+        if (visitedBlocks.get(RANDOM.nextInt(blockCount))) {
+            itemStack.setItemMeta(null);
+            itemStack.setType(Material.BUCKET);
         }
     }
 }
