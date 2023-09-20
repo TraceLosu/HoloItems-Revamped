@@ -1,14 +1,16 @@
-> This document outlines the changes between the old [Holoitems](https://github.com/dlee13/OldHoloItems) and the rewrite.
+> This document outlines the changes between the old [HoloItems](https://github.com/dlee13/OldHoloItems) and the rewrite.
 > Sorted Chronologically
 
 # Magnet
-(Please fill in, I haven't been following at this point)
+- Technically no changes, but reimplemented at old [HoloItems](https://github.com/dlee13/OldHoloItems) before copied as is.
 
 # Tide Rider
-Fixed a bug where players could scale a wall with the Tide Rider.
+- Fixed a bug where players could scale a wall with the Tide Rider.
+- Item now uses 1 durability when starting *and* stopping.
 
 # Backdash
-Implemented without changes to functionality.
+- Removed durability usage.
 
-# Memento
-Implemented without changes to functionality.
+# Momento
+- Renamed to Memento and disabled EXP drops.
+- Item is now stackable.
