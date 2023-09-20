@@ -2,7 +2,7 @@
 > Sorted Chronologically
 
 # Magnet
-- Technically no changes, but reimplemented at old [HoloItems](https://github.com/dlee13/OldHoloItems) before copied as is.
+- Technically no changes, but reimplemented at old [HoloItems](https://github.com/dlee13/OldHoloItems) (see dlee13/OldHoloItems@6150a10) before copied as is.
 
 # Tide Rider
 - Fixed a bug where players could scale a wall with the Tide Rider.
