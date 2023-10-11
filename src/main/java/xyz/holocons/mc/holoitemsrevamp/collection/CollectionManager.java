@@ -19,6 +19,7 @@ import xyz.holocons.mc.holoitemsrevamp.item.DummyBlockBlock;
 import xyz.holocons.mc.holoitemsrevamp.item.MagnetBook;
 import xyz.holocons.mc.holoitemsrevamp.item.MementoItem;
 import xyz.holocons.mc.holoitemsrevamp.item.TideRiderItem;
+import xyz.holocons.mc.holoitemsrevamp.item.TimeLapseroniItem;
 
 public class CollectionManager {
 
@@ -571,8 +572,8 @@ public class CollectionManager {
         };
     }
 
-    private static Idol buildKronii(HoloItemsRevamp plguin) {
-        return new Idol() {
+    private static Idol buildKronii(HoloItemsRevamp plugin) {
+        return new Idol(new TimeLapseroniItem(plugin)) {
 
             @Override
             public @NotNull String getSkinBase64() {
