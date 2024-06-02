@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.List;
@@ -32,8 +33,16 @@ public class PlowBook extends CustomItem implements Enchantable {
 
     @Override
     protected Recipe getRecipe() {
-        // TODO
-        return null;
+        ShapedRecipe recipe = new ShapedRecipe(getKey(), buildStack(null));
+        recipe.shape(
+            "ABA",
+            "ACA",
+            "ACA"
+        );
+        recipe.setIngredient('a', Material.TINTED_GLASS);
+        recipe.setIngredient('b', Material.OBSIDIAN);
+        recipe.setIngredient('c', Material.STICK);
+        return recipe;
     }
 
     @Override
