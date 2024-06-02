@@ -5,10 +5,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Backdash;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Magnet;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Memento;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.TideRider;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.*;
 import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
 import java.util.List;
@@ -112,6 +109,8 @@ public class EnchantManager {
                 new Magnet(plugin),
                 new Memento(plugin),
                 new TideRider(plugin),
-                new Backdash(plugin));
+                new Backdash(plugin),
+                new Plow(plugin)
+        );
     }
 }

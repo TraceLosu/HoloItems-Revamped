@@ -14,11 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.item.BackdashBoots;
-import xyz.holocons.mc.holoitemsrevamp.item.DummyBlockBlock;
-import xyz.holocons.mc.holoitemsrevamp.item.MagnetBook;
-import xyz.holocons.mc.holoitemsrevamp.item.MementoItem;
-import xyz.holocons.mc.holoitemsrevamp.item.TideRiderItem;
+import xyz.holocons.mc.holoitemsrevamp.item.*;
 
 public class CollectionManager {
 
@@ -871,7 +867,7 @@ public class CollectionManager {
     }
 
     private static Idol buildFubuki(HoloItemsRevamp plugin) {
-        return new Idol() {
+        return new Idol(new PlowBook(plugin)) {
 
             @Override
             public @NotNull String getSkinUrl() {
