@@ -11,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.List;
@@ -52,7 +53,16 @@ public class PlowBook extends CustomItem implements Enchantable {
 
     @Override
     public ItemStack applyEnchantment(ItemStack itemStack) {
-        // TODO
-        return null;
+        var enchantedStack = itemStack.clone();
+        var enchantedMeta = (EnchantmentStorageMeta) enchantedStack.getItemMeta();
+
+        if (enchantedMeta.addStoredEnchant(getEnchantment(), 1, false)) {
+            enchantedStack.setItemMeta(enchantedMeta);
+            enchantManager.removeCustomEnchantmentLore(enchantedStack);
+            enchantManager.applyCustomEnchantmentLore(enchantedStack);
+            return enchantedStack;
+        } else {
+            return null;
+        }
     }
 }
