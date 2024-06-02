@@ -40,9 +40,9 @@ public class PlowBook extends CustomItem implements Enchantable {
             "ACA",
             "ACA"
         );
-        recipe.setIngredient('a', Material.TINTED_GLASS);
-        recipe.setIngredient('b', Material.OBSIDIAN);
-        recipe.setIngredient('c', Material.STICK);
+        recipe.setIngredient('A', Material.TINTED_GLASS);
+        recipe.setIngredient('B', Material.OBSIDIAN);
+        recipe.setIngredient('C', Material.STICK);
         return recipe;
     }
 
