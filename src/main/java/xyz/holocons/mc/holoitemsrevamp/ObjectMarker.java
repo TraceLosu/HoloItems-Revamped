@@ -24,26 +24,25 @@ public class ObjectMarker<T> {
 
     /**
      * Mark an object for a certain number of ticks.
-     * @return Whether the markedObjects map was changed or updated.
+     *
      * @implNote This marks full ticks. Therefore, if you call markObject(obj, 0) followed immediately by isMarked(obj),
      * the second one will return true.
      */
-    public boolean markObject(T obj, int ticks){
+    public void markObject(T obj, int ticks){
         // Should I have a "bool force" parameter to force-mark the object? So -1 can be used with force to
         //  force-unmark an object, or a smaller number can be used to accelerate object marking?
         if(ticks < 0){
-            return false;
+            return;
         }
         var currentTick = getCurrentTick();
         var stopTick = currentTick + ticks;
         var prevStopTick = markedObjects.getOrDefault(obj, -1);
         if(prevStopTick >= stopTick){
             // The existing stop-tick is later than the new proposed stop-tick
-            return false;
+            return;
         }
         // New proposed stop-tick is different and good
         markedObjects.put(obj, stopTick);
-        return true;
     }
 
     /**
