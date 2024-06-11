@@ -6,7 +6,6 @@ import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -14,14 +13,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-
-import java.util.HashMap;
-import java.util.Map;
+import xyz.holocons.mc.holoitemsrevamp.ObjectMarker;
 
 public class Plow extends CustomEnchantment implements EnchantmentAbility{
 
     // States the tick when each Player can start breaking non-snow blocks again
-    private final Map<Player, Integer> canBreakBlockTick = new HashMap<>();
+    private final ObjectMarker<Player> plowMarker = new ObjectMarker<>();
 
     public Plow(HoloItemsRevamp plugin){
         super(plugin, "plow");
@@ -59,21 +56,19 @@ public class Plow extends CustomEnchantment implements EnchantmentAbility{
 
     @Override
     public void onBlockBreak(BlockBreakEvent event, ItemStack itemStack) {
-        int currentTick = Bukkit.getCurrentTick();
         Player player = event.getPlayer();
         // If this was me, I'd probably also get SNOW_BLOCK? But to mirror old functionality,
         // I'm going to target only SNOW.
         if(event.getBlock().getType() == Material.SNOW){
             // Event broke snow
             // Stop other block-breaks for 20 ticks
-            canBreakBlockTick.put(player, currentTick+20);
+            plowMarker.markObject(player, 20);
         }
         else{
             // Event did not break snow
             // What tick to resume breaking non-snow blocks?
             // (Presuming tick -1 is illegal)
-            int stopBlockBreaksUntil = canBreakBlockTick.getOrDefault(player, -1);
-            if(currentTick <= stopBlockBreaksUntil){
+            if(plowMarker.isMarked(player)){
                 event.setCancelled(true);
             }
         }
