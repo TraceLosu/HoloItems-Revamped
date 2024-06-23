@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import xyz.holocons.mc.holoitemsrevamp.EntityMarker;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.ObjectMarker;
 
 public class Plow extends CustomEnchantment implements EnchantmentAbility{
 
     // States the tick when each Player can start breaking non-snow blocks again
-    private final ObjectMarker<Player> plowMarker = new ObjectMarker<>();
+    private final EntityMarker plowMarker = new EntityMarker();
 
     public Plow(HoloItemsRevamp plugin){
         super(plugin, "plow");
