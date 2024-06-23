@@ -2,7 +2,6 @@ package xyz.holocons.mc.holoitemsrevamp;
 
 import org.bukkit.entity.Entity;
 
-import java.util.List;
 import java.util.UUID;
 
 public class EntityMarker extends ObjectMarker<UUID>{
