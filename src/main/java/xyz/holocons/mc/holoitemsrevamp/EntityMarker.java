@@ -1,7 +1,9 @@
 package xyz.holocons.mc.holoitemsrevamp;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
+import java.util.List;
 import java.util.UUID;
 
 public class EntityMarker extends ObjectMarker<UUID>{
@@ -16,5 +18,9 @@ public class EntityMarker extends ObjectMarker<UUID>{
 
     public boolean isMarked(Entity obj){
         return super.isMarked(obj.getUniqueId());
+    }
+
+    public List<Entity> getMarkedEntities(){
+        return super.markedObjects.keySet().stream().filter(this::isMarked).map(Bukkit::getEntity).toList();
     }
 }

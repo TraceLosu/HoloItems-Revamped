@@ -15,7 +15,7 @@ import java.util.Map;
 public class ObjectMarker<T> {
 
     // Map from marked objects to when that object will no longer be marked
-    private final Map<T, Integer> markedObjects = new HashMap<>();
+    protected final Map<T, Integer> markedObjects = new HashMap<>();
 
     public ObjectMarker(){
 
