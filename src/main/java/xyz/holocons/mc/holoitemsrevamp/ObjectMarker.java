@@ -3,7 +3,6 @@ package xyz.holocons.mc.holoitemsrevamp;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,11 +62,7 @@ public class ObjectMarker<T> {
         // Is it worth it to implement a cleanup function?
         // This function isn't used (yet) so I'm not gonna bother, but in the future it might be worth
         // implementing a cleanupMarkedObjects() just for this.
-        List<T> ret = new LinkedList<>();
-        markedObjects.forEach((k, v) ->{
-            if(isMarked(k)) ret.add(k);
-        });
-        return ret;
+        return markedObjects.keySet().stream().filter(this::isMarked).toList();
     }
 
     private int getCurrentTick(){
