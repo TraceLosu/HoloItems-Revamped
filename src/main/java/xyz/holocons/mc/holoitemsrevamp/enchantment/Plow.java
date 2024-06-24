@@ -8,19 +8,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.EntityMarker;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.util.EntityExpiringSet;
 
-public class Plow extends CustomEnchantment implements EnchantmentAbility{
+public class Plow extends CustomEnchantment implements EnchantmentAbility {
 
-    // States the tick when each Player can start breaking non-snow blocks again
-    private final EntityMarker plowMarker = new EntityMarker();
+    private final EntityExpiringSet plowMarker = new EntityExpiringSet(
+            new EntityExpiringSet.ConstantTicksToLiveExpirationPolicy<>(20));
 
-    public Plow(HoloItemsRevamp plugin){
+    public Plow(HoloItemsRevamp plugin) {
         super(plugin, "plow");
     }
 
@@ -42,10 +41,10 @@ public class Plow extends CustomEnchantment implements EnchantmentAbility{
     @Override
     public @NotNull Component displayName(int i) {
         return Component.text()
-            .color(NamedTextColor.GRAY)
-            .decoration(TextDecoration.ITALIC, false)
-            .append(Component.text("Plow"))
-            .build();
+                .color(NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false)
+                .append(Component.text("Plow"))
+                .build();
     }
 
     @Override
@@ -56,21 +55,11 @@ public class Plow extends CustomEnchantment implements EnchantmentAbility{
 
     @Override
     public void onBlockBreak(BlockBreakEvent event, ItemStack itemStack) {
-        Player player = event.getPlayer();
-        // If this was me, I'd probably also get SNOW_BLOCK? But to mirror old functionality,
-        // I'm going to target only SNOW.
-        if(event.getBlock().getType() == Material.SNOW){
-            // Event broke snow
-            // Stop other block-breaks for 20 ticks
-            plowMarker.markObject(player, 20);
-        }
-        else{
-            // Event did not break snow
-            // What tick to resume breaking non-snow blocks?
-            // (Presuming tick -1 is illegal)
-            if(plowMarker.isMarked(player)){
-                event.setCancelled(true);
-            }
+        final var player = event.getPlayer();
+        if (event.getBlock().getType() == Material.SNOW) {
+            plowMarker.add(player);
+        } else {
+            event.setCancelled(plowMarker.test(player));
         }
     }
 }
