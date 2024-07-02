@@ -21,6 +21,7 @@ import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import net.kyori.adventure.text.Component;
@@ -100,9 +101,7 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
         if (blocks.isEmpty() || --context.remainingCharges <= 0) {
             contextMap.remove(playerId);
         } else {
-            for (final var nextBlock : blocks) {
-                scheduleSplinterAbility(context, playerId, nextBlock);
-            }
+            blocks.forEach(nextBlock -> scheduleSplinterAbility(context, playerId, nextBlock));
         }
     }
 
@@ -138,6 +137,19 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
 
     private static class SplinterContext {
 
+        private static ObjectList<BlockFace> GENERIC_TRUNK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST);
+        private static ObjectList<BlockFace> BROWN_SHROOM_BLOCK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST, BlockFace.EAST,
+                BlockFace.EAST, BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.WEST,
+                BlockFace.WEST, BlockFace.NORTH, BlockFace.WEST, BlockFace.NORTH, BlockFace.NORTH, BlockFace.EAST,
+                BlockFace.NORTH, BlockFace.EAST, BlockFace.EAST, BlockFace.EAST, BlockFace.EAST, BlockFace.SOUTH,
+                BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.WEST,
+                BlockFace.WEST, BlockFace.WEST, BlockFace.WEST, BlockFace.NORTH, BlockFace.WEST, BlockFace.NORTH,
+                BlockFace.NORTH, BlockFace.NORTH, BlockFace.NORTH, BlockFace.EAST, BlockFace.NORTH, BlockFace.EAST,
+                BlockFace.EAST, BlockFace.EAST, BlockFace.EAST);
+        private static ObjectList<BlockFace> RED_MUSHROOM_BLOCK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP);
+
         private BlockState originState;
         private int remainingCharges;
         private int scheduledSplinters;
@@ -153,7 +165,9 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
             return materialMatches(originState, block) && switch (SplinterType.get(block)) {
                 case GENERIC_TRUNK -> positionMatchesXZ(originState, block);
                 case GENERIC_BRANCH -> true;
-                case SHROOM_STEM -> positionMatchesXZ(originState, block);
+                case SHROOM_STEM -> positionMatchesXZ(originState, block) && !materialMatchesAny(originState,
+                        block.getRelative(BlockFace.EAST), block.getRelative(BlockFace.SOUTH),
+                        block.getRelative(BlockFace.WEST), block.getRelative(BlockFace.NORTH));
                 case SHROOM_BLOCK -> true;
                 case INCOMPATIBLE -> false;
             };
@@ -162,16 +176,36 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
         private ObjectList<Block> search(final Block block) {
             // FIXME
             return switch (SplinterType.get(block)) {
-                case GENERIC_TRUNK -> materialMatches(originState, block.getRelative(BlockFace.UP))
-                        ? ObjectList.of(block.getRelative(BlockFace.UP))
-                        : ObjectLists.emptyList();
-                case SHROOM_STEM -> materialMatchesAny(originState,
-                        block.getRelative(BlockFace.EAST), block.getRelative(BlockFace.SOUTH),
-                        block.getRelative(BlockFace.WEST), block.getRelative(BlockFace.NORTH))
-                                ? ObjectLists.emptyList()
-                                : ObjectList.of(block.getRelative(BlockFace.UP));
+                case GENERIC_TRUNK -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                case SHROOM_STEM -> {
+                    final var blockAbove = block.getRelative(BlockFace.UP);
+                    yield switch (blockAbove.getType()) {
+                        case MUSHROOM_STEM -> ObjectList.of(blockAbove);
+                        case BROWN_MUSHROOM_BLOCK -> {
+                            this.originState = blockAbove.getState();
+                            yield search(block, BROWN_SHROOM_BLOCK_SEARCH_PATTERN);
+                        }
+                        case RED_MUSHROOM_BLOCK -> {
+                            this.originState = blockAbove.getState();
+                            yield search(block, RED_MUSHROOM_BLOCK_SEARCH_PATTERN);
+                        }
+                        default -> ObjectLists.emptyList();
+                    };
+                }
                 default -> ObjectLists.emptyList();
             };
+        }
+
+        private ObjectList<Block> search(final Block block, final ObjectList<BlockFace> pattern) {
+            final var blocks = new ObjectArrayList<Block>();
+            var nextBlock = block;
+            for (final var face : pattern) {
+                nextBlock = nextBlock.getRelative(face);
+                if (shouldSplinter(nextBlock)) {
+                    blocks.add(nextBlock);
+                }
+            }
+            return blocks;
         }
 
         private static boolean positionMatchesXZ(final BlockState originState, final Block block) {
