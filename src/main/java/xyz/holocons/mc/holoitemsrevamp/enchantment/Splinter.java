@@ -168,12 +168,12 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
         private boolean shouldSplinter(final Block block) {
             // FIXME
             return materialMatches(originState, block) && switch (SplinterType.get(block)) {
-                case GENERIC_TRUNK -> positionMatchesXZ(originState, block);
-                case GENERIC_BRANCH -> !positionMatchesXZ(originState, block);
                 case SHROOM_STEM -> positionMatchesXZ(originState, block) && !materialMatchesAny(originState,
                         block.getRelative(BlockFace.EAST), block.getRelative(BlockFace.SOUTH),
                         block.getRelative(BlockFace.WEST), block.getRelative(BlockFace.NORTH));
                 case SHROOM_BLOCK -> true;
+                case GENERIC_TRUNK -> positionMatchesXZ(originState, block);
+                case GENERIC_BRANCH -> !positionMatchesXZ(originState, block);
                 default -> false;
             };
         }
@@ -181,8 +181,6 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
         private ObjectList<Block> search(final Block block) {
             // FIXME
             return switch (SplinterType.get(block)) {
-                case GENERIC_TRUNK -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
-                case GENERIC_BRANCH -> throw new UnsupportedOperationException("unimplemented");
                 case SHROOM_STEM -> {
                     final var blockAbove = block.getRelative(BlockFace.UP);
                     yield switch (blockAbove.getType()) {
@@ -207,6 +205,7 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                         default -> ObjectLists.emptyList();
                     };
                 }
+                case GENERIC_TRUNK -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
                 default -> ObjectLists.emptyList();
             };
         }
@@ -243,10 +242,15 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
 
     private enum SplinterType {
 
-        GENERIC_TRUNK,
-        GENERIC_BRANCH,
         SHROOM_STEM,
         SHROOM_BLOCK,
+        GENERIC_TRUNK,
+        GENERIC_BRANCH,
+        MEGA_TRUNK,
+        MEGA_BRANCH,
+        ACACIA,
+        CHERRY,
+        MANGROVE,
         INCOMPATIBLE;
 
         private static SplinterType get(final Block block) {
