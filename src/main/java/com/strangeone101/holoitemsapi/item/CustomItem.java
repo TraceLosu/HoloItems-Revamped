@@ -60,8 +60,8 @@ public class CustomItem implements Keyed {
     public CustomItem(Plugin plugin, String key, Material material, Component displayName, List<Component> lore) {
         this.key = new NamespacedKey(plugin, key);
         this.material = material;
-        this.displayName = displayName;
-        this.lore = lore;
+        this.displayName = displayName != null ? displayName : Component.empty();
+        this.lore = lore != null ? lore : List.of();
     }
 
     @Override
@@ -236,16 +236,6 @@ public class CustomItem implements Keyed {
     }
 
     /**
-     * Set the display name
-     * @param displayName The display name
-     * @return Itself
-     */
-    public CustomItem setDisplayName(Component displayName) {
-        this.displayName = displayName;
-        return this;
-    }
-
-    /**
      * Get the custom display name
      * @return The display name
      */
@@ -259,16 +249,6 @@ public class CustomItem implements Keyed {
      */
     public Material getMaterial() {
         return material;
-    }
-
-    /**
-     * Set the material
-     * @param material The material
-     * @return Itself
-     */
-    public CustomItem setMaterial(Material material) {
-        this.material = material;
-        return this;
     }
 
     /**
