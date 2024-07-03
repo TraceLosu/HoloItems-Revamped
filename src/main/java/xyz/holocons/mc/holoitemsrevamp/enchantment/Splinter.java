@@ -97,11 +97,10 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
             return;
         }
 
-        final var blocks = context.search(block);
-        if (blocks.isEmpty() || --context.remainingCharges <= 0) {
+        if (--context.remainingCharges <= 0) {
             contextMap.remove(playerId);
         } else {
-            blocks.forEach(nextBlock -> scheduleSplinterAbility(context, playerId, nextBlock));
+            context.search(block).forEach(nextBlock -> scheduleSplinterAbility(context, playerId, nextBlock));
         }
     }
 
@@ -190,10 +189,12 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                         case MUSHROOM_STEM -> ObjectList.of(blockAbove);
                         case BROWN_MUSHROOM_BLOCK -> {
                             this.originState = blockAbove.getState();
+                            this.remainingCharges = 45;
                             yield search(block, BROWN_SHROOM_BLOCK_SEARCH_PATTERN);
                         }
                         case RED_MUSHROOM_BLOCK -> {
                             this.originState = blockAbove.getState();
+                            this.remainingCharges = 45;
                             final var blocks = search(block, RED_SHROOM_BLOCK_TOP_SEARCH_PATTERN);
                             var ringStartBlock = block;
                             blocks.addAll(search(ringStartBlock, RED_SHROOM_BLOCK_RING_SEARCH_PATTERN));
