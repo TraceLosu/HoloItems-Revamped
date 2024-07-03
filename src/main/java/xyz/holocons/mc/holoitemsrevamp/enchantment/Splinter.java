@@ -137,9 +137,9 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
 
     private static class SplinterContext {
 
-        private static ObjectList<BlockFace> GENERIC_TRUNK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+        private static final ObjectList<BlockFace> GENERIC_TRUNK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
                 BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST);
-        private static ObjectList<BlockFace> BROWN_SHROOM_BLOCK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+        private static final ObjectList<BlockFace> BROWN_SHROOM_BLOCK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
                 BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST, BlockFace.EAST,
                 BlockFace.EAST, BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.WEST,
                 BlockFace.WEST, BlockFace.NORTH, BlockFace.WEST, BlockFace.NORTH, BlockFace.NORTH, BlockFace.EAST,
@@ -148,7 +148,13 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 BlockFace.WEST, BlockFace.WEST, BlockFace.WEST, BlockFace.NORTH, BlockFace.WEST, BlockFace.NORTH,
                 BlockFace.NORTH, BlockFace.NORTH, BlockFace.NORTH, BlockFace.EAST, BlockFace.NORTH, BlockFace.EAST,
                 BlockFace.EAST, BlockFace.EAST, BlockFace.EAST);
-        private static ObjectList<BlockFace> RED_MUSHROOM_BLOCK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP);
+        private static final ObjectList<BlockFace> RED_SHROOM_BLOCK_TOP_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.WEST, BlockFace.NORTH, BlockFace.NORTH,
+                BlockFace.EAST, BlockFace.EAST);
+        private static final ObjectList<BlockFace> RED_SHROOM_BLOCK_RING_SEARCH_PATTERN = ObjectList.of(
+                BlockFace.EAST_NORTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST,
+                BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH, BlockFace.NORTH_EAST,
+                BlockFace.EAST, BlockFace.EAST);
 
         private BlockState originState;
         private int remainingCharges;
@@ -164,12 +170,12 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
             // FIXME
             return materialMatches(originState, block) && switch (SplinterType.get(block)) {
                 case GENERIC_TRUNK -> positionMatchesXZ(originState, block);
-                case GENERIC_BRANCH -> true;
+                case GENERIC_BRANCH -> !positionMatchesXZ(originState, block);
                 case SHROOM_STEM -> positionMatchesXZ(originState, block) && !materialMatchesAny(originState,
                         block.getRelative(BlockFace.EAST), block.getRelative(BlockFace.SOUTH),
                         block.getRelative(BlockFace.WEST), block.getRelative(BlockFace.NORTH));
                 case SHROOM_BLOCK -> true;
-                case INCOMPATIBLE -> false;
+                default -> false;
             };
         }
 
@@ -177,6 +183,7 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
             // FIXME
             return switch (SplinterType.get(block)) {
                 case GENERIC_TRUNK -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                case GENERIC_BRANCH -> throw new UnsupportedOperationException("unimplemented");
                 case SHROOM_STEM -> {
                     final var blockAbove = block.getRelative(BlockFace.UP);
                     yield switch (blockAbove.getType()) {
@@ -187,7 +194,14 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                         }
                         case RED_MUSHROOM_BLOCK -> {
                             this.originState = blockAbove.getState();
-                            yield search(block, RED_MUSHROOM_BLOCK_SEARCH_PATTERN);
+                            final var blocks = search(block, RED_SHROOM_BLOCK_TOP_SEARCH_PATTERN);
+                            var ringStartBlock = block;
+                            blocks.addAll(search(ringStartBlock, RED_SHROOM_BLOCK_RING_SEARCH_PATTERN));
+                            ringStartBlock = ringStartBlock.getRelative(BlockFace.DOWN);
+                            blocks.addAll(search(ringStartBlock, RED_SHROOM_BLOCK_RING_SEARCH_PATTERN));
+                            ringStartBlock = ringStartBlock.getRelative(BlockFace.DOWN);
+                            blocks.addAll(search(ringStartBlock, RED_SHROOM_BLOCK_RING_SEARCH_PATTERN));
+                            yield blocks;
                         }
                         default -> ObjectLists.emptyList();
                     };
@@ -208,17 +222,17 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
             return blocks;
         }
 
-        private static boolean positionMatchesXZ(final BlockState originState, final Block block) {
-            return originState.getX() == block.getX() && originState.getZ() == block.getZ();
+        private static boolean positionMatchesXZ(final BlockState state, final Block block) {
+            return state.getX() == block.getX() && state.getZ() == block.getZ();
         }
 
-        private static boolean materialMatches(final BlockState originState, final Block block) {
-            return originState.getType() == block.getType();
+        private static boolean materialMatches(final BlockState state, final Block block) {
+            return state.getType() == block.getType();
         }
 
-        private static boolean materialMatchesAny(final BlockState originState, final Block... blocks) {
+        private static boolean materialMatchesAny(final BlockState state, final Block... blocks) {
             for (final var block : blocks) {
-                if (materialMatches(originState, block)) {
+                if (materialMatches(state, block)) {
                     return true;
                 }
             }
