@@ -155,6 +155,12 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH, BlockFace.NORTH_EAST,
                 BlockFace.EAST, BlockFace.EAST);
 
+        private static final BlockFace[][] DIRECTIONS = {
+                { BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST },
+                { BlockFace.WEST, BlockFace.SELF, BlockFace.EAST },
+                { BlockFace.SOUTH_WEST, BlockFace.SOUTH, BlockFace.SOUTH_EAST },
+        };
+
         private BlockState originState;
         private int remainingCharges;
         private int scheduledSplinters;
@@ -174,6 +180,13 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 case SHROOM_BLOCK -> true;
                 case GENERIC_TRUNK -> positionMatchesXZ(originState, block);
                 case GENERIC_BRANCH -> !positionMatchesXZ(originState, block);
+                case ACACIA -> block.getBlockData() instanceof Orientable orientable && orientable.getAxis() == Axis.Y;
+                case CHERRY -> block.getBlockData() instanceof Orientable orientable && switch (getDirection(block)) {
+                    case SELF -> orientable.getAxis() == Axis.Y;
+                    case WEST, EAST -> orientable.getAxis() != Axis.Z;
+                    case NORTH, SOUTH -> orientable.getAxis() != Axis.X;
+                    default -> false;
+                };
                 default -> false;
             };
         }
@@ -206,6 +219,26 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                     };
                 }
                 case GENERIC_TRUNK -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                case CHERRY -> {
+                    final var direction = getDirection(block);
+                    if (direction == BlockFace.SELF) {
+                        yield search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                    }
+                    final var blockAbove = block.getRelative(BlockFace.UP);
+                    if (shouldSplinter(blockAbove) && blockAbove.getBlockData() instanceof Orientable orientable
+                            && orientable.getAxis() == Axis.Y) {
+                        yield ObjectList.of(blockAbove);
+                    }
+                    final var blockAdjacent = block.getRelative(direction);
+                    if (shouldSplinter(blockAdjacent) && blockAdjacent.getBlockData() instanceof Orientable orientable
+                            && ((orientable.getAxis() == Axis.X
+                                    && (direction == BlockFace.WEST || direction == BlockFace.EAST))
+                                    || (orientable.getAxis() == Axis.Z
+                                            && (direction == BlockFace.NORTH || direction == BlockFace.SOUTH)))) {
+                        yield ObjectList.of(blockAdjacent);
+                    }
+                    yield ObjectLists.emptyList();
+                }
                 default -> ObjectLists.emptyList();
             };
         }
@@ -220,6 +253,12 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 }
             }
             return blocks;
+        }
+
+        private BlockFace getDirection(final Block block) {
+            final var modX = block.getX() - originState.getX();
+            final var modZ = block.getZ() - originState.getZ();
+            return DIRECTIONS[Integer.signum(modZ) + 1][Integer.signum(modX) + 1];
         }
 
         private static boolean positionMatchesXZ(final BlockState state, final Block block) {
@@ -259,6 +298,9 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
             return switch (material) {
                 case MUSHROOM_STEM -> SHROOM_STEM;
                 case BROWN_MUSHROOM_BLOCK, RED_MUSHROOM_BLOCK -> SHROOM_BLOCK;
+                case ACACIA_LOG -> ACACIA;
+                case CHERRY_LOG -> CHERRY;
+                case MANGROVE_ROOTS, MANGROVE_LOG -> MANGROVE;
                 default -> {
                     if (Tag.LOGS.isTagged(material) && block.getBlockData() instanceof Orientable orientable) {
                         yield orientable.getAxis() == Axis.Y ? GENERIC_TRUNK : GENERIC_BRANCH;
