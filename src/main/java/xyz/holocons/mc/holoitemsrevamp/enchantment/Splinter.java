@@ -136,8 +136,6 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
 
     private static class SplinterContext {
 
-        private static final ObjectList<BlockFace> GENERIC_TRUNK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
-                BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST);
         private static final ObjectList<BlockFace> BROWN_SHROOM_BLOCK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
                 BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST, BlockFace.EAST,
                 BlockFace.EAST, BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.WEST,
@@ -154,6 +152,16 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 BlockFace.EAST_NORTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST,
                 BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH, BlockFace.NORTH_EAST,
                 BlockFace.EAST, BlockFace.EAST);
+        private static final ObjectList<BlockFace> GENERIC_TRUNK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST);
+        private static final ObjectList<BlockFace> ACACIA_EAST_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.EAST);
+        private static final ObjectList<BlockFace> ACACIA_SOUTH_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.SOUTH);
+        private static final ObjectList<BlockFace> ACACIA_WEST_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.WEST);
+        private static final ObjectList<BlockFace> ACACIA_NORTH_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.NORTH);
 
         private static final BlockFace[][] DIRECTIONS = {
                 { BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST },
@@ -183,8 +191,8 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 case ACACIA -> block.getBlockData() instanceof Orientable orientable && orientable.getAxis() == Axis.Y;
                 case CHERRY -> block.getBlockData() instanceof Orientable orientable && switch (getDirection(block)) {
                     case SELF -> orientable.getAxis() == Axis.Y;
-                    case WEST, EAST -> orientable.getAxis() != Axis.Z;
-                    case NORTH, SOUTH -> orientable.getAxis() != Axis.X;
+                    case EAST, WEST -> orientable.getAxis() != Axis.Z;
+                    case SOUTH, NORTH -> orientable.getAxis() != Axis.X;
                     default -> false;
                 };
                 default -> false;
@@ -219,6 +227,14 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                     };
                 }
                 case GENERIC_TRUNK -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                case ACACIA -> switch (getDirection(block)) {
+                    case SELF -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                    case EAST -> search(block, ACACIA_EAST_SEARCH_PATTERN);
+                    case SOUTH -> search(block, ACACIA_SOUTH_SEARCH_PATTERN);
+                    case WEST -> search(block, ACACIA_WEST_SEARCH_PATTERN);
+                    case NORTH -> search(block, ACACIA_NORTH_SEARCH_PATTERN);
+                    default -> ObjectLists.emptyList();
+                };
                 case CHERRY -> {
                     final var direction = getDirection(block);
                     if (direction == BlockFace.SELF) {
