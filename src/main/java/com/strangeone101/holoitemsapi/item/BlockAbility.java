@@ -30,13 +30,18 @@ public interface BlockAbility extends Keyed {
     }
 
     default void onBlockDropItem(BlockDropItemEvent event, BlockState blockState) {
-        final var items = event.getItems();
-        if (items.isEmpty() || !event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+        if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
             return;
         }
-        final var itemStack = items.get(items.size() - 1).getItemStack();
-        if (itemStack.getType().equals(getMaterial()) && itemStack.getAmount() == 1) {
-            items.get(items.size() - 1).setItemStack(buildStack(null));
+        final var items = event.getItems();
+        final var iterator = event.getItems().listIterator(items.size());
+        while (iterator.hasPrevious()) {
+            final var item = iterator.previous();
+            final var itemStack = item.getItemStack();
+            if (itemStack.getType().equals(getMaterial()) && itemStack.getAmount() == 1) {
+                item.setItemStack(buildStack(null));
+                return;
+            }
         }
     }
 
