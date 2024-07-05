@@ -254,7 +254,7 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                     case WEST -> search(block, GENERIC_BRANCH_WEST_SEARCH_PATTERN);
                     case NORTH_WEST -> search(block, GENERIC_BRANCH_NORTH_WEST_SEARCH_PATTERN);
                     case NORTH -> search(block, GENERIC_BRANCH_NORTH_SEARCH_PATTERN);
-                    case NORTH_EAST -> search(block, GENERIC_BRANCH_SOUTH_EAST_SEARCH_PATTERN);
+                    case NORTH_EAST -> search(block, GENERIC_BRANCH_NORTH_EAST_SEARCH_PATTERN);
                     default -> ObjectLists.emptyList();
                 };
                 case ACACIA -> switch (getDirection(block)) {
