@@ -153,6 +153,17 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH, BlockFace.NORTH_EAST,
                 BlockFace.EAST, BlockFace.EAST);
         private static final ObjectList<BlockFace> GENERIC_TRUNK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
+                BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.WEST, BlockFace.NORTH, BlockFace.NORTH,
+                BlockFace.EAST, BlockFace.EAST);
+        private static final ObjectList<BlockFace> GENERIC_BRANCH_EAST_SEARCH_PATTERN = ObjectList.of(
+                BlockFace.NORTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH, BlockFace.UP, BlockFace.NORTH, BlockFace.NORTH);
+        private static final ObjectList<BlockFace> GENERIC_BRANCH_SOUTH_SEARCH_PATTERN = ObjectList.of(
+                BlockFace.SOUTH_EAST, BlockFace.WEST, BlockFace.WEST, BlockFace.UP, BlockFace.EAST, BlockFace.EAST);
+        private static final ObjectList<BlockFace> GENERIC_BRANCH_WEST_SEARCH_PATTERN = ObjectList.of(
+                BlockFace.SOUTH_WEST, BlockFace.NORTH, BlockFace.NORTH, BlockFace.UP, BlockFace.SOUTH, BlockFace.SOUTH);
+        private static final ObjectList<BlockFace> GENERIC_BRANCH_NORTH_SEARCH_PATTERN = ObjectList.of(
+                BlockFace.NORTH_WEST, BlockFace.EAST, BlockFace.EAST, BlockFace.UP, BlockFace.WEST, BlockFace.WEST);
+        private static final ObjectList<BlockFace> ACACIA_CHERRY_TRUNK_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
                 BlockFace.EAST, BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST);
         private static final ObjectList<BlockFace> ACACIA_EAST_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
                 BlockFace.EAST);
@@ -227,8 +238,15 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                     };
                 }
                 case GENERIC_TRUNK -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                case GENERIC_BRANCH -> switch (getDirection(block)) {
+                    case EAST -> search(block, GENERIC_BRANCH_EAST_SEARCH_PATTERN);
+                    case SOUTH -> search(block, GENERIC_BRANCH_SOUTH_SEARCH_PATTERN);
+                    case WEST -> search(block, GENERIC_BRANCH_WEST_SEARCH_PATTERN);
+                    case NORTH -> search(block, GENERIC_BRANCH_NORTH_SEARCH_PATTERN);
+                    default -> ObjectLists.emptyList();
+                };
                 case ACACIA -> switch (getDirection(block)) {
-                    case SELF -> search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                    case SELF -> search(block, ACACIA_CHERRY_TRUNK_SEARCH_PATTERN);
                     case EAST -> search(block, ACACIA_EAST_SEARCH_PATTERN);
                     case SOUTH -> search(block, ACACIA_SOUTH_SEARCH_PATTERN);
                     case WEST -> search(block, ACACIA_WEST_SEARCH_PATTERN);
@@ -238,7 +256,7 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 case CHERRY -> {
                     final var direction = getDirection(block);
                     if (direction == BlockFace.SELF) {
-                        yield search(block, GENERIC_TRUNK_SEARCH_PATTERN);
+                        yield search(block, ACACIA_CHERRY_TRUNK_SEARCH_PATTERN);
                     }
                     final var blockAbove = block.getRelative(BlockFace.UP);
                     if (shouldSplinter(blockAbove) && blockAbove.getBlockData() instanceof Orientable orientable
