@@ -5,6 +5,7 @@ import com.strangeone101.holoitemsapi.enchantment.AnvilListener;
 import com.strangeone101.holoitemsapi.enchantment.EnchantManager;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentListener;
 import com.strangeone101.holoitemsapi.item.BlockListener;
+import com.strangeone101.holoitemsapi.item.CustomItemManager;
 import com.strangeone101.holoitemsapi.recipe.CraftListener;
 import com.strangeone101.holoitemsapi.tracking.CustomBlockStorage;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,6 +35,7 @@ public final class HoloItemsRevamp extends JavaPlugin {
     public void onEnable() {
         Integrations.onEnable();
 
+        CustomItemManager.lock();
         trackingManager.loadTrackedBlocks();
 
         getServer().getPluginManager().registerEvents(new EnchantmentListener(), this);

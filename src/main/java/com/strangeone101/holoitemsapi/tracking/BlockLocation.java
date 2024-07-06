@@ -50,6 +50,10 @@ public record BlockLocation(UUID worldKey, int x, int y, int z) {
         return world().getBlockState(x, y, z);
     }
 
+    public boolean isLoaded() {
+        return world() != null && world().isChunkLoaded(x >> 4, z >> 4);
+    }
+
     @Override
     public int hashCode() {
         return worldKey.hashCode() ^ ((y + z * 31) * 31 + x);

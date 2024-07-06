@@ -1,5 +1,7 @@
 package com.strangeone101.holoitemsapi.recipe;
 
+import java.util.stream.Stream;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
@@ -9,10 +11,10 @@ import com.strangeone101.holoitemsapi.item.CustomItemManager;
 /**
  * A recipe choice that uses a custom item
  */
-public class CIRecipeChoice extends RecipeChoice.ExactChoice {
+public class CustomItemRecipeChoice extends RecipeChoice.ExactChoice {
 
-    public CIRecipeChoice(ItemStack... stacks) {
-        super(stacks);
+    public CustomItemRecipeChoice(String... ids) {
+        super(Stream.of(ids).map(id -> CustomItemManager.getCustomItem(id).buildStack(null)).toList());
     }
 
     @Override
@@ -20,11 +22,12 @@ public class CIRecipeChoice extends RecipeChoice.ExactChoice {
         for (ItemStack match : this.getChoices()) {
             if (CustomItemManager.isCustomItem(match)) {
                 CustomItem ci = CustomItemManager.getCustomItem(match);
-                if (ci != null && ci == CustomItemManager.getCustomItem(t))
+                if (ci != null && ci == CustomItemManager.getCustomItem(t)) {
                     return true;
-            }
-            else if (match.isSimilar(t))
+                }
+            } else if (match.isSimilar(t)) {
                 return true;
+            }
         }
         return false;
     }

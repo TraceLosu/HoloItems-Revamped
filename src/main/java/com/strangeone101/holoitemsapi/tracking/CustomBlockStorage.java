@@ -1,20 +1,20 @@
 package com.strangeone101.holoitemsapi.tracking;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+
 import com.strangeone101.holoitemsapi.item.BlockAbility;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import org.bukkit.block.Block;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-
-import java.io.File;
-import java.io.IOException;
-import java.time.Instant;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * Shoutout to Flo0 (a.k.a 7Smiley7 on Spigot) for sharing the block tracking
@@ -93,28 +93,45 @@ public class CustomBlockStorage {
         }
     }
 
-    public void track(final Block block, final BlockAbility ability) {
-        final var trackedBlock = new BlockLocation(block);
-        trackedBlocks.put(trackedBlock, ability);
-        touchedChunks.add(trackedBlock.chunkKey());
+    public boolean contains(final Block block) {
+        return trackedBlocks.containsKey(new BlockLocation(block));
     }
 
-    public BlockAbility untrack(final Block block) {
+    public void set(final Block block, final BlockAbility ability) {
+        final var location = new BlockLocation(block);
+        trackedBlocks.put(location, ability);
+        touchedChunks.add(location.chunkKey());
+    }
+
+    public BlockAbility unset(final Block block) {
         return trackedBlocks.remove(new BlockLocation(block));
     }
 
-    public Stream<Map.Entry<BlockLocation, BlockAbility>> getTrackedBlocks(final UUID worldKey, final long chunkKey) {
-        return touchedChunks.contains(chunkKey)
-                ? trackedBlocks.entrySet().stream().filter(
-                        entry -> entry.getKey().chunkKey() == chunkKey && entry.getKey().worldKey().equals(worldKey))
-                : Stream.empty();
-    }
-
-    public BlockAbility getBlockAbility(final Block block) {
+    public BlockAbility getAbility(final Block block) {
         return trackedBlocks.get(new BlockLocation(block));
     }
 
-    public boolean contains(final Block block) {
-        return trackedBlocks.containsKey(new BlockLocation(block));
+    public void forEachBlockInChunk(final UUID worldKey, final long chunkKey,
+            final BiConsumer<? super BlockLocation, ? super BlockAbility> action) {
+        if (!touchedChunks.contains(chunkKey)) {
+            return;
+        }
+        trackedBlocks.forEach((location, ability) -> {
+            if (location.chunkKey() == chunkKey && location.worldKey().equals(worldKey)) {
+                action.accept(location, ability);
+            }
+        });
+    }
+
+    public void forEachLoadedBlock(final UUID worldKey,
+            final BiConsumer<? super BlockLocation, ? super BlockAbility> action) {
+        if (Bukkit.getWorld(worldKey) == null) {
+            return;
+        }
+        trackedBlocks.forEach((location, ability) -> {
+            if (location.worldKey().equals(worldKey) && location.isLoaded()) {
+                action.accept(location, ability);
+            }
+        });
     }
 }

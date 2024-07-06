@@ -172,24 +172,24 @@ public class RecipeBuilder {
             super(key, output);
         }
 
-        public AdvancedShape setGroupFilter(RecipeGroup group, CIRecipeChoice choice) {
+        public AdvancedShape setGroupFilter(RecipeGroup group, CustomItemRecipeChoice choice) {
             this.filters.put(group, choice);
             return this;
         }
 
-        public AdvancedShape setGroupItems(RecipeGroup group, ItemStack... itemstacks) {
-            this.filters.put(group, new CIRecipeChoice(itemstacks));
-            return this;
-        }
+        // public AdvancedShape setGroupItems(RecipeGroup group, ItemStack... itemstacks) {
+        //     this.filters.put(group, new CustomItemRecipeChoice(itemstacks));
+        //     return this;
+        // }
 
-        public AdvancedShape setGroupItems(RecipeGroup group, Material... materials) {
-            ItemStack[] stacks = new ItemStack[materials.length];
-            for (int i = 0; i < materials.length; i++) {
-                stacks[i] = new ItemStack(materials[i]);
-            }
-            this.filters.put(group, new CIRecipeChoice(stacks));
-            return this;
-        }
+        // public AdvancedShape setGroupItems(RecipeGroup group, Material... materials) {
+        //     ItemStack[] stacks = new ItemStack[materials.length];
+        //     for (int i = 0; i < materials.length; i++) {
+        //         stacks[i] = new ItemStack(materials[i]);
+        //     }
+        //     this.filters.put(group, new CustomItemRecipeChoice(stacks));
+        //     return this;
+        // }
 
         public AdvancedShape setIngredientGroup(char character, RecipeGroup group) {
             this.groups.put(character, group);
@@ -368,14 +368,14 @@ public class RecipeBuilder {
         protected String key;
         protected ItemStack output;
         protected RecipeModifier preview, craft = (item, map, context) -> item;
-        protected Map<RecipeGroup, CIRecipeChoice> filters = new HashMap<>();
+        protected Map<RecipeGroup, CustomItemRecipeChoice> filters = new HashMap<>();
 
         protected AdvancedRecipe(String key, ItemStack output) {
             this.key = key;
             this.output = output;
         }
 
-        public Map<RecipeGroup, CIRecipeChoice> getFilters() {
+        public Map<RecipeGroup, CustomItemRecipeChoice> getFilters() {
             return filters;
         }
 

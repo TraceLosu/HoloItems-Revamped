@@ -1,13 +1,13 @@
 package com.strangeone101.holoitemsapi.item;
 
-import com.strangeone101.holoitemsapi.Keys;
-import com.strangeone101.holoitemsapi.Property;
-import com.strangeone101.holoitemsapi.enchantment.Enchantable;
-import com.strangeone101.holoitemsapi.recipe.RecipeManager;
-import com.strangeone101.holoitemsapi.statistic.StatsWrapper;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.format.NamedTextColor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
 import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -25,15 +25,16 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import xyz.holocons.mc.holoitemsrevamp.Util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import com.strangeone101.holoitemsapi.Keys;
+import com.strangeone101.holoitemsapi.Property;
+import com.strangeone101.holoitemsapi.enchantment.Enchantable;
+import com.strangeone101.holoitemsapi.statistic.StatsWrapper;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
+import xyz.holocons.mc.holoitemsrevamp.Util;
 
 /**
  * A class for creating custom items. Be sure to call {@link #register()} after creating it
@@ -59,8 +60,8 @@ public class CustomItem implements Keyed {
     public CustomItem(Plugin plugin, String key, Material material, Component displayName, List<Component> lore) {
         this.key = new NamespacedKey(plugin, key);
         this.material = material;
-        this.displayName = displayName;
-        this.lore = lore;
+        this.displayName = displayName != null ? displayName : Component.empty();
+        this.lore = lore != null ? lore : List.of();
     }
 
     @Override
@@ -235,16 +236,6 @@ public class CustomItem implements Keyed {
     }
 
     /**
-     * Set the display name
-     * @param displayName The display name
-     * @return Itself
-     */
-    public CustomItem setDisplayName(Component displayName) {
-        this.displayName = displayName;
-        return this;
-    }
-
-    /**
      * Get the custom display name
      * @return The display name
      */
@@ -258,16 +249,6 @@ public class CustomItem implements Keyed {
      */
     public Material getMaterial() {
         return material;
-    }
-
-    /**
-     * Set the material
-     * @param material The material
-     * @return Itself
-     */
-    public CustomItem setMaterial(Material material) {
-        this.material = material;
-        return this;
     }
 
     /**
@@ -398,12 +379,9 @@ public class CustomItem implements Keyed {
 
     /**
      * Register this item to the registry
-     * @return Itself
      */
-    public CustomItem register() {
+    public void register() {
         CustomItemManager.register(this);
-        RecipeManager.registerRecipe(getRecipe());
-        return this;
     }
 
     /**
