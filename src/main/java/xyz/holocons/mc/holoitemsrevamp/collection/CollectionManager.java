@@ -407,7 +407,7 @@ public class CollectionManager {
     }
 
     private static Idol buildCalliope(HoloItemsRevamp plugin) {
-        return new Idol(new MementoItem(plugin)) {
+        return new Idol(new MementoItem(plugin), new LibraryBook(plugin)) {
 
             @Override
             public @NotNull String getSkinUrl() {
