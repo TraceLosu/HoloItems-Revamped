@@ -6,10 +6,14 @@ import java.time.temporal.TemporalUnit;
 import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -139,5 +143,36 @@ public final class Util {
 
     public static long toTicks(Duration duration) {
         return Tick.tick().fromDuration(duration);
+    }
+
+    /**
+     * This function is equivalent to doing a for-each loop on every
+     * itemStack inside of a shulker box. This also saves the contents
+     * of each slot in the shulker-box afterwards.
+     * @return True if shulker is a valid shulkerbox, false otherwise.
+     */
+    public static boolean shulkerForEach(ItemStack stack, Consumer<ItemStack> action) {
+        if(stack.getType() != Material.SHULKER_BOX) {
+            return false;
+        }
+        final AtomicBoolean editMetaSuccess = new AtomicBoolean(false);
+        stack.editMeta(BlockStateMeta.class, shulkerStateMeta -> {
+            // Get shulkerbox, update shulkerbox, save shulkerbox.
+            // Get shulkerbox:
+            final var blockState = shulkerStateMeta.getBlockState();
+            if(!(blockState instanceof ShulkerBox box)) {
+                editMetaSuccess.set(false);
+                return;
+            }
+
+            // Update shulkerbox:
+            final var inventory = box.getInventory();
+            inventory.forEach(action);
+            // no box.setInventory() so I assume I don't have to do that.
+
+            // Save shulkerbox:
+            editMetaSuccess.set(true);
+        });
+        return editMetaSuccess.get();
     }
 }

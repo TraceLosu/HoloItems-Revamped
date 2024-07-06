@@ -11,6 +11,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.Util;
 
 public class Library extends CustomEnchantment implements EnchantmentAbility {
 
@@ -41,7 +42,7 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
         return Component.text()
             .color(NamedTextColor.GRAY)
             .decoration(TextDecoration.ITALIC, false)
-            .append(Component.text("Magnet"))
+            .append(Component.text("Library of Memories"))
             .build();
     }
 
@@ -52,7 +53,10 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
 
     @Override
     public void onPlayerDeath(PlayerDeathEvent event, ItemStack itemStack) {
-        // TODO
-        
+        Util.shulkerForEach(itemStack, stack -> stack.getEnchantments().keySet().forEach(enchantment -> {
+            if(enchantment instanceof Memento memento) {
+                memento.onPlayerDeath(event, itemStack);
+            }
+        }));
     }
 }
