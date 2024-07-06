@@ -6,10 +6,7 @@ import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -23,11 +20,8 @@ import xyz.holocons.mc.holoitemsrevamp.Util;
 import java.util.List;
 
 public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
-    private final HoloItemsRevamp plugin;
-
     public SSKSword(HoloItemsRevamp plugin) {
         super(plugin, "ssk_sword");
-        this.plugin = plugin;
     }
 
     @Override
@@ -42,7 +36,7 @@ public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack itemStack) {
-        return MaterialTags.AXES.isTagged(itemStack);
+        return itemStack.getType() == Material.DIAMOND_SWORD;
     }
 
     @Override

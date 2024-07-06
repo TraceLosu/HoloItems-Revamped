@@ -16,10 +16,10 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.List;
 
-public class SSKSwordBook extends CustomItem implements Enchantable {
+public class SSKSwordItem extends CustomItem implements Enchantable {
 
     private static final String name = "ssk_sword";
-    private static final Material material = Material.ENCHANTED_BOOK;
+    private static final Material material = Material.DIAMOND_SWORD;
     private static final Component displayName = Component.text("SSK Sword", NamedTextColor.RED);
     private static final List<Component> lore = List.of(
         Component.text("Heal-on-hit when at full health!", NamedTextColor.DARK_PURPLE)
@@ -27,7 +27,7 @@ public class SSKSwordBook extends CustomItem implements Enchantable {
 
     private final EnchantManager enchantManager;
 
-    public SSKSwordBook(HoloItemsRevamp plugin) {
+    public SSKSwordItem(HoloItemsRevamp plugin) {
         super(plugin, name, material, displayName, lore);
         this.enchantManager = plugin.getEnchantManager();
         this.register();
