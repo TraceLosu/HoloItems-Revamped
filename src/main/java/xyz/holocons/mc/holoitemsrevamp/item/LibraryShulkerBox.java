@@ -51,15 +51,18 @@ public class LibraryShulkerBox extends CustomItem implements Enchantable, BlockA
 
     @Override
     public ItemStack applyEnchantment(ItemStack itemStack) {
+        System.out.println("Library ShulkerBox ApplyEnchantment got called");
         var enchantedStack = itemStack.clone();
         var enchantedMeta = enchantedStack.hasItemMeta() ? enchantedStack.getItemMeta() : Bukkit.getItemFactory().getItemMeta(enchantedStack.getType());
 
         if (enchantedMeta.addEnchant(getEnchantment(), 1, false)) {
+            System.out.println("Library not returning null");
             enchantedStack.setItemMeta(enchantedMeta);
             enchantManager.removeCustomEnchantmentLore(enchantedStack);
             enchantManager.applyCustomEnchantmentLore(enchantedStack);
             return enchantedStack;
         } else {
+            System.out.println("Library returning null");
             return null;
         }
     }

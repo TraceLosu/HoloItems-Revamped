@@ -4,6 +4,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
+import org.bukkit.inventory.meta.BlockStateMeta;
 
 public interface BlockAbility extends Keyed {
 
@@ -37,11 +39,19 @@ public interface BlockAbility extends Keyed {
         final var iterator = event.getItems().listIterator(items.size());
         while (iterator.hasPrevious()) {
             final var item = iterator.previous();
-            final var itemStack = item.getItemStack();
-            if (itemStack.getType().equals(getMaterial()) && itemStack.getAmount() == 1) {
+            final var oldItemStack = item.getItemStack();
+            if (oldItemStack.getType().equals(getMaterial()) && oldItemStack.getAmount() == 1) {
                 final var newItemStack = buildStack(null);
-                if(itemStack.getType() == Material.SHULKER_BOX) {
-                    newItemStack.setItemMeta(itemStack.getItemMeta());
+                if(oldItemStack.getType() == Material.SHULKER_BOX) {
+                    // A lot of these are marked as nullable, but for shulkers it's not-null.
+                    final var oldStackMeta = (BlockStateMeta) oldItemStack.getItemMeta();
+                    final var oldStackState = (ShulkerBox) oldStackMeta.getBlockState();
+                    newItemStack.editMeta(BlockStateMeta.class, newStackMeta -> {
+                        final var newStackState = (ShulkerBox) newStackMeta.getBlockState();
+                        newStackState.getInventory()
+                            .setContents(oldStackState.getInventory().getContents());
+                        newStackMeta.setBlockState(newStackState);
+                    });
                 }
                 item.setItemStack(newItemStack);
                 return;
