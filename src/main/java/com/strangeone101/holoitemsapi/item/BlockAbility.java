@@ -39,7 +39,11 @@ public interface BlockAbility extends Keyed {
             final var item = iterator.previous();
             final var itemStack = item.getItemStack();
             if (itemStack.getType().equals(getMaterial()) && itemStack.getAmount() == 1) {
-                item.setItemStack(buildStack(null));
+                final var newItemStack = buildStack(null);
+                if(itemStack.getType() == Material.SHULKER_BOX) {
+                    newItemStack.setItemMeta(itemStack.getItemMeta());
+                }
+                item.setItemStack(newItemStack);
                 return;
             }
         }
@@ -53,7 +57,7 @@ public interface BlockAbility extends Keyed {
 
     /**
      * Activates whenever a creature spawns in the same world as this BlockAbility.
-     * 
+     *
      * @param event      The CreatureSpawnEvent
      * @param blockState This BlockAbility's Block. Note that this may not be in the
      *                   same location as the event.
