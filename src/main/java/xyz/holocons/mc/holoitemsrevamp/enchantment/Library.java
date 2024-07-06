@@ -34,6 +34,7 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack itemStack) {
+        // TODO: Other colors of shulkerbox
         return itemStack.getType() == Material.SHULKER_BOX;
     }
 
