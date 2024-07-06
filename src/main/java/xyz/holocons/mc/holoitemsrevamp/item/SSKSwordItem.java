@@ -6,6 +6,7 @@ import com.strangeone101.holoitemsapi.enchantment.Enchantable;
 import com.strangeone101.holoitemsapi.item.CustomItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -53,9 +54,9 @@ public class SSKSwordItem extends CustomItem implements Enchantable {
     @Override
     public ItemStack applyEnchantment(ItemStack itemStack) {
         var enchantedStack = itemStack.clone();
-        var enchantedMeta = (EnchantmentStorageMeta) enchantedStack.getItemMeta();
+        var enchantedMeta = enchantedStack.hasItemMeta() ? enchantedStack.getItemMeta() : Bukkit.getItemFactory().getItemMeta(enchantedStack.getType());
 
-        if (enchantedMeta.addStoredEnchant(getEnchantment(), 1, false)) {
+        if (enchantedMeta.addEnchant(getEnchantment(), 1, false)) {
             enchantedStack.setItemMeta(enchantedMeta);
             enchantManager.removeCustomEnchantmentLore(enchantedStack);
             enchantManager.applyCustomEnchantmentLore(enchantedStack);
