@@ -61,8 +61,7 @@ public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
 
         // This is what Klin used, and it seems to be equivalent to damage after-sharpness after-plugins before-prot4
         final var amountToHeal = event.getDamage();
-        Util.healEntity(target, amountToHeal);
-        event.setDamage(0);
+        event.setDamage(-amountToHeal);
 
         // If there's fire aspect, add some sort of heal-over-time (since fire is DoT)
         // Code mostly copied from klin.
