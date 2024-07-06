@@ -172,6 +172,7 @@ public final class Util {
 
             // Save shulkerbox:
             editMetaSuccess.set(true);
+            shulkerStateMeta.setBlockState(blockState);
         });
         return editMetaSuccess.get();
     }
