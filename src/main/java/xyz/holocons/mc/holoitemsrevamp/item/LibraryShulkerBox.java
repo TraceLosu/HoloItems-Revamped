@@ -10,10 +10,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
@@ -62,5 +65,39 @@ public class LibraryShulkerBox extends CustomItem implements Enchantable, BlockA
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void onBlockDropItem(BlockDropItemEvent event, BlockState blockState) {
+        // Note: If there is ever a second shulkerbox-customitem then it will need this too
+        // and at that point make a ShulkerBlockAbility interface
+        final var items = event.getItems();
+        if(items.size() != 1) {
+            // Not a shulker box drop, I think?
+            BlockAbility.super.onBlockDropItem(event, blockState);
+            return;
+        }
+        final var itemEntity = items.get(0);
+        final var oldItemStack = itemEntity.getItemStack();
+        if(!isShulkerBox(oldItemStack.getType())) {
+            BlockAbility.super.onBlockDropItem(event, blockState);
+            return;
+        }
+        final var oldStackMeta = (BlockStateMeta) oldItemStack.getItemMeta();
+        final var oldStackState = (ShulkerBox) oldStackMeta.getBlockState();
+
+        final var newItemStack = buildStack(null);
+        newItemStack.editMeta(BlockStateMeta.class, newStackMeta -> {
+            final var newStackState = (ShulkerBox) newStackMeta.getBlockState();
+            newStackState.getInventory()
+                .setContents(oldStackState.getInventory().getContents());
+            newStackMeta.setBlockState(newStackState);
+        });
+        itemEntity.setItemStack(newItemStack);
+    }
+
+    private boolean isShulkerBox(Material material) {
+        // TODO: Is there a MaterialTag for this? That also handles the colors?
+        return material == Material.SHULKER_BOX;
     }
 }
