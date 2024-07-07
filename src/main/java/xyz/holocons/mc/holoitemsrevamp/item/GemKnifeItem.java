@@ -21,7 +21,7 @@ public class GemKnifeItem extends CustomItem implements Enchantable {
     private static final Material material = Material.EMERALD;
     private static final Component displayName = Component.text("Gem Knife", NamedTextColor.GREEN);
     private static final List<Component> lore = List.of(
-        Component.text("Scrape materials off of ores")
+        Component.text("Right click to consume a charge and break a piece off of an ore soft than emerald.")
     );
 
     private final EnchantManager enchantManager;
