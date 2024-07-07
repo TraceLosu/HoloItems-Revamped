@@ -1,5 +1,6 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 import net.kyori.adventure.text.Component;
@@ -11,8 +12,10 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.Util;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -104,7 +107,7 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
 
         final var maxChargeToGet = chargePerDrop * MAX_DROPS_PER_INTERACT;
         final var chargeGrabbed = getChargeFromInventory(
-            event.getPlayer().getInventory(), maxChargeToGet, false);
+            event.getPlayer().getInventory(), maxChargeToGet, true);
         final var amountToDrop = chargeGrabbed / chargePerDrop;
         final var remainingCharge = chargeGrabbed - (amountToDrop * chargePerDrop);
         // There might be excess emeralds if you try to grab lapis (3 emeralds per item)
@@ -131,8 +134,17 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
                 continue;
             }
 
-            // TODO: Shulkerbox check
-            final var chargeFromThisStack = getChargeFromStack(stack, remainingChargeToGet);
+            int chargeFromThisStack;
+            if(checkShulkers && MaterialTags.SHULKER_BOXES.isTagged(stack)) {
+                // TODO: Test this.
+                AtomicInteger atomicCharge = new AtomicInteger();
+                Util.editShulker(stack, shulkerInv ->
+                    atomicCharge.set(getChargeFromInventory(shulkerInv, remainingChargeToGet, false)));
+                chargeFromThisStack = atomicCharge.get();
+            }
+            else {
+                chargeFromThisStack = getChargeFromStack(stack, remainingChargeToGet);
+            }
             chargeGotten.addAndGet(chargeFromThisStack);
 
             inventoryContents[i] = stack;
