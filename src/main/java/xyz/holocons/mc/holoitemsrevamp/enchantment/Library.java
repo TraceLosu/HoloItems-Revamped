@@ -54,7 +54,7 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
 
     @Override
     public void onPlayerDeath(PlayerDeathEvent event, ItemStack shulkerStack) {
-        Util.shulkerForEach(shulkerStack, inventoryStack -> {
+        Util.editShulker(shulkerStack, shulkerInv -> shulkerInv.forEach(inventoryStack -> {
             if(inventoryStack == null) {
                 return;
             }
@@ -63,6 +63,6 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
                     memento.onPlayerDeath(event, inventoryStack);
                 }
             });
-        });
+        }));
     }
 }

@@ -13,6 +13,7 @@ import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -147,34 +148,29 @@ public final class Util {
     }
 
     /**
-     * This function is equivalent to doing a for-each loop on every
-     * itemStack inside of a shulker box. This also saves the contents
-     * of each slot in the shulker-box afterwards.
-     * @return True if shulker is a valid shulkerbox, false otherwise.
+     * Edit the inventory of a shulkerbox. After the consumer is called,
+     * the shulker's inventory is saved, including any edits made.
+     * @param stack The (possible) shulkerbox to edit
+     * @param action The action to perform on the shulker's inventory.
      */
-    public static boolean shulkerForEach(ItemStack stack, Consumer<ItemStack> action) {
+    public static void editShulker(ItemStack stack, Consumer<Inventory> action) {
         if(!MaterialTags.SHULKER_BOXES.isTagged(stack)) {
-            return false;
+            return;
         }
-        final AtomicBoolean editMetaSuccess = new AtomicBoolean(false);
         stack.editMeta(BlockStateMeta.class, shulkerStateMeta -> {
             // Get shulkerbox, update shulkerbox, save shulkerbox.
             // Get shulkerbox:
             final var blockState = shulkerStateMeta.getBlockState();
             if(!(blockState instanceof ShulkerBox box)) {
-                editMetaSuccess.set(false);
                 return;
             }
 
             // Update shulkerbox:
-            final var inventory = box.getInventory();
-            inventory.forEach(action);
+            action.accept(box.getInventory());
             // no box.setInventory() so I assume I don't have to do that.
 
             // Save shulkerbox:
-            editMetaSuccess.set(true);
             shulkerStateMeta.setBlockState(blockState);
         });
-        return editMetaSuccess.get();
     }
 }
