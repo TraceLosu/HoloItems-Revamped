@@ -49,7 +49,7 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
         Map.entry(Material.REDSTONE, 6),       // 1 emerald per 1 redstone
         Map.entry(Material.LAPIS_LAZULI, 18),  // 3 emerald per 1 lapis
         Map.entry(Material.QUARTZ, 12),        // 2 emerald per 1 quartz
-        Map.entry(Material.GLOWSTONE_DUST, 6) // 1 emerald per 1 glowstone
+        Map.entry(Material.GLOWSTONE_DUST, 6) // 1 emerald per 1 glowstone dust
     );
 
     private static final int CHARGE_PER_EMERALD = 6;
@@ -117,20 +117,27 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
 
     private int getChargeFromInventory(Inventory inv, final int maxChargeToGet, boolean checkShulkers) {
         AtomicInteger chargeGotten = new AtomicInteger(0);
-        inv.forEach(stack -> {
+        final var inventoryContents = inv.getContents();
+        for(int i = 0; i < inventoryContents.length; i++) {
+            // inv.forEach wasn't working properly so I'm doing this
+            final var stack = inventoryContents[i];
+
             if(stack == null) {
-                return;
+                continue;
             }
 
             final int remainingChargeToGet = maxChargeToGet - chargeGotten.get();
             if(remainingChargeToGet == 0) {
-                return;
+                continue;
             }
-            
+
             // TODO: Shulkerbox check
             final var chargeFromThisStack = getChargeFromStack(stack, remainingChargeToGet);
             chargeGotten.addAndGet(chargeFromThisStack);
-        });
+
+            inventoryContents[i] = stack;
+        }
+        inv.setContents(inventoryContents);
         return chargeGotten.get();
     }
 
