@@ -111,7 +111,8 @@ public class EnchantManager {
                 new TideRider(plugin),
                 new Backdash(plugin),
                 new Plow(plugin),
-                new Library(plugin)
+                new Library(plugin),
+                new GemKnife(plugin)
         );
     }
 }
