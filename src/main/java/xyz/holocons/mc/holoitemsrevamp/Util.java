@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
@@ -152,7 +153,7 @@ public final class Util {
      * @return True if shulker is a valid shulkerbox, false otherwise.
      */
     public static boolean shulkerForEach(ItemStack stack, Consumer<ItemStack> action) {
-        if(stack.getType() != Material.SHULKER_BOX) {
+        if(!MaterialTags.SHULKER_BOXES.isTagged(stack)) {
             return false;
         }
         final AtomicBoolean editMetaSuccess = new AtomicBoolean(false);

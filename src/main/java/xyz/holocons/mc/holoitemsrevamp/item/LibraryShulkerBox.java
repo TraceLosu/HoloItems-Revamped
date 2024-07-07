@@ -1,5 +1,6 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantManager;
 import com.strangeone101.holoitemsapi.enchantment.Enchantable;
@@ -97,7 +98,6 @@ public class LibraryShulkerBox extends CustomItem implements Enchantable, BlockA
     }
 
     private boolean isShulkerBox(Material material) {
-        // TODO: Is there a MaterialTag for this? That also handles the colors?
-        return material == Material.SHULKER_BOX;
+        return MaterialTags.SHULKER_BOXES.isTagged(material);
     }
 }
