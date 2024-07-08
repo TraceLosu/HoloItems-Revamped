@@ -40,6 +40,15 @@ public class EnchantmentListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) {
+            return;
+        }
+        final var itemStack = player.getInventory().getItemInMainHand();
+        forEachEnchantment(itemStack, ability -> ability.onEntityDamageByEntity(event, itemStack));
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         final var storageContents = event.getPlayer().getInventory().getStorageContents();
         for (final var itemStack : storageContents) {
@@ -81,23 +90,5 @@ public class EnchantmentListener implements Listener {
             }
             forEachEnchantment(itemStack, ability -> ability.onPlayerToggleSneak(event, itemStack));
         }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        final var attacker = event.getDamager();
-        final var target = event.getEntity();
-
-        if(!(attacker instanceof Player attackingPlayer)) {
-            return;
-        }
-
-        // Now that I think about it, can you not attack enemies with your offhand weapon?
-        final var weapon = attackingPlayer.getInventory().getItemInMainHand();
-        weapon.getEnchantments().keySet().forEach(enchantment -> {
-            if(enchantment instanceof EnchantmentAbility ability) {
-                ability.onPlayerAttack(event, weapon);
-            }
-        });
     }
 }

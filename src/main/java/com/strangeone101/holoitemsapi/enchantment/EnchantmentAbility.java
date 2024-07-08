@@ -18,6 +18,9 @@ public interface EnchantmentAbility extends Keyed {
     default void onBlockPlace(BlockPlaceEvent event, ItemStack itemStack) {
     }
 
+    default void onEntityDamageByEntity(EntityDamageByEntityEvent event, ItemStack itemStack) {
+    }
+
     default void onPlayerDeath(PlayerDeathEvent event, ItemStack itemStack) {
     }
 
@@ -28,8 +31,5 @@ public interface EnchantmentAbility extends Keyed {
     }
 
     default void onPlayerToggleSneak(PlayerToggleSneakEvent event, ItemStack itemStack) {
-    }
-
-    default void onPlayerAttack(EntityDamageByEntityEvent event, ItemStack itemStack) {
     }
 }

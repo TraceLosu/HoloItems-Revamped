@@ -9,8 +9,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -112,17 +110,5 @@ public final class Util {
 
     public static long toTicks(Duration duration) {
         return Tick.tick().fromDuration(duration);
-    }
-
-    public static void healEntity(final LivingEntity entity, double amountToHeal) {
-        final var maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        var health = entity.getHealth();
-
-        if(health + amountToHeal > maxHealth) {
-            entity.setHealth(maxHealth);
-        }
-        else {
-            entity.setHealth(health + amountToHeal);
-        }
     }
 }

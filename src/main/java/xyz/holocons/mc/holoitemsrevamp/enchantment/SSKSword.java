@@ -1,25 +1,33 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
-import com.destroystokyo.paper.MaterialTags;
-import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
-import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.*;
+import java.util.List;
+
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.Util;
+import org.joml.Math;
 
-import java.util.List;
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
+
+    private static final int ticksPerLevel = 80;
+
     public SSKSword(HoloItemsRevamp plugin) {
         super(plugin, "ssk_sword");
     }
@@ -42,10 +50,10 @@ public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
     @Override
     public @NotNull Component displayName(int level) {
         return Component.text()
-            .color(NamedTextColor.GRAY)
-            .decoration(TextDecoration.ITALIC, false)
-            .append(Component.text("SSK Sword"))
-            .build();
+                .color(NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false)
+                .append(Component.text("SSK Sword"))
+                .build();
     }
 
     @Override
@@ -54,31 +62,42 @@ public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
     }
 
     @Override
-    public void onPlayerAttack(EntityDamageByEntityEvent event, ItemStack itemStack) {
-        if(!(event.getEntity() instanceof LivingEntity target)) {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event, ItemStack itemStack) {
+        if (isMissingHealth(event.getDamager())) {
             return;
         }
 
-        // This is what Klin used, and it seems to be equivalent to damage after-sharpness after-plugins before-prot4
-        final var amountToHeal = event.getDamage();
-        event.setDamage(-amountToHeal);
-
-        // If there's fire aspect, add some sort of heal-over-time (since fire is DoT)
-        // Code mostly copied from klin.
-        int fireAspectLevel = itemStack.getEnchantmentLevel(FIRE_ASPECT);
-        if(fireAspectLevel > 0) {
-            target.addPotionEffects(List.of(
-                new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 80*fireAspectLevel, 1),
-                new PotionEffect(PotionEffectType.REGENERATION, 80*fireAspectLevel, 1),
-                new PotionEffect(PotionEffectType.SPEED, 80*fireAspectLevel, 1)
-            ));
+        final var rawDamage = event.getDamage();
+        if (rawDamage <= 0d || !(event.getEntity() instanceof LivingEntity target)) {
+            return;
         }
 
-        // Add some cool particle effects? Code copied straight from klin,
-        // unchanged besides "target" instead of "entity".
-        Location loc = target.getLocation().add(0, target.getHeight()/2, 0);
-        World world = target.getWorld();
-        world.spawnParticle(Particle.HEART, loc, 3, 0.5, 0.5, 0.5);
-        world.playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.1f, 1f);
+        final var clampedDamage = Math.clamp(0d, getMissingHealth(target), rawDamage);
+        event.setDamage(-clampedDamage);
+
+        final var fireAspectLevel = itemStack.getEnchantmentLevel(FIRE_ASPECT);
+        if (fireAspectLevel > 0) {
+            target.addPotionEffects(List.of(
+                    new PotionEffect(PotionEffectType.FIRE_RESISTANCE, ticksPerLevel * fireAspectLevel, 1),
+                    new PotionEffect(PotionEffectType.REGENERATION, ticksPerLevel * fireAspectLevel, 1),
+                    new PotionEffect(PotionEffectType.SPEED, ticksPerLevel * fireAspectLevel, 1)));
+        }
+
+        final var location = target.getLocation().add(0, target.getHeight() / 2, 0);
+        final var world = location.getWorld();
+        world.spawnParticle(Particle.HEART, location, 3, 0.5, 0.5, 0.5);
+        world.playSound(location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.1f, 1f);
+    }
+
+    private static boolean isMissingHealth(final Entity entity) {
+        return entity instanceof LivingEntity livingEntity
+                && livingEntity.getHealth() < livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+    }
+
+    private static double getMissingHealth(final Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            return livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - livingEntity.getHealth();
+        }
+        return 0d;
     }
 }

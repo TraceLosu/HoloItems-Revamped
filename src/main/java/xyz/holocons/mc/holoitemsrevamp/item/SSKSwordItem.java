@@ -12,7 +12,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 import java.util.List;
@@ -36,8 +35,7 @@ public class SSKSwordItem extends CustomItem implements Enchantable {
 
     @Override
     protected Recipe getRecipe() {
-        // Recipe 0 from OldHoloItems
-        ShapedRecipe recipe = new ShapedRecipe(getKey(), buildStack(null));
+        final var recipe = new ShapedRecipe(getKey(), buildStack(null));
         recipe.shape("*&#","*&#","*/#");
         recipe.setIngredient('*', Material.BLAZE_POWDER);
         recipe.setIngredient('&', Material.GHAST_TEAR);
