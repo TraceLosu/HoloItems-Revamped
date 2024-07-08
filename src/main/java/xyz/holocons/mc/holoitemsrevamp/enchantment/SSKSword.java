@@ -8,13 +8,13 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Math;
 
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
@@ -72,14 +72,16 @@ public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
             return;
         }
 
-        final var clampedDamage = Math.clamp(0d, getMissingHealth(target), rawDamage);
-        event.setDamage(-clampedDamage);
+        event.setDamage(0);
+
+        final var targetIsUndead = target.getCategory() == EntityCategory.UNDEAD;
+        final var effectType = targetIsUndead ? PotionEffectType.HARM : PotionEffectType.HEAL;
+        target.addPotionEffect(new PotionEffect(effectType, 1, 1));
 
         final var fireAspectLevel = itemStack.getEnchantmentLevel(FIRE_ASPECT);
         if (fireAspectLevel > 0) {
             target.addPotionEffects(List.of(
                     new PotionEffect(PotionEffectType.FIRE_RESISTANCE, ticksPerLevel * fireAspectLevel, 1),
-                    new PotionEffect(PotionEffectType.REGENERATION, ticksPerLevel * fireAspectLevel, 1),
                     new PotionEffect(PotionEffectType.SPEED, ticksPerLevel * fireAspectLevel, 1)));
         }
 
@@ -92,12 +94,5 @@ public class SSKSword extends CustomEnchantment implements EnchantmentAbility {
     private static boolean isMissingHealth(final Entity entity) {
         return entity instanceof LivingEntity livingEntity
                 && livingEntity.getHealth() < livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-    }
-
-    private static double getMissingHealth(final Entity entity) {
-        if (entity instanceof LivingEntity livingEntity) {
-            return livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - livingEntity.getHealth();
-        }
-        return 0d;
     }
 }
