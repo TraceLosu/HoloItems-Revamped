@@ -1,5 +1,7 @@
 package com.strangeone101.holoitemsapi.enchantment;
 
+import java.util.function.Consumer;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
@@ -16,41 +18,35 @@ import org.bukkit.inventory.ItemStack;
 
 public class EnchantmentListener implements Listener {
 
+    private static void forEachEnchantment(final ItemStack itemStack,
+            final Consumer<? super EnchantmentAbility> action) {
+        itemStack.getEnchantments().keySet().forEach(enchantment -> {
+            if (enchantment instanceof EnchantmentAbility ability) {
+                action.accept(ability);
+            }
+        });
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         final var itemStack = event.getPlayer().getInventory().getItemInMainHand();
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof EnchantmentAbility ability) {
-                ability.onBlockBreak(event, itemStack);
-            }
-        });
+        forEachEnchantment(itemStack, ability -> ability.onBlockBreak(event, itemStack));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         final var itemStack = event.getItemInHand();
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof EnchantmentAbility ability) {
-                ability.onBlockPlace(event, itemStack);
-            }
-        });
+        forEachEnchantment(itemStack, ability -> ability.onBlockPlace(event, itemStack));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         final var storageContents = event.getPlayer().getInventory().getStorageContents();
-
         for (final var itemStack : storageContents) {
             if (itemStack == null) {
                 continue;
             }
-            itemStack.getEnchantments().keySet().forEach(enchantment -> {
-                if (enchantment instanceof EnchantmentAbility ability) {
-                    ability.onPlayerDeath(event, itemStack);
-                }
-            });
+            forEachEnchantment(itemStack, ability -> ability.onPlayerDeath(event, itemStack));
         }
     }
 
@@ -60,12 +56,7 @@ public class EnchantmentListener implements Listener {
             return;
         }
         final var itemStack = throwableProjectile.getItem();
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof EnchantmentAbility ability) {
-                ability.onProjectileLaunch(event, itemStack);
-            }
-        });
+        forEachEnchantment(itemStack, ability -> ability.onProjectileLaunch(event, itemStack));
     }
 
     @EventHandler(ignoreCancelled = false)
@@ -78,27 +69,17 @@ public class EnchantmentListener implements Listener {
             case OFF_HAND -> event.getPlayer().getInventory().getItemInOffHand();
             default -> new ItemStack(Material.AIR);
         };
-
-        itemStack.getEnchantments().keySet().forEach(enchantment -> {
-            if (enchantment instanceof EnchantmentAbility ability) {
-                ability.onPlayerInteract(event, itemStack);
-            }
-        });
+        forEachEnchantment(itemStack, ability -> ability.onPlayerInteract(event, itemStack));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
         final var armorContents = event.getPlayer().getInventory().getArmorContents();
-
         for (final var itemStack : armorContents) {
             if (itemStack == null) {
                 continue;
             }
-            itemStack.getEnchantments().keySet().forEach(enchantment -> {
-                if (enchantment instanceof EnchantmentAbility ability) {
-                    ability.onPlayerToggleSneak(event, itemStack);
-                }
-            });
+            forEachEnchantment(itemStack, ability -> ability.onPlayerToggleSneak(event, itemStack));
         }
     }
 
