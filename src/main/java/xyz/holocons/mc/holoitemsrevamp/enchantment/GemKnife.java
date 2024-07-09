@@ -2,8 +2,10 @@ package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.sk89q.worldedit.blocks.Blocks;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
@@ -131,13 +133,13 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
             //  That, or getShulkerBoxInventory (renamed to getBatteryInventory?) should do that.
             final var shulkerInv = getShulkerBoxInventory(stack);
             if(shulkerInv != null) {
-                // This is a weird solution, I see another one that seems weirder.
-                // I wanna hear if you have any ideas before I do that one, though.
-                // TODO: This doesn't work. I was hoping this would work, even if janky.
-                amountToTake -= removeFromInventory(shulkerInv, amountToTake, materialToTake);
                 final var finalAmountToTake = amountToTake;
-                editShulkerBoxInventory(stack, editableShulkerInv ->
+                final var amountTakenFromShulker = editShulkerBoxInventoryWithReturn(stack, editableShulkerInv ->
                     removeFromInventory(editableShulkerInv, finalAmountToTake, materialToTake));
+                if(amountTakenFromShulker != null) {
+                    amountToTake -= amountTakenFromShulker;
+                }
+
                 if(amountToTake == 0) {
                     return maxToTake;
                 }
@@ -176,6 +178,28 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
                 action.accept(shulkerBox.getInventory());
             }
         });
+    }
+
+    /**
+     * Edit the inventory of a shulkerbox. After the consumer is called,
+     * the shulker's inventory is saved, including any edits made.
+     *
+     * @param itemStack The (possible) shulkerbox to edit
+     * @param action    The action to perform on the shulker's inventory
+     * @return          The return value of action, or null if the action was not called.
+     * @param <R>       The return type of the function
+     */
+    private static <R> R editShulkerBoxInventoryWithReturn(ItemStack itemStack, Function<Inventory, R> action) {
+        if(!(itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta)) {
+            return null;
+        }
+        if(!(blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox)) {
+            return null;
+        }
+        R returnValue = action.apply(shulkerBox.getInventory());
+        blockStateMeta.setBlockState(shulkerBox);
+        itemStack.setItemMeta(blockStateMeta);
+        return returnValue;
     }
 
     private static Inventory getShulkerBoxInventory(final ItemStack itemStack) {
