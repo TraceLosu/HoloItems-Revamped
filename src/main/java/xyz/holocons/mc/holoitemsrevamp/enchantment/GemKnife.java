@@ -1,22 +1,13 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
-import com.sk89q.worldedit.blocks.Blocks;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
-import com.destroystokyo.paper.MaterialTags;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 
@@ -27,37 +18,21 @@ import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
 
-    /**
-     * When you GemKnife a Block, what item will get spit out/output?
-     */
-    private static final Map<Material, Material> COMPATIBLE_MATERIALS = Map.ofEntries(
-            Map.entry(Material.COAL_ORE, Material.COAL_BLOCK),
-            Map.entry(Material.DEEPSLATE_COAL_ORE, Material.COAL_BLOCK),
-            Map.entry(Material.IRON_ORE, Material.IRON_BLOCK),
-            Map.entry(Material.DEEPSLATE_IRON_ORE, Material.IRON_BLOCK),
-            Map.entry(Material.GOLD_ORE, Material.GOLD_BLOCK),
-            Map.entry(Material.DEEPSLATE_GOLD_ORE, Material.GOLD_BLOCK),
-            Map.entry(Material.NETHER_GOLD_ORE, Material.GOLD_BLOCK),
-            Map.entry(Material.GILDED_BLACKSTONE, Material.GOLD_BLOCK),
-            Map.entry(Material.REDSTONE_ORE, Material.REDSTONE_BLOCK),
-            Map.entry(Material.DEEPSLATE_REDSTONE_ORE, Material.REDSTONE_BLOCK),
-            Map.entry(Material.LAPIS_ORE, Material.LAPIS_BLOCK),
-            Map.entry(Material.DEEPSLATE_LAPIS_ORE, Material.LAPIS_BLOCK),
-            Map.entry(Material.NETHER_QUARTZ_ORE, Material.QUARTZ_BLOCK),
-            Map.entry(Material.GLOWSTONE, Material.GLOWSTONE));
-
-    /**
-     * How much of each material do you get per-netherite-ingot?
-     */
-    private static final Map<Material, Integer> MATERIALS_PER_INGOT = Map.ofEntries(
-        Map.entry(Material.COAL_BLOCK, 64),
-        Map.entry(Material.IRON_BLOCK, 64),
-        Map.entry(Material.GOLD_BLOCK, 64),
-        Map.entry(Material.REDSTONE_BLOCK, 64),
-        Map.entry(Material.LAPIS_BLOCK, 64),
-        Map.entry(Material.QUARTZ_BLOCK, 64),
-        Map.entry(Material.GLOWSTONE, 64)
-    );
+    private static final Map<Material, ItemStack> COMPATIBLE_MATERIALS = Map.ofEntries(
+            Map.entry(Material.COAL_ORE, new ItemStack(Material.COAL_BLOCK, 64)),
+            Map.entry(Material.DEEPSLATE_COAL_ORE, new ItemStack(Material.COAL_BLOCK, 64)),
+            Map.entry(Material.IRON_ORE, new ItemStack(Material.IRON_BLOCK, 64)),
+            Map.entry(Material.DEEPSLATE_IRON_ORE, new ItemStack(Material.IRON_BLOCK, 64)),
+            Map.entry(Material.GOLD_ORE, new ItemStack(Material.GOLD_BLOCK, 64)),
+            Map.entry(Material.DEEPSLATE_GOLD_ORE, new ItemStack(Material.GOLD_BLOCK, 64)),
+            Map.entry(Material.NETHER_GOLD_ORE, new ItemStack(Material.GOLD_BLOCK, 64)),
+            Map.entry(Material.GILDED_BLACKSTONE, new ItemStack(Material.GOLD_BLOCK, 64)),
+            Map.entry(Material.REDSTONE_ORE, new ItemStack(Material.REDSTONE_BLOCK, 64)),
+            Map.entry(Material.DEEPSLATE_REDSTONE_ORE, new ItemStack(Material.REDSTONE_BLOCK, 64)),
+            Map.entry(Material.LAPIS_ORE, new ItemStack(Material.LAPIS_BLOCK, 64)),
+            Map.entry(Material.DEEPSLATE_LAPIS_ORE, new ItemStack(Material.LAPIS_BLOCK, 64)),
+            Map.entry(Material.NETHER_QUARTZ_ORE, new ItemStack(Material.QUARTZ_BLOCK, 64)),
+            Map.entry(Material.GLOWSTONE, new ItemStack(Material.GLOWSTONE, 64)));
 
     public GemKnife(HoloItemsRevamp plugin) {
         super(plugin, "gem_knife");
@@ -96,118 +71,23 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
         if (clickedBlock == null) {
             return;
         }
-        final var materialToDrop = COMPATIBLE_MATERIALS.get(clickedBlock.getType());
-        if (materialToDrop == null) {
-            return;
-        }
-        final var amountPerIngot = MATERIALS_PER_INGOT.get(materialToDrop);
-        if(amountPerIngot == null) {
-            // Shouldn't be possible, but just in case.
+        final var itemStackToDrop = COMPATIBLE_MATERIALS.get(clickedBlock.getType());
+        if (itemStackToDrop == null) {
             return;
         }
 
-        final var ingotsTaken = removeFromInventory(
-            event.getPlayer().getInventory(), 1, Material.NETHERITE_INGOT);
-        final var amountToDrop = amountPerIngot * ingotsTaken;
-
-        clickedBlock.getWorld().dropItemNaturally(clickedBlock.getLocation(),
-            new ItemStack(materialToDrop, amountToDrop));
-    }
-
-    /**
-     * Removes an item from an inventory. Will recursively check into shulker boxes.
-     * @param inventory The inventory to scan for an item
-     * @param maxToTake The maximum amount of the item to remove from the inventory
-     * @param materialToTake What kind of material should be searched for/taken
-     * @return How many of the item was successfully removed from the inventory
-     */
-    private static int removeFromInventory(Inventory inventory, final int maxToTake, Material materialToTake) {
-        int amountToTake = maxToTake;
-
-        for(ItemStack stack : inventory.getContents()) {
-            if(stack == null || stack.isEmpty()) {
-                continue;
-            }
-
-            // TODO: Check for "Battery" HoloItem
-            //  That, or getShulkerBoxInventory (renamed to getBatteryInventory?) should do that.
-            final var shulkerInv = getShulkerBoxInventory(stack);
-            if(shulkerInv != null) {
-                final var finalAmountToTake = amountToTake;
-                final var amountTakenFromShulker = editShulkerBoxInventoryWithReturn(stack, editableShulkerInv ->
-                    removeFromInventory(editableShulkerInv, finalAmountToTake, materialToTake));
-                if(amountTakenFromShulker != null) {
-                    amountToTake -= amountTakenFromShulker;
-                }
-
-                if(amountToTake == 0) {
-                    return maxToTake;
-                }
-                continue;
-            }
-
-            if(stack.getType() != materialToTake) {
-                continue;
-            }
-
-            final var stackSize = stack.getAmount();
-            if(stackSize >= amountToTake) {
-                // This stack has enough items.
-                stack.setAmount(stackSize - amountToTake);
-                return maxToTake;
-            }
-            else {
-                // This stack does not have enough items; absorb the entire stack.
-                amountToTake -= stackSize;
-                stack.setType(Material.AIR);
+        final var inventory = event.getPlayer().getInventory();
+        for (var i = 0; i < 9; i++) {
+            final var hotbarItemStack = inventory.getItem(i);
+            if (Battery.expendFuel(hotbarItemStack, 1, GemKnife::isFuel)) {
+                final var location = event.getInteractionPoint();
+                location.getWorld().dropItemNaturally(location, itemStackToDrop);
+                return;
             }
         }
-        return maxToTake - amountToTake;
     }
 
-    /**
-     * Edit the inventory of a shulkerbox. After the consumer is called,
-     * the shulker's inventory is saved, including any edits made.
-     *
-     * @param itemStack The (possible) shulkerbox to edit
-     * @param action    The action to perform on the shulker's inventory.
-     */
-    private static void editShulkerBoxInventory(ItemStack itemStack, Consumer<Inventory> action) {
-        itemStack.editMeta(BlockStateMeta.class, blockStateMeta -> {
-            if (blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
-                action.accept(shulkerBox.getInventory());
-            }
-        });
-    }
-
-    /**
-     * Edit the inventory of a shulkerbox. After the consumer is called,
-     * the shulker's inventory is saved, including any edits made.
-     *
-     * @param itemStack The (possible) shulkerbox to edit
-     * @param action    The action to perform on the shulker's inventory
-     * @return          The return value of action, or null if the action was not called.
-     * @param <R>       The return type of the function
-     */
-    private static <R> R editShulkerBoxInventoryWithReturn(ItemStack itemStack, Function<Inventory, R> action) {
-        if(!(itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta)) {
-            return null;
-        }
-        if(!(blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox)) {
-            return null;
-        }
-        R returnValue = action.apply(shulkerBox.getInventory());
-        blockStateMeta.setBlockState(shulkerBox);
-        itemStack.setItemMeta(blockStateMeta);
-        return returnValue;
-    }
-
-    private static Inventory getShulkerBoxInventory(final ItemStack itemStack) {
-        if (itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta
-                && blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
-            return shulkerBox.getInventory();
-        } else {
-            return null;
-        }
+    private static boolean isFuel(final ItemStack itemStack) {
+        return itemStack.getType() == Material.NETHERITE_INGOT;
     }
 }

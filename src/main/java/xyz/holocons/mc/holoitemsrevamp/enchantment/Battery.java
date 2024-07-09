@@ -53,8 +53,8 @@ public class Battery extends CustomEnchantment implements EnchantmentAbility {
         return 39;
     }
 
-    public boolean expendFuel(final ItemStack itemStack, final int amount, final Predicate<ItemStack> isFuel) {
-        if (itemStack.containsEnchantment(this) && amount > 0
+    public static boolean expendFuel(final ItemStack itemStack, final int amount, final Predicate<ItemStack> isFuel) {
+        if (isBattery(itemStack) && amount > 0
                 && itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta
                 && blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
             final var fuelList = new ObjectArrayList<ItemStack>();
@@ -72,6 +72,15 @@ public class Battery extends CustomEnchantment implements EnchantmentAbility {
                         return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isBattery(final ItemStack itemStack) {
+        for (final var enchantment : itemStack.getEnchantments().keySet()) {
+            if (enchantment instanceof Battery) {
+                return true;
             }
         }
         return false;
