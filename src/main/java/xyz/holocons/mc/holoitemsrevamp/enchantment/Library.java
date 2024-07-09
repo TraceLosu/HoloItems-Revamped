@@ -1,25 +1,25 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
-import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
-import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.jetbrains.annotations.NotNull;
+
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.Util;
 
 public class Library extends CustomEnchantment implements EnchantmentAbility {
 
-    private final HoloItemsRevamp plugin;
-
     public Library(HoloItemsRevamp plugin) {
         super(plugin, "library_of_memories");
-        this.plugin = plugin;
     }
 
     @Override
@@ -41,10 +41,10 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
     @Override
     public @NotNull Component displayName(int i) {
         return Component.text()
-            .color(NamedTextColor.GRAY)
-            .decoration(TextDecoration.ITALIC, false)
-            .append(Component.text("Library of Memories"))
-            .build();
+                .color(NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false)
+                .append(Component.text("Library of Memories"))
+                .build();
     }
 
     @Override
@@ -53,16 +53,19 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
     }
 
     @Override
-    public void onPlayerDeath(PlayerDeathEvent event, ItemStack shulkerStack) {
-        Util.editShulker(shulkerStack, shulkerInv -> shulkerInv.forEach(inventoryStack -> {
-            if(inventoryStack == null) {
-                return;
-            }
-            inventoryStack.getEnchantments().keySet().forEach(enchantment -> {
-                if(enchantment instanceof Memento memento) {
-                    memento.onPlayerDeath(event, inventoryStack);
+    public void onPlayerDeath(PlayerDeathEvent event, ItemStack itemStack) {
+        if (!(itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta)
+                || !(blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox)) {
+            return;
+        }
+
+        for (final var inventoryItemStack : shulkerBox.getInventory()) {
+            for (final var enchantment : inventoryItemStack.getEnchantments().keySet()) {
+                if (enchantment instanceof Memento memento) {
+                    memento.onPlayerDeath(event, inventoryItemStack);
+                    return;
                 }
-            });
-        }));
+            }
+        }
     }
 }
