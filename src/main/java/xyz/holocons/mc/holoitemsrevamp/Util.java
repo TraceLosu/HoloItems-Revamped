@@ -17,7 +17,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.NotNull;
 
 import com.destroystokyo.paper.profile.ProfileProperty;
 
@@ -95,34 +94,6 @@ public final class Util {
         }
         Util.previousCurrentTick = currentTick;
         return Util.epochTick + currentTick;
-    }
-
-    /**
-     * Returns the ore rarity of a tool material.
-     *
-     * @param material The material to check
-     * @return An ingot material that corresponds to the provided material, or air
-     *         if there is none.
-     */
-    @NotNull
-    public static Material getOreLevel(Material material) {
-        return switch (material) {
-            case NETHERITE_AXE, NETHERITE_BOOTS, NETHERITE_HELMET, NETHERITE_HOE, NETHERITE_CHESTPLATE,
-                    NETHERITE_LEGGINGS, NETHERITE_INGOT, NETHERITE_PICKAXE, NETHERITE_SHOVEL, NETHERITE_SWORD ->
-                Material.NETHERITE_INGOT;
-            case DIAMOND_CHESTPLATE, DIAMOND_HELMET, DIAMOND_BOOTS, DIAMOND_LEGGINGS, DIAMOND_HORSE_ARMOR, DIAMOND_HOE,
-                    DIAMOND_AXE, DIAMOND_PICKAXE, DIAMOND_SHOVEL, DIAMOND_SWORD ->
-                Material.DIAMOND;
-            case GOLDEN_CHESTPLATE, GOLDEN_HELMET, GOLDEN_BOOTS, GOLDEN_LEGGINGS, GOLDEN_HORSE_ARMOR, GOLDEN_HOE,
-                    GOLDEN_AXE, GOLDEN_PICKAXE, GOLDEN_SHOVEL, GOLDEN_SWORD ->
-                Material.GOLD_INGOT;
-            case IRON_CHESTPLATE, IRON_HELMET, IRON_BOOTS, IRON_LEGGINGS, IRON_HORSE_ARMOR, IRON_HOE, IRON_AXE,
-                    IRON_PICKAXE, IRON_SHOVEL, IRON_SWORD ->
-                Material.IRON_INGOT;
-            case WOODEN_HOE, WOODEN_AXE, WOODEN_PICKAXE, WOODEN_SHOVEL, WOODEN_SWORD -> Material.OAK_PLANKS;
-            case LEATHER_CHESTPLATE, LEATHER_HELMET, LEATHER_BOOTS, LEATHER_LEGGINGS -> Material.LEATHER;
-            default -> Material.AIR;
-        };
     }
 
     /**
