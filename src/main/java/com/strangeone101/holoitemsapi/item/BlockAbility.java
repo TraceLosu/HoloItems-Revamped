@@ -4,7 +4,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -17,7 +16,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
-import org.bukkit.inventory.meta.BlockStateMeta;
 
 public interface BlockAbility extends Keyed {
 
@@ -39,10 +37,9 @@ public interface BlockAbility extends Keyed {
         final var iterator = event.getItems().listIterator(items.size());
         while (iterator.hasPrevious()) {
             final var item = iterator.previous();
-            final var oldItemStack = item.getItemStack();
-            if (oldItemStack.getType().equals(getMaterial()) && oldItemStack.getAmount() == 1) {
-                final var newItemStack = buildStack(null);
-                item.setItemStack(newItemStack);
+            final var itemStack = item.getItemStack();
+            if (itemStack.getType().equals(getMaterial()) && itemStack.getAmount() == 1) {
+                item.setItemStack(buildStack(null));
                 return;
             }
         }
