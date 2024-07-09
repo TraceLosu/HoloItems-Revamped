@@ -60,12 +60,17 @@ public class Library extends CustomEnchantment implements EnchantmentAbility {
         }
 
         for (final var inventoryItemStack : shulkerBox.getInventory()) {
+            if(inventoryItemStack == null) {
+                continue;
+            }
             for (final var enchantment : inventoryItemStack.getEnchantments().keySet()) {
                 if (enchantment instanceof Memento memento) {
                     memento.onPlayerDeath(event, inventoryItemStack);
-                    return;
                 }
             }
         }
+
+        blockStateMeta.setBlockState(shulkerBox);
+        itemStack.setItemMeta(blockStateMeta);
     }
 }
