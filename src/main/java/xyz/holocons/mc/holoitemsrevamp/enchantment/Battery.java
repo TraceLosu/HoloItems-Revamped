@@ -55,13 +55,13 @@ public class Battery extends CustomEnchantment implements EnchantmentAbility {
     }
 
     public static boolean expendFuel(final Player player, final int amount, final Predicate<ItemStack> isFuel) {
-        for (var i = 0; i < 9; i++) {
-            final var hotbarItemStack = player.getInventory().getItem(i);
+        for (var index = 0; index < 9; index++) {
+            final var hotbarItemStack = player.getInventory().getItem(index);
             if (isBattery(hotbarItemStack) && amount > 0
                     && hotbarItemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta
                     && blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
                 final var fuelList = new ObjectArrayList<ItemStack>();
-                int remainingAmount = amount;
+                var remainingAmount = amount;
                 for (final var inventoryItemStack : shulkerBox.getInventory()) {
                     if (inventoryItemStack != null && isFuel.test(inventoryItemStack)) {
                         remainingAmount -= inventoryItemStack.getAmount();
