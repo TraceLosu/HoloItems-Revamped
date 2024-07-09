@@ -6,16 +6,10 @@ import java.time.temporal.TemporalUnit;
 import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
-import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.destroystokyo.paper.profile.ProfileProperty;
@@ -116,32 +110,5 @@ public final class Util {
 
     public static long toTicks(Duration duration) {
         return Tick.tick().fromDuration(duration);
-    }
-
-    /**
-     * Edit the inventory of a shulkerbox. After the consumer is called,
-     * the shulker's inventory is saved, including any edits made.
-     * @param stack The (possible) shulkerbox to edit
-     * @param action The action to perform on the shulker's inventory.
-     */
-    public static void editShulker(ItemStack stack, Consumer<Inventory> action) {
-        if(!MaterialTags.SHULKER_BOXES.isTagged(stack)) {
-            return;
-        }
-        stack.editMeta(BlockStateMeta.class, shulkerStateMeta -> {
-            // Get shulkerbox, update shulkerbox, save shulkerbox.
-            // Get shulkerbox:
-            final var blockState = shulkerStateMeta.getBlockState();
-            if(!(blockState instanceof ShulkerBox box)) {
-                return;
-            }
-
-            // Update shulkerbox:
-            action.accept(box.getInventory());
-            // no box.setInventory() so I assume I don't have to do that.
-
-            // Save shulkerbox:
-            shulkerStateMeta.setBlockState(blockState);
-        });
     }
 }

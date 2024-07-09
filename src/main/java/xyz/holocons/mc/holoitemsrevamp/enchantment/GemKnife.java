@@ -1,24 +1,26 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
-import com.destroystokyo.paper.MaterialTags;
-import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
-import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.units.qual.A;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.Util;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.destroystokyo.paper.MaterialTags;
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
 
@@ -114,11 +116,12 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
         // but you have 4 emeralds in inventory (1 excess)
         final var excessEmeralds = remainingCharge / CHARGE_PER_EMERALD;
 
-        dropItem(clickedBlock, materialToDrop, amountToDrop);
-        dropItem(clickedBlock, Material.EMERALD, excessEmeralds);
+        final var location = clickedBlock.getLocation();
+        location.getWorld().dropItemNaturally(location, new ItemStack(materialToDrop, amountToDrop));
+        location.getWorld().dropItemNaturally(location, new ItemStack(Material.EMERALD, excessEmeralds));
     }
 
-    private int getChargeFromInventory(Inventory inv, final int maxChargeToGet, boolean checkShulkers) {
+    private static int getChargeFromInventory(Inventory inv, final int maxChargeToGet, boolean checkShulkers) {
         AtomicInteger chargeGotten = new AtomicInteger(0);
         final var inventoryContents = inv.getContents();
         for(int i = 0; i < inventoryContents.length; i++) {
@@ -138,7 +141,7 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
             if(checkShulkers && MaterialTags.SHULKER_BOXES.isTagged(stack)) {
                 // TODO: Test this.
                 AtomicInteger atomicCharge = new AtomicInteger();
-                Util.editShulker(stack, shulkerInv ->
+                editShulker(stack, shulkerInv ->
                     atomicCharge.set(getChargeFromInventory(shulkerInv, remainingChargeToGet, false)));
                 chargeFromThisStack = atomicCharge.get();
             }
@@ -158,7 +161,7 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
      * than maxCharge.
      * @return The charge gained from this stack. Guaranteed to be 0 <= return <= maxCharge.
      */
-    private int getChargeFromStack(ItemStack stack, int maxCharge) {
+    private static int getChargeFromStack(ItemStack stack, int maxCharge) {
         if(!stack.getEnchantments().isEmpty()) {
             // Even if it's an emerald or emerald block it could still be:
             // - A gemknife (don't absorb)
@@ -193,8 +196,30 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
         }
     }
 
-    private void dropItem(Block whereToDrop, Material materialToDrop, int amountToDrop) {
-        whereToDrop.getWorld().dropItemNaturally(whereToDrop.getLocation(),
-            new ItemStack(materialToDrop, amountToDrop));
+    /**
+     * Edit the inventory of a shulkerbox. After the consumer is called,
+     * the shulker's inventory is saved, including any edits made.
+     * @param stack The (possible) shulkerbox to edit
+     * @param action The action to perform on the shulker's inventory.
+     */
+    private static void editShulker(ItemStack stack, Consumer<Inventory> action) {
+        if(!MaterialTags.SHULKER_BOXES.isTagged(stack)) {
+            return;
+        }
+        stack.editMeta(BlockStateMeta.class, shulkerStateMeta -> {
+            // Get shulkerbox, update shulkerbox, save shulkerbox.
+            // Get shulkerbox:
+            final var blockState = shulkerStateMeta.getBlockState();
+            if(!(blockState instanceof ShulkerBox box)) {
+                return;
+            }
+
+            // Update shulkerbox:
+            action.accept(box.getInventory());
+            // no box.setInventory() so I assume I don't have to do that.
+
+            // Save shulkerbox:
+            shulkerStateMeta.setBlockState(blockState);
+        });
     }
 }
