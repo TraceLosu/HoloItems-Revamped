@@ -75,15 +75,9 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
         if (itemStackToDrop == null) {
             return;
         }
-
-        final var inventory = event.getPlayer().getInventory();
-        for (var i = 0; i < 9; i++) {
-            final var hotbarItemStack = inventory.getItem(i);
-            if (Battery.expendFuel(hotbarItemStack, 1, GemKnife::isFuel)) {
-                final var location = event.getInteractionPoint();
-                location.getWorld().dropItemNaturally(location, itemStackToDrop);
-                return;
-            }
+        if (Battery.expendFuel(event.getPlayer(), 1, GemKnife::isFuel)) {
+            final var location = event.getInteractionPoint();
+            location.getWorld().dropItemNaturally(location, itemStackToDrop);
         }
     }
 

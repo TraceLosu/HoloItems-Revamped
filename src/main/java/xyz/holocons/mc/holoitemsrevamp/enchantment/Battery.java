@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.jetbrains.annotations.NotNull;
@@ -53,23 +54,26 @@ public class Battery extends CustomEnchantment implements EnchantmentAbility {
         return 39;
     }
 
-    public static boolean expendFuel(final ItemStack itemStack, final int amount, final Predicate<ItemStack> isFuel) {
-        if (isBattery(itemStack) && amount > 0
-                && itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta
-                && blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
-            final var fuelList = new ObjectArrayList<ItemStack>();
-            int remainingAmount = amount;
-            for (final var inventoryItemStack : shulkerBox.getInventory()) {
-                if (inventoryItemStack != null && isFuel.test(inventoryItemStack)) {
-                    remainingAmount -= inventoryItemStack.getAmount();
-                    if (remainingAmount > 0) {
-                        fuelList.add(inventoryItemStack);
-                    } else {
-                        inventoryItemStack.setAmount(-remainingAmount);
-                        fuelList.forEach(fuelItemStack -> fuelItemStack.setAmount(0));
-                        blockStateMeta.setBlockState(shulkerBox);
-                        itemStack.setItemMeta(blockStateMeta);
-                        return true;
+    public static boolean expendFuel(final Player player, final int amount, final Predicate<ItemStack> isFuel) {
+        for (var i = 0; i < 9; i++) {
+            final var hotbarItemStack = player.getInventory().getItem(i);
+            if (isBattery(hotbarItemStack) && amount > 0
+                    && hotbarItemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta
+                    && blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
+                final var fuelList = new ObjectArrayList<ItemStack>();
+                int remainingAmount = amount;
+                for (final var inventoryItemStack : shulkerBox.getInventory()) {
+                    if (inventoryItemStack != null && isFuel.test(inventoryItemStack)) {
+                        remainingAmount -= inventoryItemStack.getAmount();
+                        if (remainingAmount > 0) {
+                            fuelList.add(inventoryItemStack);
+                        } else {
+                            inventoryItemStack.setAmount(-remainingAmount);
+                            fuelList.forEach(fuelItemStack -> fuelItemStack.setAmount(0));
+                            blockStateMeta.setBlockState(shulkerBox);
+                            hotbarItemStack.setItemMeta(blockStateMeta);
+                            return true;
+                        }
                     }
                 }
             }
@@ -78,6 +82,9 @@ public class Battery extends CustomEnchantment implements EnchantmentAbility {
     }
 
     private static boolean isBattery(final ItemStack itemStack) {
+        if (itemStack == null) {
+            return false;
+        }
         for (final var enchantment : itemStack.getEnchantments().keySet()) {
             if (enchantment instanceof Battery) {
                 return true;
