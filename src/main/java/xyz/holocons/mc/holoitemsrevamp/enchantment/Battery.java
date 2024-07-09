@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
-import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.kyori.adventure.text.Component;
@@ -19,7 +18,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
-public class Battery extends CustomEnchantment implements EnchantmentAbility {
+public class Battery extends CustomEnchantment {
 
     public Battery(HoloItemsRevamp plugin) {
         super(plugin, "battery");
