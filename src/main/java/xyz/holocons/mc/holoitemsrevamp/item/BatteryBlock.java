@@ -21,20 +21,19 @@ import com.strangeone101.holoitemsapi.item.CustomItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
-import xyz.holocons.mc.holoitemsrevamp.enchantment.Library;
+import xyz.holocons.mc.holoitemsrevamp.enchantment.Battery;
 
-public class LibraryBlock extends CustomItem implements Enchantable, BlockAbility {
+public class BatteryBlock extends CustomItem implements Enchantable, BlockAbility {
 
-    private static final String name = "library_of_memories";
+    private static final String name = "battery";
     private static final Material material = Material.SHULKER_BOX;
-    private static final Component displayName = Component.text("Library of Memories", NamedTextColor.RED);
+    private static final Component displayName = Component.text("Battery", NamedTextColor.RED);
     private static final List<Component> lore = List.of(
-        Component.text("A shulkerbox to store momentos.", NamedTextColor.DARK_PURPLE)
-    );
+            Component.text("Holds fuel", NamedTextColor.DARK_PURPLE));
 
     private final EnchantManager enchantManager;
 
-    public LibraryBlock(HoloItemsRevamp plugin) {
+    public BatteryBlock(HoloItemsRevamp plugin) {
         super(plugin, name, material, displayName, lore);
         this.enchantManager = plugin.getEnchantManager();
         this.register();
@@ -43,8 +42,8 @@ public class LibraryBlock extends CustomItem implements Enchantable, BlockAbilit
     @Override
     protected Recipe getRecipe() {
         // TODO: Add a recipe.
-        //  Maybe the recipe should use a shulker-box in its recipe since this is
-        //  a custom-item and NOT an enchantment book.
+        // Maybe the recipe should use a shulker-box in its recipe since this is
+        // a custom-item and NOT an enchantment book.
         return null;
     }
 
@@ -56,7 +55,8 @@ public class LibraryBlock extends CustomItem implements Enchantable, BlockAbilit
     @Override
     public ItemStack applyEnchantment(ItemStack itemStack) {
         var enchantedStack = itemStack.clone();
-        var enchantedMeta = enchantedStack.hasItemMeta() ? enchantedStack.getItemMeta() : Bukkit.getItemFactory().getItemMeta(enchantedStack.getType());
+        var enchantedMeta = enchantedStack.hasItemMeta() ? enchantedStack.getItemMeta()
+                : Bukkit.getItemFactory().getItemMeta(enchantedStack.getType());
 
         if (enchantedMeta.addEnchant(getEnchantment(), 1, false)) {
             enchantedStack.setItemMeta(enchantedMeta);
@@ -73,12 +73,12 @@ public class LibraryBlock extends CustomItem implements Enchantable, BlockAbilit
         final var contents = getShulkerBoxContents(blockState);
         BlockAbility.super.onBlockDropItem(event, blockState);
         final var items = event.getItems();
-        final var iterator = event.getItems().listIterator(items.size());
+        final var iterator = items.listIterator(items.size());
         while (iterator.hasPrevious()) {
             final var item = iterator.previous();
             final var itemStack = item.getItemStack();
             for (final var enchantment : itemStack.getEnchantments().keySet()) {
-                if (enchantment instanceof Library) {
+                if (enchantment instanceof Battery) {
                     setShulkerBoxContents(itemStack, contents);
                     return;
                 }
@@ -95,11 +95,11 @@ public class LibraryBlock extends CustomItem implements Enchantable, BlockAbilit
     }
 
     private static void setShulkerBoxContents(final ItemStack itemStack, final ItemStack[] contents) {
-        itemStack.editMeta(BlockStateMeta.class, blockStateMeta -> {
-            if (blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
-                shulkerBox.getInventory().setContents(contents);
-                blockStateMeta.setBlockState(shulkerBox);
-            }
-        });
+        if (itemStack.getItemMeta() instanceof BlockStateMeta blockStateMeta
+                && blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
+            shulkerBox.getInventory().setContents(contents);
+            blockStateMeta.setBlockState(shulkerBox);
+            itemStack.setItemMeta(blockStateMeta);
+        }
     }
 }
