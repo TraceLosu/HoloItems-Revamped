@@ -120,32 +120,37 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
      * @return How many of the item was successfully removed from the inventory
      */
     private static int removeFromInventory(Inventory inventory, final int maxToTake, Material materialToTake) {
-        int amountTaken = 0;
+        int amountToTake = maxToTake;
+
         for(ItemStack stack : inventory.getContents()) {
             if(stack == null || stack.isEmpty()) {
                 continue;
             }
 
-            // TODO: Scan shulkerboxes
+            final var shulkerInv = getShulkerBoxInventory(stack);
+            if(shulkerInv != null) {
+                // This is a weird solution, I see another one that seems weirder.
+                // I wanna hear if you have any ideas before I do that one, though.
+                continue;
+            }
             
             if(stack.getType() != materialToTake) {
                 continue;
             }
 
             final var stackSize = stack.getAmount();
-            if(stackSize + amountTaken >= maxToTake) {
+            if(stackSize >= amountToTake) {
                 // This stack has enough items.
-                final var amountToRemove = maxToTake - amountTaken;
-                stack.setAmount(stackSize - amountToRemove);
+                stack.setAmount(stackSize - amountToTake);
                 return maxToTake;
             }
             else {
                 // This stack does not have enough items; absorb the entire stack.
-                amountTaken += stackSize;
+                amountToTake -= stackSize;
                 stack.setType(Material.AIR);
             }
         }
-        return amountTaken;
+        return maxToTake - amountToTake;
     }
 
     /**
