@@ -127,13 +127,23 @@ public class GemKnife extends CustomEnchantment implements EnchantmentAbility {
                 continue;
             }
 
+            // TODO: Check for "Battery" HoloItem
+            //  That, or getShulkerBoxInventory (renamed to getBatteryInventory?) should do that.
             final var shulkerInv = getShulkerBoxInventory(stack);
             if(shulkerInv != null) {
                 // This is a weird solution, I see another one that seems weirder.
                 // I wanna hear if you have any ideas before I do that one, though.
+                // TODO: This doesn't work. I was hoping this would work, even if janky.
+                amountToTake -= removeFromInventory(shulkerInv, amountToTake, materialToTake);
+                final var finalAmountToTake = amountToTake;
+                editShulkerBoxInventory(stack, editableShulkerInv ->
+                    removeFromInventory(editableShulkerInv, finalAmountToTake, materialToTake));
+                if(amountToTake == 0) {
+                    return maxToTake;
+                }
                 continue;
             }
-            
+
             if(stack.getType() != materialToTake) {
                 continue;
             }
