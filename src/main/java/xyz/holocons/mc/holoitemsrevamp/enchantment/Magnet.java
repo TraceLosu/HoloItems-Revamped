@@ -1,18 +1,19 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
-import com.destroystokyo.paper.MaterialTags;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.entity.Item;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+
 import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
 import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
@@ -37,17 +38,16 @@ public class Magnet extends CustomEnchantment implements EnchantmentAbility {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
-        return MaterialTags.PICKAXES.isTagged(item) || MaterialTags.AXES.isTagged(item)
-            || MaterialTags.SHOVELS.isTagged(item) || MaterialTags.HOES.isTagged(item);
+        return EnchantmentTarget.TOOL.includes(item);
     }
 
     @Override
     public @NotNull Component displayName(int level) {
         return Component.text()
-            .color(NamedTextColor.GRAY)
-            .decoration(TextDecoration.ITALIC, false)
-            .append(Component.text("Magnet"))
-            .build();
+                .color(NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false)
+                .append(Component.text("Magnet"))
+                .build();
     }
 
     @Override
@@ -72,7 +72,8 @@ public class Magnet extends CustomEnchantment implements EnchantmentAbility {
                 final var excess = player.getInventory().addItem(itemStacks);
                 items.forEach(player::playPickupItemAnimation);
                 items.forEach(Item::remove);
-                excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
+                excess.values()
+                        .forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
             }
         }.runTask(plugin);
     }
