@@ -66,7 +66,7 @@ public class BlockListener implements Listener {
             return;
         }
 
-        ability.onBlockDropItem(event, block.getState());
+        ability.onBlockDropItem(event, event.getBlockState());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

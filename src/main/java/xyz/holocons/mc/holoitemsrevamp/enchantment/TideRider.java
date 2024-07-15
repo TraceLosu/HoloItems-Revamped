@@ -1,16 +1,11 @@
 package xyz.holocons.mc.holoitemsrevamp.enchantment;
 
-import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
-import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +13,13 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+
+import com.strangeone101.holoitemsapi.enchantment.CustomEnchantment;
+import com.strangeone101.holoitemsapi.enchantment.EnchantmentAbility;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 import xyz.holocons.mc.holoitemsrevamp.integration.Integrations;
 
@@ -42,13 +44,13 @@ public class TideRider extends CustomEnchantment implements EnchantmentAbility {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack item) {
-        return item.getType() == Material.TRIDENT;
+        return EnchantmentTarget.TRIDENT.includes(item);
     }
 
     @Override
     public @NotNull Component displayName(int level) {
         return Component.text("Tide Rider", NamedTextColor.GRAY)
-            .decoration(TextDecoration.ITALIC, false);
+                .decoration(TextDecoration.ITALIC, false);
     }
 
     @Override
@@ -128,7 +130,8 @@ public class TideRider extends CustomEnchantment implements EnchantmentAbility {
                     yVelocity = 0;
                 }
 
-                player.setVelocity(player.getVelocity().add(direction).normalize().multiply(multiplier).setY(yVelocity));
+                player.setVelocity(
+                        player.getVelocity().add(direction).normalize().multiply(multiplier).setY(yVelocity));
                 player.setFallDistance(0);
             }
         }.runTaskTimer(plugin, 2, 1);

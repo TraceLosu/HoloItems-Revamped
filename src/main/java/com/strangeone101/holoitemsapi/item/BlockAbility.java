@@ -30,13 +30,18 @@ public interface BlockAbility extends Keyed {
     }
 
     default void onBlockDropItem(BlockDropItemEvent event, BlockState blockState) {
-        final var items = event.getItems();
-        if (items.isEmpty() || !event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+        if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
             return;
         }
-        final var itemStack = items.get(items.size() - 1).getItemStack();
-        if (itemStack.getType().equals(getMaterial()) && itemStack.getAmount() == 1) {
-            items.get(items.size() - 1).setItemStack(buildStack(null));
+        final var items = event.getItems();
+        final var iterator = items.listIterator(items.size());
+        while (iterator.hasPrevious()) {
+            final var item = iterator.previous();
+            final var itemStack = item.getItemStack();
+            if (itemStack.getType().equals(getMaterial()) && itemStack.getAmount() == 1) {
+                item.setItemStack(buildStack(null));
+                return;
+            }
         }
     }
 
@@ -46,13 +51,6 @@ public interface BlockAbility extends Keyed {
     default void onBlockPlace(BlockPlaceEvent event, BlockState blockState) {
     }
 
-    /**
-     * Activates whenever a creature spawns in the same world as this BlockAbility.
-     * 
-     * @param event      The CreatureSpawnEvent
-     * @param blockState This BlockAbility's Block. Note that this may not be in the
-     *                   same location as the event.
-     */
     default void onCreatureSpawn(CreatureSpawnEvent event, BlockState blockState) {
     }
 
