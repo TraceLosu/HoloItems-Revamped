@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
+import org.bukkit.block.Smoker;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Nullable;
@@ -116,5 +117,27 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
         }
 
         return destinationBlock;
+    }
+
+    /**
+     * Determines whether this LaunchPad is on cooldown from a previous action
+     * @param block The LaunchPad to check for cooldown
+     */
+    private boolean isOnCooldown(Block block) {
+        if(block instanceof Smoker smoker) {
+            return smoker.getBurnTime() > 0;
+        }
+        return true;
+    }
+
+    /**
+     * Puts this LaunchPad on cooldown for some time.
+     * @param block The LaunchPad to check for cooldown
+     * @param cooldownTime Time (in ticks) to go into cooldown for. TODO: Check that it actually is ticks
+     */
+    private void goOnCooldown(Block block, short cooldownTime) {
+        if(block instanceof Smoker smoker) {
+            smoker.setBurnTime(cooldownTime);
+        }
     }
 }
