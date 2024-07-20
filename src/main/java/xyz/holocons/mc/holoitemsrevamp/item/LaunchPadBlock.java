@@ -21,7 +21,7 @@ import java.util.List;
 public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     private static final String name = "launch_pad";
-    private static final Material material = Material.SOUL_CAMPFIRE;
+    private static final Material material = Material.SMOKER;
     private static final Component displayName = Component.text("Launch Pad", NamedTextColor.WHITE);
     private static final List<Component> lore = List.of(
             Component.text("Light to launch a package", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
