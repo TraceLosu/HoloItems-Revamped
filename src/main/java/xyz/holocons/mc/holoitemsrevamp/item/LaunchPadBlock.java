@@ -65,6 +65,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
         int firstSpace = destinationString.indexOf(' ');
         if(firstSpace == -1) {
             // Either only an x coordinate, or no delimeter between X and Z coordinates
+            // Could not get both X and Z coordinate
             return null;
         }
         int secondSpace = destinationString.indexOf(' ');
@@ -82,7 +83,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
             }
             destinationZ = Integer.parseInt(destinationZString);
         } catch (NumberFormatException nfe) {
-            // Couldn't get a destination X and Z.
+            // Could not parse X or Z coordinate into integer
             return null;
         }
 
