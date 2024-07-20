@@ -2,6 +2,7 @@ package xyz.holocons.mc.holoitemsrevamp.item;
 
 import com.strangeone101.holoitemsapi.item.BlockAbility;
 import com.strangeone101.holoitemsapi.item.CustomItem;
+import com.strangeone101.holoitemsapi.tracking.CustomBlockStorage;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -27,8 +28,11 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
             Component.text("Light to launch a package", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
     );
 
+    private final CustomBlockStorage customBlockTracker;
+
     public LaunchPadBlock(HoloItemsRevamp plugin) {
         super(plugin, name, material, displayName, lore);
+        customBlockTracker = plugin.getTrackingManager();
         register();
     }
 
@@ -53,7 +57,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
      */
     // TODO: Remove the SuppressWarnings thing after we actually properly get the destination string
     @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-    private @Nullable Location getDestination(Block block) {
+    private @Nullable Block getDestination(Block block) {
         String destinationString = "0 0";
         // TODO: Get the destination string.
 
@@ -98,6 +102,18 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
             }
         }
 
-        return new Location(destinationWorld, destinationX, 352, destinationZ);
+        Block destinationBlock = destinationWorld.getHighestBlockAt(destinationX, destinationZ);
+
+        while(!customBlockTracker.contains(destinationBlock)
+            && !(customBlockTracker.getAbility(destinationBlock) instanceof LaunchPadBlock)) {
+            if(destinationBlock.getY() == destinationBlock.getWorld().getMinHeight()
+            || destinationBlock.getType() == Material.AIR) {
+                // Could not find a launch pad at the destination (x,z)
+                return null;
+            }
+            destinationBlock = destinationBlock.getRelative(0, -1, 0);
+        }
+
+        return destinationBlock;
     }
 }
