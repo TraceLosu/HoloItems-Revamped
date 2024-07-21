@@ -181,6 +181,8 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 BlockFace.WEST);
         private static final ObjectList<BlockFace> ACACIA_NORTH_SEARCH_PATTERN = ObjectList.of(BlockFace.UP,
                 BlockFace.NORTH);
+        private static final ObjectList<BlockFace> MANGROVE_ROOTS_ORIGIN_SEARCH_PATTERN = ObjectList.of(BlockFace.EAST,
+                BlockFace.SOUTH_WEST, BlockFace.NORTH_WEST, BlockFace.NORTH_EAST);
 
         private static final BlockFace[][] DIRECTIONS = {
                 { BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST },
@@ -214,6 +216,9 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                     case SOUTH, NORTH -> orientable.getAxis() != Axis.X;
                     default -> false;
                 };
+                case MANGROVE_ROOTS -> true;
+                case MANGROVE_LOG -> block.getBlockData() instanceof Orientable orientable
+                        && orientable.getAxis() == Axis.Y;
                 default -> false;
             };
         }
@@ -285,6 +290,23 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                     }
                     yield ObjectLists.emptyList();
                 }
+                case MANGROVE_ROOTS -> switch (originState.getType()) {
+                    case MANGROVE_ROOTS -> {
+                        final var direction = getDirection(block);
+                        if (direction == BlockFace.SELF) {
+                            final var blocks = search(block, MANGROVE_ROOTS_ORIGIN_SEARCH_PATTERN);
+                            if (blocks.isEmpty()) {
+                                final var blockAbove = block.getRelative(BlockFace.UP);
+                                if (shouldSplinter(blockAbove)) {
+                                    yield ObjectList.of(blockAbove);
+                                }
+                            }
+                            yield blocks;
+                        }
+                        yield ObjectLists.emptyList();
+                    }
+                    default -> ObjectLists.emptyList();
+                };
                 default -> ObjectLists.emptyList();
             };
         }
@@ -335,7 +357,8 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
         MEGA_BRANCH,
         ACACIA,
         CHERRY,
-        MANGROVE,
+        MANGROVE_ROOTS,
+        MANGROVE_LOG,
         INCOMPATIBLE;
 
         private static SplinterType get(final Block block) {
@@ -346,7 +369,8 @@ public class Splinter extends CustomEnchantment implements EnchantmentAbility {
                 case BROWN_MUSHROOM_BLOCK, RED_MUSHROOM_BLOCK -> SHROOM_BLOCK;
                 case ACACIA_LOG -> ACACIA;
                 case CHERRY_LOG -> CHERRY;
-                case MANGROVE_ROOTS, MANGROVE_LOG -> MANGROVE;
+                case MANGROVE_ROOTS -> MANGROVE_ROOTS;
+                case MANGROVE_LOG -> MANGROVE_LOG;
                 default -> {
                     if (Tag.LOGS.isTagged(material) && block.getBlockData() instanceof Orientable orientable) {
                         yield orientable.getAxis() == Axis.Y ? GENERIC_TRUNK : GENERIC_BRANCH;
