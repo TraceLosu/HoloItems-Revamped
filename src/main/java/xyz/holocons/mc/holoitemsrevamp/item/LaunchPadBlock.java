@@ -1,24 +1,25 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
-import com.strangeone101.holoitemsapi.item.BlockAbility;
-import com.strangeone101.holoitemsapi.item.CustomItem;
-import com.strangeone101.holoitemsapi.tracking.CustomBlockStorage;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.Container;
 import org.bukkit.block.Smoker;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Nullable;
-import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
-import java.util.List;
+import com.strangeone101.holoitemsapi.item.BlockAbility;
+import com.strangeone101.holoitemsapi.item.CustomItem;
+import com.strangeone101.holoitemsapi.tracking.CustomBlockStorage;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
 
 public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
@@ -26,8 +27,9 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     private static final Material material = Material.SMOKER;
     private static final Component displayName = Component.text("Launch Pad", NamedTextColor.WHITE);
     private static final List<Component> lore = List.of(
-            Component.text("Light to launch a package", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
-    );
+            Component.text("Light to launch a package", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+
+    private static final Pattern destinationPattern = Pattern.compile("(\\d+)\\s+(\\d+)\\s+(\\w*)");
 
     private final CustomBlockStorage customBlockTracker;
 
@@ -39,8 +41,8 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     @Override
     protected Recipe getRecipe() {
-        ShapedRecipe recipe = new ShapedRecipe(getKey(), buildStack(null));
-        recipe.shape("a a","bcb","ded");
+        final var recipe = new ShapedRecipe(getKey(), buildStack(null));
+        recipe.shape("a a", "bcb", "ded");
         recipe.setIngredient('a', Material.SMOOTH_STONE_SLAB);
         recipe.setIngredient('b', Material.GLASS);
         recipe.setIngredient('c', Material.LODESTONE);
@@ -51,92 +53,52 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     // TODO: The actual functionality?
 
-    /**
-     * Scans a block to determine the destination location
-     * @param block A block (likely package) to scan
-     * @return The destination location for this package, or null if a destination could not be determined.
-     */
-    // TODO: Remove the SuppressWarnings thing after we actually properly get the destination string
-    @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-    private @Nullable Block getDestination(Block block) {
-        String destinationString = "0 0";
-        // TODO: Get the destination string.
-
-        // String format: "x_coord z_coord optional world name potentially with spaces"
-        int firstSpace = destinationString.indexOf(' ');
-        if(firstSpace == -1) {
-            // Either only an x coordinate, or no delimeter between X and Z coordinates
-            // Could not get both X and Z coordinate
-            return null;
-        }
-        int secondSpace = destinationString.indexOf(' ');
-
-        int destinationX;
-        int destinationZ;
-        try {
-            destinationX = Integer.parseInt(destinationString.substring(0, firstSpace));
-            String destinationZString;
-            if(secondSpace == -1) {
-                destinationZString = destinationString.substring(firstSpace+1);
-            }
-            else {
-                destinationZString = destinationString.substring(firstSpace+1, secondSpace);
-            }
-            destinationZ = Integer.parseInt(destinationZString);
-        } catch (NumberFormatException nfe) {
-            // Could not parse X or Z coordinate into integer
-            return null;
-        }
-
-        World destinationWorld;
-        if(secondSpace == -1) {
-            // In this case, there is no world name, so use the default one.
-            destinationWorld = block.getWorld();
-        }
-        else {
-            // In this case, there is a world name to use.
-            String destinationWorldName = destinationString.substring(secondSpace+1);
-            if(destinationWorldName.isBlank()) {
-                destinationWorld = block.getWorld();
-            }
-            else {
-                destinationWorld = Bukkit.getWorld(destinationWorldName);
-            }
-        }
-
-        Block destinationBlock = destinationWorld.getHighestBlockAt(destinationX, destinationZ);
-
-        while(!customBlockTracker.contains(destinationBlock)
-            && !(customBlockTracker.getAbility(destinationBlock) instanceof LaunchPadBlock)) {
-            if(destinationBlock.getY() == destinationBlock.getWorld().getMinHeight()
-            || destinationBlock.getType() == Material.AIR) {
-                // Could not find a launch pad at the destination (x,z)
-                return null;
-            }
-            destinationBlock = destinationBlock.getRelative(0, -1, 0);
-        }
-
-        return destinationBlock;
+    private @Nullable Block searchForNearestLaunchPad(final Block destination) {
+        throw new UnsupportedOperationException("unimplemented");
     }
 
     /**
-     * Determines whether this LaunchPad is on cooldown from a previous action
-     * @param block The LaunchPad to check for cooldown
+     * Parses the coordinates of the destination from given string. Failure to get
+     * coordinates results in returning the package to the originating Launch Pad
+     * 
+     * @param destination        String containing x coordinate, z coordinate, and
+     *                           optional world name
+     * @param defaultDestination The originating Launch Pad
+     * @return
      */
-    private boolean isOnCooldown(Block block) {
-        if(block instanceof Smoker smoker) {
-            return smoker.getBurnTime() > 0;
+    private static Block parseDestinationOrDefault(final String destination, final Block defaultDestination) {
+        final var matcher = destinationPattern.matcher(destination);
+        if (matcher.find()) {
+            try {
+                final var x = Integer.parseInt(matcher.group(0));
+                final var z = Integer.parseInt(matcher.group(1));
+                final var worldName = matcher.group(2);
+                final var world = worldName.isEmpty() ? defaultDestination.getWorld() : Bukkit.getWorld(worldName);
+                return world.getBlockAt(x, 0, z);
+            } catch (Exception e) {
+            }
         }
-        return true;
+        return defaultDestination;
     }
 
     /**
-     * Puts this LaunchPad on cooldown for some time.
-     * @param block The LaunchPad to check for cooldown
-     * @param cooldownTime Time (in ticks) to go into cooldown for. TODO: Check that it actually is ticks
+     * Determines whether this Launch Pad is on cooldown
+     * 
+     * @param block The Launch Pad
      */
-    private void goOnCooldown(Block block, short cooldownTime) {
-        if(block instanceof Smoker smoker) {
+    private static boolean testCooldown(Block block) {
+        return block instanceof Smoker smoker && smoker.getBurnTime() > 0;
+    }
+
+    /**
+     * Puts this Launch Pad on cooldown for some time.
+     * 
+     * @param block        The Launch Pad
+     * @param cooldownTime The cooldown duration in ticks. TODO: Check that it
+     *                     actually is ticks
+     */
+    private static void setCooldown(Block block, short cooldownTime) {
+        if (block instanceof Smoker smoker) {
             smoker.setBurnTime(cooldownTime);
         }
     }
