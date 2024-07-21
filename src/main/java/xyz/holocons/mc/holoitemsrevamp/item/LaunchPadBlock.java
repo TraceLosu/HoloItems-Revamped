@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Smoker;
 import org.bukkit.inventory.Recipe;
@@ -82,7 +81,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     }
 
     /**
-     * Check whether this Launch Pad is on cooldown
+     * Check whether given Launch Pad is on cooldown
      * 
      * @param block The Launch Pad
      */
@@ -91,7 +90,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     }
 
     /**
-     * Puts this Launch Pad on cooldown for some time.
+     * Puts given Launch Pad on cooldown for some time.
      * 
      * @param block        The Launch Pad
      * @param cooldownTime The cooldown duration in ticks. TODO: Check that it
