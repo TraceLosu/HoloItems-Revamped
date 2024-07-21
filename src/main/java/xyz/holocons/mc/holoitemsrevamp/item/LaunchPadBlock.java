@@ -53,7 +53,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     // TODO: The actual functionality?
 
-    private @Nullable Block searchForNearestLaunchPad(final Block destination) {
+    private @Nullable Block findNearestLaunchPad(final Block destination) {
         throw new UnsupportedOperationException("unimplemented");
     }
 
@@ -82,12 +82,12 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     }
 
     /**
-     * Determines whether this Launch Pad is on cooldown
+     * Check whether this Launch Pad is on cooldown
      * 
      * @param block The Launch Pad
      */
     private static boolean testCooldown(Block block) {
-        return block instanceof Smoker smoker && smoker.getBurnTime() > 0;
+        return !(block instanceof Smoker smoker) || smoker.getBurnTime() > 0;
     }
 
     /**
