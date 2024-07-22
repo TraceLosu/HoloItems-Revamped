@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -109,6 +110,27 @@ public class CustomBlockStorage {
 
     public BlockAbility getAbility(final Block block) {
         return trackedBlocks.get(new BlockLocation(block));
+    }
+
+    public BlockLocation getNearestBlock(final Block block, final boolean useHeight,
+            final BiPredicate<? super BlockLocation, ? super BlockAbility> predicate) {
+        final var location = new BlockLocation(block);
+        final var optionalEntry = trackedBlocks.entrySet().stream()
+                .filter(entry -> location.worldKey().equals(entry.getKey().worldKey())
+                        && predicate.test(entry.getKey(), entry.getValue()))
+                .min((a, b) -> distanceSquared(location, a.getKey(), useHeight)
+                        - distanceSquared(location, b.getKey(), useHeight));
+        return optionalEntry.map(entry -> entry.getKey()).orElse(null);
+    }
+
+    private static int distanceSquared(final BlockLocation first, final BlockLocation second, final boolean useHeight) {
+        if (!first.worldKey().equals(second.worldKey())) {
+            return Integer.MAX_VALUE;
+        }
+        final var x = first.x() - second.x();
+        final var y = useHeight ? first.y() - second.y() : 0;
+        final var z = first.z() - second.z();
+        return x * x + y * y + z * z;
     }
 
     public void forEachBlockInChunk(final UUID worldKey, final long chunkKey,
