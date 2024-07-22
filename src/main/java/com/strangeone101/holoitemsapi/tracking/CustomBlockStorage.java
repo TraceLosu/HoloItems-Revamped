@@ -115,9 +115,10 @@ public class CustomBlockStorage {
     public BlockLocation getNearestBlock(final Block block, final boolean sphere, final int radius,
             final BiPredicate<? super BlockLocation, ? super BlockAbility> predicate) {
         final var location = new BlockLocation(block);
+        final var radiusSquared = radius * radius;
         final var optionalEntry = trackedBlocks.entrySet().stream()
                 .filter(entry -> predicate.test(entry.getKey(), entry.getValue())
-                        && distanceSquared(location, entry.getKey(), sphere) <= radius)
+                        && distanceSquared(location, entry.getKey(), sphere) <= radiusSquared)
                 .min((a, b) -> distanceSquared(location, a.getKey(), sphere)
                         - distanceSquared(location, b.getKey(), sphere));
         return optionalEntry.map(entry -> entry.getKey()).orElse(null);
