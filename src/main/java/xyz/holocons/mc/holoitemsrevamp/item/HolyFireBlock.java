@@ -74,7 +74,7 @@ public class HolyFireBlock extends CustomItem implements BlockAbility {
 
     @Override
     public void onCreatureSpawn(CreatureSpawnEvent event, BlockState blockState) {
-        if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL) {
+        if (event.isCancelled() || event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL) {
             return;
         }
 
