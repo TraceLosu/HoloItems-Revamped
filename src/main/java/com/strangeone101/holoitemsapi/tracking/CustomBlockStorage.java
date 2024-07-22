@@ -112,23 +112,24 @@ public class CustomBlockStorage {
         return trackedBlocks.get(new BlockLocation(block));
     }
 
-    public BlockLocation getNearestBlock(final Block block, final boolean useHeight,
+    public BlockLocation getNearestBlock(final Block block, final boolean sphere, final int radius,
             final BiPredicate<? super BlockLocation, ? super BlockAbility> predicate) {
         final var location = new BlockLocation(block);
+        final var radiusSquared = radius * radius;
         final var optionalEntry = trackedBlocks.entrySet().stream()
-                .filter(entry -> location.worldKey().equals(entry.getKey().worldKey())
-                        && predicate.test(entry.getKey(), entry.getValue()))
-                .min((a, b) -> distanceSquared(location, a.getKey(), useHeight)
-                        - distanceSquared(location, b.getKey(), useHeight));
+                .filter(entry -> predicate.test(entry.getKey(), entry.getValue())
+                        && distanceSquared(location, entry.getKey(), sphere) <= radiusSquared)
+                .min((a, b) -> distanceSquared(location, a.getKey(), sphere)
+                        - distanceSquared(location, b.getKey(), sphere));
         return optionalEntry.map(entry -> entry.getKey()).orElse(null);
     }
 
-    private static int distanceSquared(final BlockLocation first, final BlockLocation second, final boolean useHeight) {
+    private static int distanceSquared(final BlockLocation first, final BlockLocation second, final boolean sphere) {
         if (!first.worldKey().equals(second.worldKey())) {
             return Integer.MAX_VALUE;
         }
         final var x = first.x() - second.x();
-        final var y = useHeight ? first.y() - second.y() : 0;
+        final var y = sphere ? first.y() - second.y() : 0;
         final var z = first.z() - second.z();
         return x * x + y * y + z * z;
     }
