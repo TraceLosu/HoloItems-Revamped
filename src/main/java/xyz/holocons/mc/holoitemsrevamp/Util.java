@@ -2,6 +2,7 @@ package xyz.holocons.mc.holoitemsrevamp;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Base64;
 import java.util.UUID;
@@ -84,7 +85,7 @@ public final class Util {
     public static long currentTimeTicks() {
         final var currentTick = Integer.toUnsignedLong(Bukkit.getCurrentTick());
         if (currentTick < Util.previousCurrentTick) {
-            Util.epochTick = System.currentTimeMillis() / Ticks.SINGLE_TICK_DURATION_MS - currentTick;
+            Util.epochTick = toTicks(System.currentTimeMillis(), ChronoUnit.MILLIS) - currentTick;
         }
         Util.previousCurrentTick = currentTick;
         return Util.epochTick + currentTick;
