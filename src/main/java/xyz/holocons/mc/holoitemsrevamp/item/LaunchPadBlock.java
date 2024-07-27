@@ -101,4 +101,20 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
             smoker.setBurnTime(cooldownTime);
         }
     }
+
+    /**
+     * Launches a package. Does not touch launch-pad data (ex cooldown), only manipulates the package block.
+     * @param pack A package to be launched.
+     */
+    private static void launchPackage(Block pack) {
+        throw new UnsupportedOperationException("unimplemented");
+    }
+
+    /**
+     * Tries to get a package associated with this launch pad.
+     * @return The package associated with this LaunchPad
+     */
+    private static Block getPackage(Block launchPad) {
+        throw new UnsupportedOperationException("unimplemented");
+    }
 }
