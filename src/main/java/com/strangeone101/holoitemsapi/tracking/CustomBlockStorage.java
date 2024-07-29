@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -115,13 +116,20 @@ public class CustomBlockStorage {
 
     public BlockLocation getNearestBlock(final Block block, final boolean sphere, final int radius,
             final BiPredicate<? super BlockLocation, ? super BlockAbility> predicate) {
-        final var location = new BlockLocation(block);
+        final var origin = new BlockLocation(block);
         final var radiusSquared = square(radius);
-        final var optionalEntry = trackedBlocks.entrySet().stream()
-                .filter(entry -> predicate.test(entry.getKey(), entry.getValue())
-                        && distanceSquared(location, entry.getKey(), sphere) <= radiusSquared)
-                .min(Comparator.comparingInt(entry -> distanceSquared(location, entry.getKey(), sphere)));
-        return optionalEntry.map(entry -> entry.getKey()).orElse(null);
+        final var nearestLocationFunction = BinaryOperator
+                .minBy(Comparator.<BlockLocation>comparingInt(location -> distanceSquared(origin, location, sphere))
+                        .thenComparingInt(location -> square(origin.y() - location.y())));
+        BlockLocation nearest = null;
+        for (final var entry : trackedBlocks.object2ObjectEntrySet()) {
+            final var location = entry.getKey();
+            final var ability = entry.getValue();
+            if (predicate.test(location, ability) && distanceSquared(origin, location, sphere) <= radiusSquared) {
+                nearest = nearest != null ? nearestLocationFunction.apply(nearest, location) : location;
+            }
+        }
+        return nearest;
     }
 
     private static int distanceSquared(final BlockLocation first, final BlockLocation second, final boolean sphere) {
