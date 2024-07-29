@@ -3,9 +3,11 @@ package com.strangeone101.holoitemsapi.tracking;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -114,14 +116,20 @@ public class CustomBlockStorage {
 
     public BlockLocation getNearestBlock(final Block block, final boolean sphere, final int radius,
             final BiPredicate<? super BlockLocation, ? super BlockAbility> predicate) {
-        final var location = new BlockLocation(block);
-        final var radiusSquared = radius * radius;
-        final var optionalEntry = trackedBlocks.entrySet().stream()
-                .filter(entry -> predicate.test(entry.getKey(), entry.getValue())
-                        && distanceSquared(location, entry.getKey(), sphere) <= radiusSquared)
-                .min((a, b) -> distanceSquared(location, a.getKey(), sphere)
-                        - distanceSquared(location, b.getKey(), sphere));
-        return optionalEntry.map(entry -> entry.getKey()).orElse(null);
+        final var origin = new BlockLocation(block);
+        final var radiusSquared = square(radius);
+        final var nearestLocationFunction = BinaryOperator
+                .minBy(Comparator.<BlockLocation>comparingInt(location -> distanceSquared(origin, location, sphere))
+                        .thenComparingInt(location -> square(origin.y() - location.y())));
+        BlockLocation nearest = null;
+        for (final var entry : trackedBlocks.object2ObjectEntrySet()) {
+            final var location = entry.getKey();
+            final var ability = entry.getValue();
+            if (predicate.test(location, ability) && distanceSquared(origin, location, sphere) <= radiusSquared) {
+                nearest = nearest != null ? nearestLocationFunction.apply(nearest, location) : location;
+            }
+        }
+        return nearest;
     }
 
     private static int distanceSquared(final BlockLocation first, final BlockLocation second, final boolean sphere) {
@@ -131,7 +139,11 @@ public class CustomBlockStorage {
         final var x = first.x() - second.x();
         final var y = sphere ? first.y() - second.y() : 0;
         final var z = first.z() - second.z();
-        return x * x + y * y + z * z;
+        return square(x) + square(y) + square(z);
+    }
+
+    private static int square(final int i) {
+        return i * i;
     }
 
     public void forEachBlockInChunk(final UUID worldKey, final long chunkKey,

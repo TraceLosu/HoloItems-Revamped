@@ -6,7 +6,7 @@ import org.bukkit.entity.Entity;
 
 public class EntityExpiringSet extends ExpiringSet<Entity, UUID> {
 
-    public EntityExpiringSet(ExpirationPolicy<Entity> expirationPolicy) {
+    public EntityExpiringSet(final ExpirationPolicy<Entity> expirationPolicy) {
         super(Entity::getUniqueId, expirationPolicy);
     }
 }
