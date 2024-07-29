@@ -1,6 +1,7 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -24,6 +25,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import xyz.holocons.mc.holoitemsrevamp.HoloItemsRevamp;
+import xyz.holocons.mc.holoitemsrevamp.util.SimpleExpiringSet;
 
 public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
@@ -36,12 +38,12 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     private static final Pattern destinationPattern = Pattern.compile("(\\d+)\\s+(\\d+)\\s+(\\w*)");
 
     private final CustomBlockStorage customBlockTracker;
-    private final Object2ObjectOpenHashMap<BlockLocation, BlockLocation> destinationCache;
+    private final DestinationCache destinationCache;
 
     public LaunchPadBlock(HoloItemsRevamp plugin) {
         super(plugin, name, material, displayName, lore);
         customBlockTracker = plugin.getTrackingManager();
-        destinationCache = new Object2ObjectOpenHashMap<>();
+        destinationCache = new DestinationCache();
         register();
     }
 
@@ -141,5 +143,27 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     private static boolean isPackage(final Block block) {
         return block.getType() == Material.BARREL || MaterialTags.SHULKER_BOXES.isTagged(block);
+    }
+
+    private static class DestinationCache {
+
+        private final Object2ObjectOpenHashMap<BlockLocation, BlockLocation> destinationMap = new Object2ObjectOpenHashMap<>();
+        private final SimpleExpiringSet<BlockLocation> expiringSet = new SimpleExpiringSet<>(600);
+
+        public BlockLocation get(final BlockLocation origin) {
+            if (expiringSet.test(origin)) {
+                expiringSet.add(origin);
+                return destinationMap.get(origin);
+            }
+            if (expiringSet.isEmpty()) {
+                destinationMap.clear();
+            }
+            return null;
+        }
+
+        public void set(final BlockLocation origin, final BlockLocation destination) {
+            expiringSet.add(origin);
+            destinationMap.put(origin, destination);
+        }
     }
 }
