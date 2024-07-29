@@ -4,17 +4,22 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.HeightMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Smoker;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Nullable;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.strangeone101.holoitemsapi.item.BlockAbility;
 import com.strangeone101.holoitemsapi.item.CustomItem;
+import com.strangeone101.holoitemsapi.tracking.BlockLocation;
 import com.strangeone101.holoitemsapi.tracking.CustomBlockStorage;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -31,10 +36,12 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     private static final Pattern destinationPattern = Pattern.compile("(\\d+)\\s+(\\d+)\\s+(\\w*)");
 
     private final CustomBlockStorage customBlockTracker;
+    private final Object2ObjectOpenHashMap<BlockLocation, BlockLocation> destinationCache;
 
     public LaunchPadBlock(HoloItemsRevamp plugin) {
         super(plugin, name, material, displayName, lore);
         customBlockTracker = plugin.getTrackingManager();
+        destinationCache = new Object2ObjectOpenHashMap<>();
         register();
     }
 
@@ -53,7 +60,18 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     // TODO: The actual functionality?
 
     private @Nullable Block findNearestLaunchPad(final Block destination) {
-        throw new UnsupportedOperationException("unimplemented");
+        final var launchPadLocation = customBlockTracker.getNearestBlock(destination, false, 96,
+                (location, ability) -> ability instanceof LaunchPadBlock);
+        var block = launchPadLocation.world().getHighestBlockAt(launchPadLocation.x(), launchPadLocation.z(),
+                HeightMap.WORLD_SURFACE);
+        while (block.getY() > launchPadLocation.y()) {
+            if (block.getType() == Material.AIR || isPackage(block)) {
+                block = block.getRelative(BlockFace.DOWN);
+            } else {
+                break;
+            }
+        }
+        return customBlockTracker.getAbility(block) instanceof LaunchPadBlock ? block : null;
     }
 
     /**
@@ -63,7 +81,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
      * @param destination        String containing x coordinate, z coordinate, and
      *                           optional world name
      * @param defaultDestination The originating Launch Pad
-     * @return
+     * @return The Block where a package should be sent
      */
     private static Block parseDestinationOrDefault(final String destination, final Block defaultDestination) {
         final var matcher = destinationPattern.matcher(destination);
@@ -103,7 +121,9 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
     }
 
     /**
-     * Launches a package. Does not touch launch-pad data (ex cooldown), only manipulates the package block.
+     * Launches a package. Does not touch launch-pad data (ex cooldown), only
+     * manipulates the package block.
+     * 
      * @param pack A package to be launched.
      */
     private static void launchPackage(Block pack) {
@@ -112,9 +132,14 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     /**
      * Tries to get a package associated with this launch pad.
+     * 
      * @return The package associated with this LaunchPad
      */
     private static Block getPackage(Block launchPad) {
         throw new UnsupportedOperationException("unimplemented");
+    }
+
+    private static boolean isPackage(final Block block) {
+        return block.getType() == Material.BARREL || MaterialTags.SHULKER_BOXES.isTagged(block);
     }
 }
