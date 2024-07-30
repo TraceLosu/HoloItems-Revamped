@@ -61,19 +61,19 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     // TODO: The actual functionality?
 
-    private @Nullable Block findNearestLaunchPad(final Block destination) {
+    private @Nullable BlockLocation findNearestLaunchPad(final Block destination) {
         final var launchPadLocation = customBlockTracker.getNearestBlock(destination, false, 96,
                 (location, ability) -> ability instanceof LaunchPadBlock);
         var block = launchPadLocation.world().getHighestBlockAt(launchPadLocation.x(), launchPadLocation.z(),
                 HeightMap.WORLD_SURFACE);
         while (block.getY() > launchPadLocation.y()) {
-            if (block.getType() == Material.AIR || isPackage(block)) {
+            if (block.isEmpty() || isPackage(block)) {
                 block = block.getRelative(BlockFace.DOWN);
             } else {
                 break;
             }
         }
-        return customBlockTracker.getAbility(block) instanceof LaunchPadBlock ? block : null;
+        return customBlockTracker.getAbility(block) instanceof LaunchPadBlock ? new BlockLocation(block) : null;
     }
 
     /**
@@ -93,7 +93,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
                 final var z = Integer.parseInt(matcher.group(1));
                 final var worldName = matcher.group(2);
                 final var world = worldName.isEmpty() ? defaultDestination.getWorld() : Bukkit.getWorld(worldName);
-                return world.getBlockAt(x, 0, z);
+                return world.getBlockAt(x, world.getMaxHeight(), z);
             } catch (Exception e) {
             }
         }
@@ -147,8 +147,8 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
 
     private static class DestinationCache {
 
-        private final Object2ObjectOpenHashMap<BlockLocation, BlockLocation> destinationMap = new Object2ObjectOpenHashMap<>();
         private final SimpleExpiringSet<BlockLocation> expiringSet = new SimpleExpiringSet<>(600);
+        private final Object2ObjectOpenHashMap<BlockLocation, BlockLocation> destinationMap = new Object2ObjectOpenHashMap<>();
 
         public BlockLocation get(final BlockLocation origin) {
             if (expiringSet.test(origin)) {
