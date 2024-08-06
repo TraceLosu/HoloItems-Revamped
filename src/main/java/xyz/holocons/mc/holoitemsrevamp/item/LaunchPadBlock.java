@@ -1,7 +1,6 @@
 package xyz.holocons.mc.holoitemsrevamp.item;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -87,7 +86,7 @@ public class LaunchPadBlock extends CustomItem implements BlockAbility {
      */
     private static Block parseDestinationOrDefault(final String destination, final Block defaultDestination) {
         final var matcher = destinationPattern.matcher(destination);
-        if (matcher.find()) {
+        if (matcher.matches()) {
             try {
                 final var x = Integer.parseInt(matcher.group(0));
                 final var z = Integer.parseInt(matcher.group(1));
