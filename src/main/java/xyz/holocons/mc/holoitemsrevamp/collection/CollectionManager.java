@@ -1235,7 +1235,7 @@ public class CollectionManager {
     }
 
     private static Idol buildWatame(HoloItemsRevamp plugin) {
-        return new Idol() {
+        return new Idol(new LaunchPadBlock(plugin)) {
 
             @Override
             public @NotNull String getSkinUrl() {
